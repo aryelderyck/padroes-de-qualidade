@@ -26,6 +26,8 @@ Orçamento zero: só ferramentas gratuitas. Explique em português, de forma dir
 Aryel também quer **aprender inglês**: use o termo técnico em inglês com a tradução na primeira vez; diante de mensagem de
 erro ou tela em inglês, peça primeiro que ele diga o que entendeu e só depois confirme ou corrija; ao fechar cada tarefa,
 registre de 3 a 5 termos novos em `APRENDIZADOS.md`.
+**Ensine com recursos visuais:** use diagramas, gráficos, tabelas e maquetes sempre que ajudarem, de preferência algo
+que abra no celular; o visual complementa o texto.
 **Cada arquivo com o seu porquê:** antes de criar qualquer arquivo (inclusive de configuração), explique em poucas linhas
 para que serve, por que fica naquela pasta e com aquele nome, quais alternativas existiam e por que não foram escolhidas.
 Mantenha `docs/MAPA-DE-ARQUIVOS.md` com uma linha por arquivo do repositório

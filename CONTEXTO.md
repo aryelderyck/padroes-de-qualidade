@@ -27,6 +27,9 @@ atualize sempre que algo mudar.
   *rate limit*, limite de requisições). Mensagens de erro e telas em inglês não são traduzidas de imediato: primeiro a pessoa
   tenta dizer o que entendeu, depois Claude confirma ou corrige. No fim de cada tarefa, de 3 a 5 termos novos vão para o
   glossário (seção 6) e para o `APRENDIZADOS.md`. O texto visível dos projetos continua em português do Brasil.
+- **Ensinar com recursos visuais:** sempre que ajudar, Claude explica com diagramas (fluxos, arquitetura, o caminho de um
+  dado), gráficos, tabelas comparativas e maquetes, e não só com texto. Prefere o que a pessoa consegue abrir no celular
+  (artefato, imagem, diagrama inline). O visual complementa a explicação escrita, não a substitui.
 - **Cada arquivo com o seu porquê:** antes de criar qualquer arquivo (inclusive de configuração), Claude explica em poucas
   linhas para que serve, por que fica naquela pasta e com aquele nome, quais alternativas existiam e por que não foram
   escolhidas. Cada repositório mantém `docs/MAPA-DE-ARQUIVOS.md`, com uma linha por arquivo nas colunas
@@ -122,6 +125,7 @@ Decisões que valem para vários projetos. Acrescente no topo, com data.
 - **2026-11-10:** o painel de Dota 2 é um site público para jogadores, com **dados reais em execução** (OpenDota, API da comunidade, não da Valve); o repositório, os testes e os exemplos continuam só com dados fictícios.
 - **2026-11-10:** o painel entra com busca (SEO) e vários idiomas desde o desenho (`PADROES.md`, seção 9A). Arquitetura e ordem dos idiomas dependem de aprovação.
 - **2026-11-10:** a conta do GitHub passou a se chamar `aryelderyck`; endereços e links foram atualizados (E-021, E-022).
+- **2026-11-10:** ao ensinar, usar diagramas e outros recursos visuais sempre que ajudarem (seção 2, "Ensinar com recursos visuais"). Para o painel, três direções visuais (Dire e Radiant, Mana e Ouro) foram montadas como maquetes com dados fictícios; a escolha é da pessoa.
 - **2026-11-09:** projeto 2 passa a ser o painel de estatísticas de Dota 2 (OpenDota), no lugar do radar de licitações. Motivo: a pessoa não se animou com o tema; busca algo ligado a jogos.
 - **2026-11-09:** criado o kit `padroes-de-qualidade` (padrões, erros, perguntas de revisão, contexto, práticas) para manter a qualidade entre os projetos.
 

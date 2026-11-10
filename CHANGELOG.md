@@ -39,3 +39,4 @@
   modelos de CI (Python e Node), CodeQL, Dependabot, `pyproject` e Dockerfile.
 - Lições iniciais vindas da landing page.
 - Pendente: validar os modelos em um projeto real (nenhum foi executado).
+- `CONTEXTO.md` e `CLAUDE.template.md`: regra "ensinar com recursos visuais" (diagramas, gráficos e maquetes).
