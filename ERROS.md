@@ -87,6 +87,7 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 | E-032 | Contagem de CR com `od` e `grep` contou a letra "r" | Teste | kit de padrões | Resolvido |
 | E-033 | Escape de barra invertida num script Python gravou um byte CR no `ERROS.md` | Ferramenta | kit de padrões | Resolvido |
 | E-034 | Commits do kit sem o formato `docs(kit):` e com vários assuntos juntos | Processo | kit de padrões | Resolvido |
+| E-035 | Identidade do git da máquina expõe usuário do Windows e nome do computador | Segurança | painel e kit | Aberto |
 
 ## Registro
 
@@ -463,3 +464,14 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 - **Como evitar:** antes do primeiro commit em um repositório, ler o `README.md` e o `CLAUDE.md` dele à procura de regras de commit; no kit, usar `docs(kit):`.
 - **Virou regra em:** `README.md` do kit (regra já existente).
 - **Status:** Resolvido
+
+### E-035 · Identidade do git da máquina expõe usuário do Windows e nome do computador
+- **Data / projeto:** 2026-11-10 · painel e kit
+- **Categoria:** Segurança
+- **Sintoma:** os 13 commits locais da sessão (4 no painel, 9 no kit) têm como autor o nome de usuário do Windows e um e-mail formado por esse usuário e o nome do computador. Os commits já publicados usavam outra identidade.
+- **Causa raiz:** o `.gitconfig` global da máquina define `user.name` e `user.email` com esses valores, e ninguém conferiu a identidade antes do primeiro commit. O repositório é público: o autor de cada commit fica visível para qualquer pessoa.
+- **Como foi detectado:** Claude Code, na verificação final antes do envio, procurando o nome de usuário também no histórico (`git log -p`), e não só nos arquivos.
+- **Correção:** envio suspenso; a pessoa decide a identidade (recomendado: nome da conta do GitHub e o e-mail `noreply` do GitHub, configurados só nestes repositórios) e os commits locais são refeitos com o autor certo antes do envio.
+- **Como evitar:** antes do primeiro commit numa máquina nova, conferir `git config user.name` e `git config user.email`; a verificação de dados pessoais antes de enviar inclui o histórico (`git log -p` e os autores), não só a versão final dos arquivos.
+- **Virou regra em:** ainda não (aguarda a correção).
+- **Status:** Aberto
