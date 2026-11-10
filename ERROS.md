@@ -85,6 +85,7 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 | E-030 | Acentos trocados em script `.ps1` salvo sem BOM | Ferramenta | painel | Resolvido |
 | E-031 | `git checkout-index -f -a` não aplicou o `eol=lf` novo | Ferramenta | kit de padrões | Resolvido |
 | E-032 | Contagem de CR com `od` e `grep` contou a letra "r" | Teste | kit de padrões | Resolvido |
+| E-033 | Escape `` num script Python gravou um byte CR no `ERROS.md` | Ferramenta | kit de padrões | Resolvido |
 
 ## Registro
 
@@ -435,7 +436,18 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 - **Sintoma:** `head -c 200 README.md | od -c | grep -c '\\r'` (no Git Bash) deu 7 num arquivo que já estava em LF.
 - **Causa raiz:** o padrão chegou ao `grep` como `\r`, que o GNU grep trata como a letra "r", e não como o byte CR; a saída do `od` tem letras "r" do texto, e o comando contou linhas com elas. Por que as duas barras viraram uma não foi investigado. Usei a medição sem antes testá-la num caso conhecido (regra 17).
 - **Como foi detectado:** Claude Code, ao perceber que a contagem não batia com `git ls-files --eol` (`w/lf`).
-- **Correção:** contar os bytes CR com Python (`open(f, "rb").read().count(b"")`), que deu 201 num arquivo ainda em CRLF (controle positivo) e 0 no arquivo restaurado.
+- **Correção:** contar os bytes CR com Python (`open(f, "rb").read().count(b"\r")`), que deu 201 num arquivo ainda em CRLF (controle positivo) e 0 no arquivo restaurado.
 - **Como evitar:** regra 17: toda medição de "não tem X" roda antes num caso que tem X.
 - **Virou regra em:** `ERROS.md`, regra 17 (já existente).
+- **Status:** Resolvido
+
+### E-033 · Escape `\r` num script Python gravou um byte CR no `ERROS.md`
+- **Data / projeto:** 2026-11-10 · kit de padrões
+- **Categoria:** Ferramenta
+- **Sintoma:** depois de um commit, `git ls-files --eol` passou a mostrar o `ERROS.md` como `-text` (binário) em vez de LF.
+- **Causa raiz:** para escrever o texto "barra e r" na entrada E-032, usei um script Python com uma string comum; o `\r` dentro dela virou o caractere CR de verdade. Um CR solto faz o git, com `text=auto`, tratar o arquivo como binário. A checagem que fiz depois ignorava o byte 13 (CR) por engano e não pegou o problema.
+- **Como foi detectado:** Claude Code, conferindo `git ls-files --eol` depois do commit; o byte foi localizado contando `b"\r"` com Python.
+- **Correção:** troca do byte CR pelo texto "barra e r", sem usar escape; `git ls-files --eol` voltou a `i/lf w/lf`.
+- **Como evitar:** para gravar texto com barras invertidas em documentação, usar o Edit ou um heredoc do shell com `'EOF'`, não uma string comum de Python; depois de editar arquivo de texto, conferir `git ls-files --eol` (`-text` é sinal de byte estranho).
+- **Virou regra em:** ainda não (registro de ferramenta).
 - **Status:** Resolvido
