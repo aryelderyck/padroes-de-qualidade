@@ -3,7 +3,7 @@
 <!-- Copie este arquivo para a raiz do repositório novo, preencha os [colchetes] e apague os comentários. -->
 
 ## Padrões obrigatórios
-Este projeto segue o kit **padroes-de-qualidade**, versão **[0.3]**, nível **[1, 2 ou 3]**.
+Este projeto segue o kit **padroes-de-qualidade**, versão **[0.4]**, nível **[1, 2 ou 3]**.
 Leia o documento mestre no início do projeto e de cada etapa grande:
 https://raw.githubusercontent.com/aryelderyck/padroes-de-qualidade/main/PADROES.md
 Leia também o contexto geral e as perguntas de revisão, e consulte-os ao longo do trabalho:

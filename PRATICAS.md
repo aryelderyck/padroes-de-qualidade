@@ -28,6 +28,10 @@ melhorou (erro evitado, tempo poupado, clareza). Descartar também é aprendizad
 | Fixar actions do GitHub por hash do commit | Reduz risco de cadeia de suprimentos nos workflows | E-commerce ou AtendeFlow | Candidata |
 | Orçamento de desempenho no Lighthouse CI | Impede que a página fique mais lenta sem ninguém notar | Landing, na etapa 1 | Candidata (já configurada na landing, ainda não executada) |
 | Log estruturado com id de requisição | Rastrear um pedido de ponta a ponta | Painel | Candidata (planejada para o painel) |
+| Endereço público em um só lugar (`SITE_URL`) com teste que o confere | Evita o quebra-cabeça do E-021 quando conta ou domínio mudam | Painel | Candidata |
+| Lighthouse CI com SEO, Acessibilidade e Desempenho a partir de 95 | Impede regressão de busca e velocidade sem ninguém notar | Painel (páginas públicas) | Candidata |
+| Teste automatizado de `hreflang` recíproco, canônica e links internos | Erros de idioma e link quebrado são silenciosos e prejudicam a busca | Painel | Candidata |
+| Medir Core Web Vitals em campo depois de publicar | O laboratório (Lighthouse) não vê o que o jogador real vê | Painel, depois do deploy | Candidata |
 | Feature flags simples | Liga e desliga recursos novos sem novo deploy | AtendeFlow | Candidata |
 | Revisão por um segundo agente, independente | Quem revisa não é quem escreveu; útil em trabalho de alto risco | Qualquer etapa crítica (segurança, pagamentos) | Candidata |
 

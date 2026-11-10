@@ -42,6 +42,10 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 10. **Não deixe entregas pela metade.** Esqueleto criado precisa ser preenchido ou o estado deve ser dito claramente (E-006).
 11. **Mantenha plano e código alinhados.** Quando o código diverge do plano, registre o desvio (E-012).
 12. **Finais de linha e formatação:** `.gitattributes` com LF desde o primeiro commit (E-004).
+13. **Antes de editar, confira se o clone local está em dia** com o remoto (E-020).
+14. **Endereço público em um só lugar,** com teste que o confere; URL absoluta espalhada quebra na mudança de nome (E-021).
+15. **Autorização de ferramenta depende do nome do repositório.** Depois de renomear conta ou repositório, confirme o acesso antes de prometer o envio (E-022).
+16. **Distinga dado real de dado fictício ao explicar o projeto:** o que o produto mostra em execução e o que o repositório guarda (E-024).
 
 ## Índice
 
@@ -66,6 +70,11 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 | E-017 | Páginas oficiais de API que não renderizam para a ferramenta | Ferramenta | painel de Dota 2 | Aberto |
 | E-018 | Inline `style=""` bloqueado pelo CSP | Segurança | landing | Resolvido |
 | E-019 | Página de login sem acesso para o assistente (LinkedIn) | Ambiente | portfólio (planejamento) | Resolvido |
+| E-020 | Clone local 53 commits atrás do remoto | Processo | landing | Resolvido |
+| E-021 | Endereço com nome de usuário espalhado em vários arquivos | Código | landing | Resolvido |
+| E-022 | Envio recusado depois da mudança do nome da conta | Ambiente | landing | Resolvido |
+| E-023 | Leitura de página recusada por falta de origem (PROVENANCE_REQUIRED) | Ambiente | landing | Resolvido |
+| E-024 | "Dados fictícios" dito sem separar produto de repositório | Comunicação | painel | Resolvido |
 
 ## Registro
 
@@ -276,4 +285,59 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 - **Correção:** descartei os perfis errados e pedi à pessoa que colasse o texto do próprio perfil.
 - **Como evitar:** para páginas autenticadas, pedir o conteúdo colado em vez de tentar contornar ou adivinhar por busca.
 - **Virou regra em:** `ERROS.md`, regra 7.
+- **Status:** Resolvido
+
+### E-020 · Clone local 53 commits atrás do remoto
+- **Data / projeto:** 2026-11-10 · landing
+- **Categoria:** Processo
+- **Sintoma:** o clone usado pelo assistente estava em um commit antigo; o Claude Code já tinha avançado o projeto.
+- **Causa raiz:** o clone foi feito em outra sessão e não foi atualizado antes de começar a editar.
+- **Como foi detectado:** `git status -sb` mostrou "behind 53" antes de qualquer edição.
+- **Correção:** `git pull --ff-only` e só depois as edições.
+- **Como evitar:** primeiro passo de toda sessão em repositório existente: `git fetch` e `git status -sb`.
+- **Virou regra em:** `ERROS.md`, regra 13.
+- **Status:** Resolvido
+
+### E-021 · Endereço com nome de usuário espalhado em vários arquivos
+- **Data / projeto:** 2026-11-10 · landing
+- **Categoria:** Código
+- **Sintoma:** depois que a conta do GitHub mudou de nome, o endereço antigo continuava em `og:url`, `og:image`, no rodapé, no README, no selo do CI e em uma constante de teste.
+- **Causa raiz:** o endereço público foi escrito à mão em vários lugares. O GitHub Pages usa o nome da conta no endereço e não redireciona o endereço antigo.
+- **Como foi detectado:** busca por texto do nome antigo em todo o repositório logo após a renomeação.
+- **Correção:** substituição em 4 arquivos, testes unitários rodados (40 de 40) e commit.
+- **Como evitar:** guardar o endereço público em um único lugar (constante ou variável de build) e ter um teste que compara os demais com ele. Depois de renomear, buscar o nome antigo no repositório inteiro.
+- **Virou regra em:** `ERROS.md`, regra 14; candidata em `PRATICAS.md`.
+- **Status:** Resolvido
+
+### E-022 · Envio recusado depois da mudança do nome da conta
+- **Data / projeto:** 2026-11-10 · landing
+- **Categoria:** Ambiente
+- **Sintoma:** o envio para o endereço novo foi recusado ("não está no conjunto autorizado"), e adicionar o repositório sob o nome novo falhou por haver outro de mesmo nome já anexado.
+- **Causa raiz:** a autorização da sessão ficou registrada com o nome antigo da conta; o GitHub redireciona o nome antigo para o novo, mas a ferramenta confere o nome.
+- **Como foi detectado:** a mensagem de erro do envio.
+- **Correção:** envio pelo endereço antigo, que a sessão autorizava e o GitHub redirecionou para o repositório certo. Em outro caso, iniciar nova sessão com o repositório pelo nome novo.
+- **Como evitar:** depois de renomear conta ou repositório, avisar no começo da sessão e confirmar o acesso antes de prometer um envio.
+- **Virou regra em:** `ERROS.md`, regra 15.
+- **Status:** Resolvido
+
+### E-023 · Leitura de página recusada por falta de origem (PROVENANCE_REQUIRED)
+- **Data / projeto:** 2026-11-10 · landing
+- **Categoria:** Ambiente
+- **Sintoma:** a leitura do endereço novo do GitHub Pages foi recusada, então não foi possível confirmar que a página está no ar.
+- **Causa raiz:** a ferramenta só abre endereços que a pessoa escreveu na conversa ou que apareceram em resultados anteriores; o endereço foi montado por mim.
+- **Como foi detectado:** retorno `PROVENANCE_REQUIRED`.
+- **Correção:** pedir que a pessoa cole o endereço na conversa; enquanto isso, a publicação fica marcada como não verificada.
+- **Como evitar:** pedir o endereço à pessoa quando precisar verificar uma publicação nova; não afirmar que está no ar sem ter aberto.
+- **Virou regra em:** `ERROS.md`, regras 1 e 6.
+- **Status:** Resolvido
+
+### E-024 · "Dados fictícios" dito sem separar produto de repositório
+- **Data / projeto:** 2026-11-10 · painel
+- **Categoria:** Comunicação
+- **Sintoma:** a pessoa entendeu que o painel usaria dados inventados, quando quer estatísticas reais de partidas.
+- **Causa raiz:** a regra "só dados fictícios em repositório público" (LGPD) foi explicada sem dizer que vale para o repositório e os testes, não para o que o site mostra em execução.
+- **Como foi detectado:** a pessoa corrigiu na mensagem seguinte.
+- **Correção:** explicação refeita com duas colunas: em execução, dados reais da API; no repositório e nos testes, só fictícios.
+- **Como evitar:** ao falar de dados, dizer sempre onde ficam (produto, banco, repositório, testes) e de onde vêm.
+- **Virou regra em:** `ERROS.md`, regra 16.
 - **Status:** Resolvido

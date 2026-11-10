@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4 · 2026-11-10
+- `PADROES.md`: nova seção 9A (web pública: indexação, idiomas com `hreflang`, Core Web Vitals, testes de SEO) e três
+  lições novas na seção 13.
+- `ERROS.md`: entradas E-020 a E-024 (clone desatualizado, endereço com nome de usuário, autorização depois da
+  renomeação, leitura recusada, "dados fictícios" sem contexto) e regras 13 a 16.
+- `CONTEXTO.md`: decisões de 2026-11-10 (dados reais em execução, SEO e idiomas, nome da conta).
+- `PRATICAS.md`: quatro práticas candidatas ligadas a SEO, idiomas e endereço público.
+- Kit publicado em `aryelderyck/padroes-de-qualidade` com licença MIT.
+
 ## 0.3 · 2026-11-09
 - Novo `REVISAO.md`: perguntas de revisão por momento (design, código, otimização, segurança, testes, entrega,
   aprendizado, comunicação, operação) e formato curto "Decisão / Alternativas / Por que / Risco".

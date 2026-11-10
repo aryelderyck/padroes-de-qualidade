@@ -1,6 +1,6 @@
 # Padrões de qualidade dos projetos
 
-Versão 0.3 · 2026-11-09 · Dono: Aryel
+Versão 0.4 · 2026-11-10 · Dono: Aryel
 
 Este é o documento mestre. Todo projeto novo (landing, painel, e-commerce, AtendeFlow e os que vierem)
 começa por aqui e só é considerado **pronto** quando cumpre a Definição de Pronto (seção 2).
@@ -121,6 +121,35 @@ Isto é boa prática de engenharia, não aconselhamento jurídico. Para cada pro
 - Melhoria progressiva: sem JavaScript o conteúdo continua legível.
 - Verificação visual real, com capturas de tela em 1440 px e 390 px, antes de dar por concluído.
 
+## 9A. Web pública: busca, idiomas e velocidade (todo site que quer ser encontrado)
+
+Vale para o painel de Dota 2 e para qualquer site público. **Nenhuma regra garante posição nos resultados:** a
+posição depende da concorrência, de links vindos de outros sites e de tempo. O que o projeto controla é a base técnica
+sem falhas e o conteúdo realmente útil.
+
+**Rastreamento e indexação**
+- Cada página tem `<title>` e `meta description` próprios, um único `<h1>`, URL canônica (`rel="canonical"`) e HTML semântico.
+- `sitemap.xml` e `robots.txt` gerados pelo build, com endereços completos e só das páginas que devem aparecer na busca.
+- Conteúdo importante existe no HTML entregue (renderização no servidor ou geração estática); não depende de JavaScript para aparecer.
+- Páginas com dados pessoais (por exemplo, a página de um jogador) usam `noindex` e ficam fora do sitemap (LGPD).
+- Dados estruturados (JSON-LD) só descrevem o que a página realmente mostra.
+- Links internos com texto descritivo ("heróis mais fortes do patch", não "clique aqui"); toda página importante é alcançável em poucos cliques e tem migalhas de pão.
+- Páginas geradas em massa só entram no índice se tiverem valor próprio; páginas repetitivas e vazias contam como abuso de conteúdo em escala na política do Google.
+
+**Idiomas (i18n)**
+- Um endereço por idioma, no caminho (`/pt-br/`, `/en/`), nunca decidido só por cookie ou por IP.
+- `hreflang` conforme a documentação do Google: cada página aponta para si mesma e para todas as versões, de volta em ambos os sentidos, com endereços completos, mais `x-default`. Códigos de idioma ISO 639-1 e de região ISO 3166-1 (`es-419` não é aceito).
+- `<html lang>` correto em cada página; seletor de idioma feito de links comuns.
+- Textos em arquivos de tradução; sem tradução automática crua em página indexada (revisar antes de publicar).
+- Números, datas e plurais com `Intl`; fontes próprias com subconjunto para cirílico e chinês, sem Google Fonts.
+- Idioma novo só entra com tradução revisada de todas as páginas indexáveis dele; melhor menos idiomas bem feitos do que muitos pela metade.
+
+**Velocidade e qualidade**
+- Core Web Vitals no percentil 75: LCP até 2,5 s, INP até 200 ms, CLS até 0,1. Medir com Lighthouse CI no pipeline (nota mínima de 95 em Desempenho, Acessibilidade, Boas práticas e SEO) e conferir em campo depois de publicar.
+- Reservar espaço para imagens e gráficos (sem saltos de layout), imagens em formatos modernos e com `width`/`height`, CSS crítico pequeno, JavaScript só onde há interação.
+- HTTPS, cabeçalhos de segurança e CSP sem recursos de terceiros (sem CDN, sem analytics que dependam de cookies).
+- Teste automatizado do que dá para provar: `hreflang` recíproco, links internos sem erro 404, um `<h1>` por página, canônica presente, `noindex` nas páginas de jogador.
+
 ## 10. Observabilidade (nível 2 em diante)
 
 - Log estruturado (JSON) com nível, hora e id de requisição.
@@ -156,6 +185,9 @@ O registro completo, com causa raiz e correção de cada erro, está em [`ERROS.
 - **Capturas de tela mostram o que o código não mostra,** inclusive o meio de uma animação (E-007, E-008).
 - **Ferramentas que não rodaram são declaradas** como não verificadas (E-005, E-013).
 - **Confirme limites e termos de uma API na fonte oficial** antes de desenhar o projeto em torno dela (E-014, E-017).
+- **Endereço público em um só lugar.** Nome de usuário e domínio mudam; URL absoluta espalhada quebra (E-021).
+- **Confira se o clone está em dia antes de editar** (`git status -sb`, `git pull --ff-only`) (E-020).
+- **Diga onde mora o dado real e onde mora o fictício:** dados reais em execução, fictícios no repositório e nos testes (E-024).
 
 ## 14. Como evoluir este documento
 

@@ -29,7 +29,7 @@ atualize sempre que algo mudar.
 | Projeto | Nível | Stack | Situação |
 | --- | --- | --- | --- |
 | Landing page (escritório fictício) | 1 | HTML, CSS, JavaScript, Playwright, GitHub Actions | v1 na `main` (GitHub Pages ainda não ativado); faltam: rodar axe, html-validate, Lighthouse e fontes reais, ativar Pages e as etapas guiadas |
-| Painel de estatísticas de Dota 2 | 2 | Python, FastAPI, SQLAlchemy, pytest | Em desenho (parte 1 apresentada; parte 2 sobre etapas e divisão de código pendente) |
+| Painel de estatísticas de Dota 2 | 2 | Python, FastAPI, SQLAlchemy, pytest | Em desenho (SEO, idiomas e escopo em aprovação; repositório criado só com licença e aviso) |
 | E-commerce | 3 | TypeScript, NestJS, React | Não iniciado |
 | AtendeFlow (CRM, agenda, orçamentos multiempresa, pt/en) | 3 | A definir | Não iniciado |
 
@@ -103,6 +103,9 @@ Modelo de nova linha: `| situação | como percebi | o que ajudou ou vai tentar 
 
 Decisões que valem para vários projetos. Acrescente no topo, com data.
 
+- **2026-11-10:** o painel de Dota 2 é um site público para jogadores, com **dados reais em execução** (OpenDota, API da comunidade, não da Valve); o repositório, os testes e os exemplos continuam só com dados fictícios.
+- **2026-11-10:** o painel entra com busca (SEO) e vários idiomas desde o desenho (`PADROES.md`, seção 9A). Arquitetura e ordem dos idiomas dependem de aprovação.
+- **2026-11-10:** a conta do GitHub passou a se chamar `aryelderyck`; endereços e links foram atualizados (E-021, E-022).
 - **2026-11-09:** projeto 2 passa a ser o painel de estatísticas de Dota 2 (OpenDota), no lugar do radar de licitações. Motivo: a pessoa não se animou com o tema; busca algo ligado a jogos.
 - **2026-11-09:** criado o kit `padroes-de-qualidade` (padrões, erros, perguntas de revisão, contexto, práticas) para manter a qualidade entre os projetos.
 

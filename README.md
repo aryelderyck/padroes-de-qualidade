@@ -3,7 +3,7 @@
 Kit de padrões que mantém o mesmo nível de qualidade em todos os projetos de portfólio do Aryel
 (landing page, painel de Dota 2, e-commerce, AtendeFlow e os próximos).
 
-> Versão **0.3**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
+> Versão **0.4**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
 > O primeiro projeto que usar cada um deve validar e corrigir o modelo aqui.
 
 ## O que tem aqui
@@ -31,6 +31,7 @@ Kit de padrões que mantém o mesmo nível de qualidade em todos os projetos de 
 | Escrever código | `REVISAO.md` blocos B e D |
 | Otimizar ou refatorar | `REVISAO.md` bloco C |
 | Testar | `PADROES.md` seção 4 e `REVISAO.md` bloco E |
+| Site público (busca, idiomas, velocidade) | `PADROES.md` seção 9A |
 | Antes de dizer "pronto" | `REVISAO.md` bloco F e `templates/CHECKLIST-PRONTO.md` |
 | Apareceu um erro | `ERROS.md` (consultar se já aconteceu e registrar) |
 | Ensinar um conceito | `CONTEXTO.md` (glossário e dificuldades) e `REVISAO.md` bloco G |
