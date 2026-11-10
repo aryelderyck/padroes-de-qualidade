@@ -103,6 +103,7 @@ Modelo de nova linha: `| situação | como percebi | o que ajudou ou vai tentar 
 
 Decisões que valem para vários projetos. Acrescente no topo, com data.
 
+- **2026-11-10:** aprovados pela pessoa: arquitetura híbrida (páginas estáticas para busca e API para jogadores), ordem de idiomas (pt-BR e inglês, depois os demais) e versão 1 (heróis e meta, busca de jogador, diagnóstico em pt-BR). Fonte de dados proposta: OpenDota atrás de uma interface própria; limites e regras ainda sem confirmação oficial. Especificação em `painel-dota/docs/superpowers/specs/`, aguardando revisão.
 - **2026-11-10:** o painel de Dota 2 é um site público para jogadores, com **dados reais em execução** (OpenDota, API da comunidade, não da Valve); o repositório, os testes e os exemplos continuam só com dados fictícios.
 - **2026-11-10:** o painel entra com busca (SEO) e vários idiomas desde o desenho (`PADROES.md`, seção 9A). Arquitetura e ordem dos idiomas dependem de aprovação.
 - **2026-11-10:** a conta do GitHub passou a se chamar `aryelderyck`; endereços e links foram atualizados (E-021, E-022).
