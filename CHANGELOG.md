@@ -14,6 +14,7 @@
 - `CONTEXTO.md` e `CLAUDE.template.md`: regra "cada arquivo com o seu porquê" (explicar antes de criar e manter `docs/MAPA-DE-ARQUIVOS.md` em cada repositório).
 - Regra "cada arquivo com o seu porquê": mapa atualizado no mesmo commit do arquivo; temporários ganham uma linha;
   registrada em `PRATICAS.md` como "Em teste (painel)".
+- Novo `docs/MAPA-DE-ARQUIVOS.md` do kit, com o porquê de cada arquivo; link no `README.md`. `REVISAO-CRITICA.md` fica marcado como sem justificativa separada (sobreposto ao `REVISAO.md`), a decidir com a pessoa.
 
 ## 0.3 · 2026-11-09
 - Novo `REVISAO.md`: perguntas de revisão por momento (design, código, otimização, segurança, testes, entrega,

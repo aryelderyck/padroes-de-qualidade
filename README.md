@@ -8,6 +8,8 @@ Kit de padrões que mantém o mesmo nível de qualidade em todos os projetos de 
 
 ## O que tem aqui
 
+Por que cada arquivo existe, onde fica e que alternativas havia: [`docs/MAPA-DE-ARQUIVOS.md`](docs/MAPA-DE-ARQUIVOS.md).
+
 | Arquivo | Para que serve |
 | --- | --- |
 | [`PADROES.md`](PADROES.md) | Documento mestre: princípios, níveis, testes, CI/CD, segurança, LGPD, API, front-end, aprendizado e lições |
