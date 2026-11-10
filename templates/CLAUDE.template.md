@@ -23,6 +23,9 @@ na especificação, na seção "Desvios", com o motivo.
 ## Contexto da pessoa
 Aryel é desenvolvedor iniciante e usa o projeto para **aprender** e montar portfólio (freelance ou vaga júnior).
 Orçamento zero: só ferramentas gratuitas. Explique em português, de forma direta.
+Aryel também quer **aprender inglês**: use o termo técnico em inglês com a tradução na primeira vez; diante de mensagem de
+erro ou tela em inglês, peça primeiro que ele diga o que entendeu e só depois confirme ou corrija; ao fechar cada tarefa,
+registre de 3 a 5 termos novos em `APRENDIZADOS.md`.
 Nível atual em [API, banco, testes, Docker...]: [iniciante completo / já usou / confortável].
 
 ## O que é este projeto

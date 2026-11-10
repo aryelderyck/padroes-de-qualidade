@@ -22,6 +22,11 @@ atualize sempre que algo mudar.
 - Cada etapa termina com algo **visível funcionando** e com um teste.
 - Perguntar, em vez de entregar a resposta, quando o arquivo faz parte do plano de aprendizado.
 - Linguagem direta, sem jargão não explicado. Quando usar um termo técnico novo, definir e, se for importante, acrescentar ao glossário (seção 6).
+- **Inglês junto com o código:** a pessoa quer aprender inglês e praticar com as telas e mensagens em inglês das ferramentas.
+  As explicações continuam em português. Termos técnicos aparecem em inglês com a tradução na primeira vez (por exemplo,
+  *rate limit*, limite de requisições). Mensagens de erro e telas em inglês não são traduzidas de imediato: primeiro a pessoa
+  tenta dizer o que entendeu, depois Claude confirma ou corrige. No fim de cada tarefa, de 3 a 5 termos novos vão para o
+  glossário (seção 6) e para o `APRENDIZADOS.md`. O texto visível dos projetos continua em português do Brasil.
 - A pessoa prefere não gastar tempo escrevendo CSS de variáveis (cores e tamanhos); o foco de escrita dela é a lógica (JavaScript/Python), os testes e a API.
 
 ## 3. Mapa dos projetos
@@ -103,6 +108,7 @@ Modelo de nova linha: `| situação | como percebi | o que ajudou ou vai tentar 
 
 Decisões que valem para vários projetos. Acrescente no topo, com data.
 
+- **2026-11-10:** aprender inglês passa a ser objetivo de todos os projetos (seção 2, "Inglês junto com o código").
 - **2026-11-10:** aprovados pela pessoa: arquitetura híbrida (páginas estáticas para busca e API para jogadores), ordem de idiomas (pt-BR e inglês, depois os demais) e versão 1 (heróis e meta, busca de jogador, diagnóstico em pt-BR). Fonte de dados proposta: OpenDota atrás de uma interface própria; limites e regras ainda sem confirmação oficial. Especificação em `painel-dota/docs/superpowers/specs/`, aguardando revisão.
 - **2026-11-10:** o painel de Dota 2 é um site público para jogadores, com **dados reais em execução** (OpenDota, API da comunidade, não da Valve); o repositório, os testes e os exemplos continuam só com dados fictícios.
 - **2026-11-10:** o painel entra com busca (SEO) e vários idiomas desde o desenho (`PADROES.md`, seção 9A). Arquitetura e ordem dos idiomas dependem de aprovação.

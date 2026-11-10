@@ -8,6 +8,7 @@
 - `CONTEXTO.md`: decisões de 2026-11-10 (dados reais em execução, SEO e idiomas, nome da conta).
 - `PRATICAS.md`: quatro práticas candidatas ligadas a SEO, idiomas e endereço público.
 - Kit publicado em `aryelderyck/padroes-de-qualidade` com licença MIT.
+- `CONTEXTO.md` e `CLAUDE.template.md`: aprender inglês junto com o código.
 
 ## 0.3 · 2026-11-09
 - Novo `REVISAO.md`: perguntas de revisão por momento (design, código, otimização, segurança, testes, entrega,
