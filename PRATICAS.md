@@ -34,6 +34,7 @@ melhorou (erro evitado, tempo poupado, clareza). Descartar também é aprendizad
 | Medir Core Web Vitals em campo depois de publicar | O laboratório (Lighthouse) não vê o que o jogador real vê | Painel, depois do deploy | Candidata |
 | Feature flags simples | Liga e desliga recursos novos sem novo deploy | AtendeFlow | Candidata |
 | Revisão por um segundo agente, independente | Quem revisa não é quem escreveu; útil em trabalho de alto risco | Qualquer etapa crítica (segurança, pagamentos) | Candidata |
+| Cada arquivo com o seu porquê: explicar antes de criar (para que serve, pasta, nome, alternativas) e manter `docs/MAPA-DE-ARQUIVOS.md`, atualizado no mesmo commit do arquivo; temporários ganham uma linha | A pessoa entende a estrutura do projeto, e arquivo sem motivo não nasce; vira pergunta do `/fechar-tarefa` | Painel de Dota 2 (desde o plano 1) e o próprio kit | Em teste (painel) |
 
 ## Como acrescentar
 

@@ -12,6 +12,8 @@
 - `ERROS.md`: entradas E-025 (verificação com `git grep` que não lê arquivo novo), E-026 (conexão encerrada na primeira chamada à OpenDota) e E-027 (aspas perdidas entre processos do PowerShell 5.1), E-028 (lista de um item só no PowerShell), E-029 (`__type` no `ConvertFrom-Json`) e E-030 (`.ps1` sem BOM), E-031 a E-033 (atualização dos finais de linha) e regras 17 e 18.
 - `.gitattributes` com `* text=auto eol=lf` (o kit cumpria a regra 12 só por acaso).
 - `CONTEXTO.md` e `CLAUDE.template.md`: regra "cada arquivo com o seu porquê" (explicar antes de criar e manter `docs/MAPA-DE-ARQUIVOS.md` em cada repositório).
+- Regra "cada arquivo com o seu porquê": mapa atualizado no mesmo commit do arquivo; temporários ganham uma linha;
+  registrada em `PRATICAS.md` como "Em teste (painel)".
 
 ## 0.3 · 2026-11-09
 - Novo `REVISAO.md`: perguntas de revisão por momento (design, código, otimização, segurança, testes, entrega,

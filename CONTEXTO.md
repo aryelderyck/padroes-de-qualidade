@@ -30,9 +30,11 @@ atualize sempre que algo mudar.
 - **Cada arquivo com o seu porquê:** antes de criar qualquer arquivo (inclusive de configuração), Claude explica em poucas
   linhas para que serve, por que fica naquela pasta e com aquele nome, quais alternativas existiam e por que não foram
   escolhidas. Cada repositório mantém `docs/MAPA-DE-ARQUIVOS.md`, com uma linha por arquivo nas colunas
-  `arquivo | para que serve | por que está aqui | alternativas | tarefa em que foi criado`. Arquivo que Claude não consegue
-  justificar não é criado, e a pessoa é avisada. No fechamento de cada tarefa, uma das perguntas de explicar de volta pode
-  ser sobre um arquivo criado nela.
+  `arquivo | para que serve | por que está aqui | alternativas | tarefa em que foi criado`, atualizada no mesmo commit que
+  cria, move ou apaga o arquivo. Arquivo que Claude não consegue justificar não é criado, e a pessoa é avisada. A regra vale
+  por inteiro para arquivos do repositório; para arquivos temporários (fora do repositório), basta uma linha dizendo para que
+  servem. No fechamento de cada tarefa, uma das perguntas de explicar de volta pode ser sobre um arquivo criado nela.
+  Situação: em teste no painel (`PRATICAS.md`).
 - A pessoa prefere não gastar tempo escrevendo CSS de variáveis (cores e tamanhos); o foco de escrita dela é a lógica (JavaScript/Python), os testes e a API.
 
 ## 3. Mapa dos projetos
