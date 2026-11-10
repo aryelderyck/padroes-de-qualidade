@@ -27,6 +27,12 @@ atualize sempre que algo mudar.
   *rate limit*, limite de requisições). Mensagens de erro e telas em inglês não são traduzidas de imediato: primeiro a pessoa
   tenta dizer o que entendeu, depois Claude confirma ou corrige. No fim de cada tarefa, de 3 a 5 termos novos vão para o
   glossário (seção 6) e para o `APRENDIZADOS.md`. O texto visível dos projetos continua em português do Brasil.
+- **Cada arquivo com o seu porquê:** antes de criar qualquer arquivo (inclusive de configuração), Claude explica em poucas
+  linhas para que serve, por que fica naquela pasta e com aquele nome, quais alternativas existiam e por que não foram
+  escolhidas. Cada repositório mantém `docs/MAPA-DE-ARQUIVOS.md`, com uma linha por arquivo nas colunas
+  `arquivo | para que serve | por que está aqui | alternativas | tarefa em que foi criado`. Arquivo que Claude não consegue
+  justificar não é criado, e a pessoa é avisada. No fechamento de cada tarefa, uma das perguntas de explicar de volta pode
+  ser sobre um arquivo criado nela.
 - A pessoa prefere não gastar tempo escrevendo CSS de variáveis (cores e tamanhos); o foco de escrita dela é a lógica (JavaScript/Python), os testes e a API.
 
 ## 3. Mapa dos projetos
@@ -108,6 +114,7 @@ Modelo de nova linha: `| situação | como percebi | o que ajudou ou vai tentar 
 
 Decisões que valem para vários projetos. Acrescente no topo, com data.
 
+- **2026-11-10:** todo arquivo novo é explicado antes de ser criado e ganha uma linha no `docs/MAPA-DE-ARQUIVOS.md` do repositório; arquivo sem justificativa não é criado (seção 2, "Cada arquivo com o seu porquê"). Vale para o painel e para os próximos projetos.
 - **2026-11-10:** aprender inglês passa a ser objetivo de todos os projetos (seção 2, "Inglês junto com o código").
 - **2026-11-10:** aprovados pela pessoa: arquitetura híbrida (páginas estáticas para busca e API para jogadores), ordem de idiomas (pt-BR e inglês, depois os demais) e versão 1 (heróis e meta, busca de jogador, diagnóstico em pt-BR). Fonte de dados proposta: OpenDota atrás de uma interface própria; limites e regras ainda sem confirmação oficial. Especificação em `painel-dota/docs/superpowers/specs/`, aguardando revisão.
 - **2026-11-10:** o painel de Dota 2 é um site público para jogadores, com **dados reais em execução** (OpenDota, API da comunidade, não da Valve); o repositório, os testes e os exemplos continuam só com dados fictícios.

@@ -46,6 +46,8 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 14. **Endereço público em um só lugar,** com teste que o confere; URL absoluta espalhada quebra na mudança de nome (E-021).
 15. **Autorização de ferramenta depende do nome do repositório.** Depois de renomear conta ou repositório, confirme o acesso antes de prometer o envio (E-022).
 16. **Distinga dado real de dado fictício ao explicar o projeto:** o que o produto mostra em execução e o que o repositório guarda (E-024).
+17. **Verificação que procura a ausência de algo precisa provar que olhou.** Rode-a antes num caso que deve ser encontrado; `git grep` não lê arquivo fora do git sem `--untracked` (E-025).
+18. **Script que gasta chamadas limitadas de uma API roda antes contra um dublê** (resposta inventada, sem rede); só depois vai à API de verdade (E-029).
 
 ## Índice
 
@@ -75,6 +77,12 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 | E-022 | Envio recusado depois da mudança do nome da conta | Ambiente | landing | Resolvido |
 | E-023 | Leitura de página recusada por falta de origem (PROVENANCE_REQUIRED) | Ambiente | landing | Resolvido |
 | E-024 | "Dados fictícios" dito sem separar produto de repositório | Comunicação | painel | Resolvido |
+| E-025 | Verificação com `git grep` passaria sem olhar o arquivo novo | Processo | painel | Resolvido |
+| E-026 | Primeira chamada à OpenDota caiu com "Connection was reset" | Ambiente | painel | Aberto |
+| E-027 | Aspas internas somem ao passar JSON para outro `powershell.exe` | Ferramenta | painel | Resolvido |
+| E-028 | Lista de um item só vira objeto no PowerShell e quebra o `+` | Código | painel | Resolvido |
+| E-029 | `ConvertFrom-Json` do PowerShell 5.1 quebra com a chave `__type` | Ferramenta | painel | Resolvido |
+| E-030 | Acentos trocados em script `.ps1` salvo sem BOM | Ferramenta | painel | Resolvido |
 
 ## Registro
 
@@ -340,4 +348,70 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 - **Correção:** explicação refeita com duas colunas: em execução, dados reais da API; no repositório e nos testes, só fictícios.
 - **Como evitar:** ao falar de dados, dizer sempre onde ficam (produto, banco, repositório, testes) e de onde vêm.
 - **Virou regra em:** `ERROS.md`, regra 16.
+- **Status:** Resolvido
+
+### E-025 · Verificação com `git grep` passaria sem olhar o arquivo novo
+- **Data / projeto:** 2026-11-10 · painel
+- **Categoria:** Processo
+- **Sintoma:** o passo 5 da tarefa 1 do plano 1 manda conferir `git grep -nE "[0-9]{8,}" docs/api-fontes.md` antes do commit. O arquivo é novo e ainda não está no git, então o comando não devolve nada e a verificação "passa" sem ter lido o arquivo.
+- **Causa raiz:** `git grep` só procura em arquivos rastreados pelo git; arquivo novo exige `--untracked` (ou `git add` antes). A verificação foi escrita sem ser executada contra um caso que deveria ser encontrado.
+- **Como foi detectado:** Claude Code, antes de usar o passo: criou um arquivo de teste fora do git com um número fictício de 9 dígitos; `git grep` saiu com código 1 (nada achado) e `git grep --untracked` achou a linha.
+- **Correção:** com a aprovação da pessoa, o passo 5 do plano passou a usar `git grep --untracked` e a exigir um ensaio com número fictício antes da verificação real.
+- **Como evitar:** regra 17. Toda verificação de "não tem X" roda primeiro contra um exemplo que tem X. Observação: ID de conta do Dota pode ter menos de 8 dígitos (contas antigas), então o padrão `{8,}` também não pega todos os IDs; ele é uma rede, não uma prova.
+- **Virou regra em:** `ERROS.md`, regra 17.
+- **Status:** Resolvido
+
+### E-026 · Primeira chamada à OpenDota caiu com "Connection was reset"
+- **Data / projeto:** 2026-11-10 · painel
+- **Categoria:** Ambiente
+- **Sintoma:** a primeira execução de `curl.exe -i https://api.opendota.com/api/constants/patch` na máquina da pessoa falhou com "Connection was reset"; a segunda, logo depois, devolveu 200. No mesmo dia, Claude Code repetiu o padrão na mesma máquina: para obter 13 respostas (curl e navegador) houve cerca de 14 tentativas que caíram antes da resposta; todas as chamadas acabaram respondendo depois de repetir. Aconteceu também com `www.dota2.com`; `api.github.com` respondeu na primeira. O curl mostra a queda durante o aperto de mãos TLS (erro 35), antes de qualquer código HTTP, e, pelo contador `X-Rate-Limit-Remaining-Day`, as tentativas que caíram não foram descontadas do saldo (inferência, não regra documentada).
+- **Causa raiz:** não confirmada. Como cai antes do HTTP e afeta dois domínios diferentes, limite de requisições da OpenDota (que responderia 429) fica improvável. Hipóteses não verificadas: rede local, antivírus ou firewall inspecionando HTTPS, ou o provedor de internet. Teste que separaria as causas: repetir em outra rede (por exemplo, o roteador do celular).
+- **Como foi detectado:** a pessoa, ao rodar o passo 1 da tarefa 1.
+- **Correção:** nova tentativa manual.
+- **Como evitar:** o cliente da fonte (plano 2) trata conexão encerrada como falha temporária, com nova tentativa e espera crescente (especificação, seção 5), e tem teste para isso. Se voltar a acontecer, anotar hora, rede e mensagem completa para comparar.
+- **Virou regra em:** ainda não (aguarda repetição para ter causa).
+- **Status:** Aberto
+
+### E-027 · Aspas internas somem ao passar JSON para outro `powershell.exe`
+- **Data / projeto:** 2026-11-10 · painel
+- **Categoria:** Ferramenta
+- **Sintoma:** `powershell -File script.ps1 -JsonDeTeste '{"a":{"b":1}}'` falhou com "JSON primitivo inválido"; o script recebeu o texto sem as aspas duplas.
+- **Causa raiz:** o Windows PowerShell 5.1, ao chamar um programa externo (inclusive outro `powershell.exe`), não escapa as aspas duplas de dentro do argumento, e elas se perdem na linha de comando.
+- **Como foi detectado:** Claude Code, no ensaio sem rede do script que lista os campos do jogador.
+- **Correção:** rodar o script na mesma sessão (`& $script -JsonDeTeste '...'`), sem criar outro processo.
+- **Como evitar:** no PowerShell 5.1, passar JSON a outro processo por arquivo, não por argumento; ou chamar o script com `&` na mesma sessão.
+- **Virou regra em:** ainda não (registro de ferramenta).
+- **Status:** Resolvido
+
+### E-028 · Lista de um item só vira objeto no PowerShell e quebra o `+`
+- **Data / projeto:** 2026-11-10 · painel
+- **Categoria:** Código
+- **Sintoma:** no script de verificação do STRATZ, `($lista | Select-Object -First 5) + ($lista | Select-Object -Last 5)` falha com "não contém um método denominado 'op_Addition'" quando a lista tem 1 item.
+- **Causa raiz:** o PowerShell "desembrulha" o resultado de um pipeline com um item só: devolve o objeto, não uma lista, e objeto não sabe somar. Escrevi pensando só no caso de muitos itens.
+- **Como foi detectado:** Claude Code, ao revisar o script linha a linha para explicar à pessoa, antes de ela rodar; reproduzido com uma lista fictícia de 1 item.
+- **Correção:** `@(...)` em volta de cada parte, que força lista; com até 10 itens, mostra a lista inteira.
+- **Como evitar:** no PowerShell, envolver em `@(...)` todo resultado de pipeline que será somado, contado ou indexado; testar com 0, 1 e muitos itens (`PADROES.md`, seção 4, casos de borda).
+- **Virou regra em:** `PADROES.md`, seção 4 (casos de borda), já existente.
+- **Status:** Resolvido
+
+### E-029 · `ConvertFrom-Json` do PowerShell 5.1 quebra com a chave `__type`
+- **Data / projeto:** 2026-11-10 · painel
+- **Categoria:** Ferramenta
+- **Sintoma:** no teste sem rede do script do STRATZ, toda consulta de introspecção "falhava 4 vezes", e o arquivo saía só com "sem resposta". Erro escondido: "Nenhum construtor sem parâmetros foi definido para o tipo de 'System.String'".
+- **Causa raiz:** o `ConvertFrom-Json` do Windows PowerShell 5.1 usa o `JavaScriptSerializer` do .NET, que trata a chave `__type` como instrução interna de tipo, e não como dado. A introspecção do GraphQL devolve exatamente `"__type": {...}`. O `catch` do script engolia a exceção e repetia a chamada.
+- **Como foi detectado:** Claude Code, com um dublê de `Invoke-WebRequest` que devolvia um esquema inventado, antes de a pessoa rodar com o token real. Hipótese confirmada isolando `'{"__type":{}}' | ConvertFrom-Json` (quebra) contra a chave `tipo` (funciona). Sem o dublê, a rodada real teria gastado cerca de 100 chamadas sem resultado.
+- **Correção:** apelido do GraphQL na consulta (`tipo: __type(...)`), e a resposta volta com a chave `tipo`; o dublê passou a respeitar apelidos, como um servidor de verdade.
+- **Como evitar:** regra 18. No PowerShell 5.1, evitar chaves `__type` em JSON lido com `ConvertFrom-Json`; e `catch` que repete deve, ao desistir, mostrar o motivo da última falha.
+- **Virou regra em:** `ERROS.md`, regra 18.
+- **Status:** Resolvido
+
+### E-030 · Acentos trocados em script `.ps1` salvo sem BOM
+- **Data / projeto:** 2026-11-10 · painel
+- **Categoria:** Ferramenta
+- **Sintoma:** o texto "até", gravado pelo script do STRATZ, saiu como "atÃ©"; a pergunta do script do jogador também teria saído trocada.
+- **Causa raiz:** o Windows PowerShell 5.1 lê arquivo `.ps1` em UTF-8 sem BOM (a marca de 3 bytes `EF BB BF` no começo) como se fosse Windows-1252. Os scripts foram criados em UTF-8 sem BOM.
+- **Como foi detectado:** Claude Code, lendo o arquivo gerado pelo teste com dublê; os 3 primeiros bytes dos scripts confirmaram a falta da marca.
+- **Correção:** os scripts foram regravados em UTF-8 com BOM, e o teste mostrou "até" correto.
+- **Como evitar:** script `.ps1` com acentos para o PowerShell 5.1 vai em UTF-8 **com** BOM; conferir com os 3 primeiros bytes. Quando o projeto tiver `.editorconfig`, fixar isso lá para `*.ps1`.
+- **Virou regra em:** ainda não (registro de ferramenta).
 - **Status:** Resolvido

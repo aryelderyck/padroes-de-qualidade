@@ -26,6 +26,11 @@ Orçamento zero: só ferramentas gratuitas. Explique em português, de forma dir
 Aryel também quer **aprender inglês**: use o termo técnico em inglês com a tradução na primeira vez; diante de mensagem de
 erro ou tela em inglês, peça primeiro que ele diga o que entendeu e só depois confirme ou corrija; ao fechar cada tarefa,
 registre de 3 a 5 termos novos em `APRENDIZADOS.md`.
+**Cada arquivo com o seu porquê:** antes de criar qualquer arquivo (inclusive de configuração), explique em poucas linhas
+para que serve, por que fica naquela pasta e com aquele nome, quais alternativas existiam e por que não foram escolhidas.
+Mantenha `docs/MAPA-DE-ARQUIVOS.md` com uma linha por arquivo do repositório
+(`arquivo | para que serve | por que está aqui | alternativas | tarefa em que foi criado`). Se não conseguir justificar um
+arquivo, não o crie e avise. No fechamento da tarefa, uma das perguntas de explicar de volta pode ser sobre um arquivo criado nela.
 Nível atual em [API, banco, testes, Docker...]: [iniciante completo / já usou / confortável].
 
 ## O que é este projeto
