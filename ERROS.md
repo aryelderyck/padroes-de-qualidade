@@ -86,6 +86,7 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 | E-031 | `git checkout-index -f -a` não aplicou o `eol=lf` novo | Ferramenta | kit de padrões | Resolvido |
 | E-032 | Contagem de CR com `od` e `grep` contou a letra "r" | Teste | kit de padrões | Resolvido |
 | E-033 | Escape de barra invertida num script Python gravou um byte CR no `ERROS.md` | Ferramenta | kit de padrões | Resolvido |
+| E-034 | Commits do kit sem o formato `docs(kit):` e com vários assuntos juntos | Processo | kit de padrões | Resolvido |
 
 ## Registro
 
@@ -450,4 +451,15 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 - **Correção:** troca do byte CR pelo texto "barra e r", sem usar escape; `git ls-files --eol` voltou a `i/lf w/lf`. O erro se repetiu ao registrar esta própria entrada (o título no índice ganhou outro CR, também por string Python passada pelo shell); corrigido trocando a linha inteira por um título sem barra invertida.
 - **Como evitar:** para gravar texto com barras invertidas em documentação, usar o Edit ou um heredoc do shell com `'EOF'`, não uma string comum de Python; depois de editar arquivo de texto, conferir `git ls-files --eol` (`-text` é sinal de byte estranho).
 - **Virou regra em:** ainda não (registro de ferramenta).
+- **Status:** Resolvido
+
+### E-034 · Commits do kit sem o formato `docs(kit):` e com vários assuntos juntos
+- **Data / projeto:** 2026-11-10 · kit de padrões
+- **Categoria:** Processo
+- **Sintoma:** seis commits do kit saíram como `docs: ...` e `chore: ...`, e o primeiro juntou seis erros e uma regra nova num só commit.
+- **Causa raiz:** o `README.md` do kit pede `docs(kit): o que mudou` e um assunto por commit, mas eu li só os arquivos indicados pela pessoa (`PADROES.md`, `CONTEXTO.md`, `REVISAO.md`, `ERROS.md`) e segui o formato do painel.
+- **Como foi detectado:** Claude Code, lendo o `README.md` do kit para montar o mapa de arquivos, antes de enviar os commits.
+- **Correção:** os commits seguintes usam `docs(kit):` e um assunto cada. Os seis anteriores ficaram como estão, para não reescrever o histórico; o conteúdo deles está certo.
+- **Como evitar:** antes do primeiro commit em um repositório, ler o `README.md` e o `CLAUDE.md` dele à procura de regras de commit; no kit, usar `docs(kit):`.
+- **Virou regra em:** `README.md` do kit (regra já existente).
 - **Status:** Resolvido
