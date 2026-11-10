@@ -83,6 +83,8 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 | E-028 | Lista de um item só vira objeto no PowerShell e quebra o `+` | Código | painel | Resolvido |
 | E-029 | `ConvertFrom-Json` do PowerShell 5.1 quebra com a chave `__type` | Ferramenta | painel | Resolvido |
 | E-030 | Acentos trocados em script `.ps1` salvo sem BOM | Ferramenta | painel | Resolvido |
+| E-031 | `git checkout-index -f -a` não aplicou o `eol=lf` novo | Ferramenta | kit de padrões | Resolvido |
+| E-032 | Contagem de CR com `od` e `grep` contou a letra "r" | Teste | kit de padrões | Resolvido |
 
 ## Registro
 
@@ -414,4 +416,26 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 - **Correção:** os scripts foram regravados em UTF-8 com BOM, e o teste mostrou "até" correto.
 - **Como evitar:** script `.ps1` com acentos para o PowerShell 5.1 vai em UTF-8 **com** BOM; conferir com os 3 primeiros bytes. Quando o projeto tiver `.editorconfig`, fixar isso lá para `*.ps1`.
 - **Virou regra em:** ainda não (registro de ferramenta).
+- **Status:** Resolvido
+
+### E-031 · `git checkout-index -f -a` não aplicou o `eol=lf` novo
+- **Data / projeto:** 2026-11-10 · kit de padrões
+- **Categoria:** Ferramenta
+- **Sintoma:** depois do commit do `.gitattributes` (`* text=auto eol=lf`), `git checkout-index -f -a` terminou sem erro, mas 17 arquivos continuaram em CRLF na pasta (`git ls-files --eol` mostrava `w/crlf` com `attr/text=auto eol=lf`).
+- **Causa raiz:** não confirmada. O comando não regravou os arquivos, embora os atributos estivessem certos (`git check-attr`). Hipótese: o git considera o arquivo em dia pelo registro de data e tamanho e não o reescreve.
+- **Como foi detectado:** Claude Code, conferindo `git ls-files --eol` depois do comando, em vez de presumir que funcionou.
+- **Correção:** com a pasta limpa (`git status --porcelain` vazio), apagar os arquivos rastreados e restaurar do git: `git ls-files -z | xargs -0 rm -f && git checkout -- .`. Resultado: 20 de 20 em LF, sem nenhum byte CR, e `git status` vazio.
+- **Como evitar:** depois de criar ou mudar o `.gitattributes`, usar o apagar-e-restaurar (só com a pasta limpa) e conferir com `git ls-files --eol`. Vale para o painel na tarefa 2.
+- **Virou regra em:** ainda não (registro de ferramenta).
+- **Status:** Resolvido
+
+### E-032 · Contagem de CR com `od` e `grep` contou a letra "r"
+- **Data / projeto:** 2026-11-10 · kit de padrões
+- **Categoria:** Teste
+- **Sintoma:** `head -c 200 README.md | od -c | grep -c '\r'` deu 7 num arquivo que já estava em LF.
+- **Causa raiz:** no `grep`, o padrão `\r` vira "barra seguida de r", e não o byte CR; a saída do `od` tem letras "r" do texto, e o comando contou linhas com elas. Usei a medição sem antes testá-la num caso conhecido (regra 17).
+- **Como foi detectado:** Claude Code, ao perceber que a contagem não batia com `git ls-files --eol` (`w/lf`).
+- **Correção:** contar os bytes CR com Python (`open(f, "rb").read().count(b"")`), que deu 201 num arquivo ainda em CRLF (controle positivo) e 0 no arquivo restaurado.
+- **Como evitar:** regra 17: toda medição de "não tem X" roda antes num caso que tem X.
+- **Virou regra em:** `ERROS.md`, regra 17 (já existente).
 - **Status:** Resolvido

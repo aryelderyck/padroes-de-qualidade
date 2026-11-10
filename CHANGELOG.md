@@ -9,7 +9,8 @@
 - `PRATICAS.md`: quatro práticas candidatas ligadas a SEO, idiomas e endereço público.
 - Kit publicado em `aryelderyck/padroes-de-qualidade` com licença MIT.
 - `CONTEXTO.md` e `CLAUDE.template.md`: aprender inglês junto com o código.
-- `ERROS.md`: entradas E-025 (verificação com `git grep` que não lê arquivo novo), E-026 (conexão encerrada na primeira chamada à OpenDota) e E-027 (aspas perdidas entre processos do PowerShell 5.1), E-028 (lista de um item só no PowerShell), E-029 (`__type` no `ConvertFrom-Json`) e E-030 (`.ps1` sem BOM) e regras 17 e 18.
+- `ERROS.md`: entradas E-025 (verificação com `git grep` que não lê arquivo novo), E-026 (conexão encerrada na primeira chamada à OpenDota) e E-027 (aspas perdidas entre processos do PowerShell 5.1), E-028 (lista de um item só no PowerShell), E-029 (`__type` no `ConvertFrom-Json`) e E-030 (`.ps1` sem BOM), E-031 e E-032 (atualização dos finais de linha) e regras 17 e 18.
+- `.gitattributes` com `* text=auto eol=lf` (o kit cumpria a regra 12 só por acaso).
 - `CONTEXTO.md` e `CLAUDE.template.md`: regra "cada arquivo com o seu porquê" (explicar antes de criar e manter `docs/MAPA-DE-ARQUIVOS.md` em cada repositório).
 
 ## 0.3 · 2026-11-09
