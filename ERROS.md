@@ -432,8 +432,8 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 ### E-032 · Contagem de CR com `od` e `grep` contou a letra "r"
 - **Data / projeto:** 2026-11-10 · kit de padrões
 - **Categoria:** Teste
-- **Sintoma:** `head -c 200 README.md | od -c | grep -c '\r'` deu 7 num arquivo que já estava em LF.
-- **Causa raiz:** no `grep`, o padrão `\r` vira "barra seguida de r", e não o byte CR; a saída do `od` tem letras "r" do texto, e o comando contou linhas com elas. Usei a medição sem antes testá-la num caso conhecido (regra 17).
+- **Sintoma:** `head -c 200 README.md | od -c | grep -c '\\r'` (no Git Bash) deu 7 num arquivo que já estava em LF.
+- **Causa raiz:** o padrão chegou ao `grep` como `\r`, que o GNU grep trata como a letra "r", e não como o byte CR; a saída do `od` tem letras "r" do texto, e o comando contou linhas com elas. Por que as duas barras viraram uma não foi investigado. Usei a medição sem antes testá-la num caso conhecido (regra 17).
 - **Como foi detectado:** Claude Code, ao perceber que a contagem não batia com `git ls-files --eol` (`w/lf`).
 - **Correção:** contar os bytes CR com Python (`open(f, "rb").read().count(b"")`), que deu 201 num arquivo ainda em CRLF (controle positivo) e 0 no arquivo restaurado.
 - **Como evitar:** regra 17: toda medição de "não tem X" roda antes num caso que tem X.
