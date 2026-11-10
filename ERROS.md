@@ -85,7 +85,7 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 | E-030 | Acentos trocados em script `.ps1` salvo sem BOM | Ferramenta | painel | Resolvido |
 | E-031 | `git checkout-index -f -a` não aplicou o `eol=lf` novo | Ferramenta | kit de padrões | Resolvido |
 | E-032 | Contagem de CR com `od` e `grep` contou a letra "r" | Teste | kit de padrões | Resolvido |
-| E-033 | Escape `` num script Python gravou um byte CR no `ERROS.md` | Ferramenta | kit de padrões | Resolvido |
+| E-033 | Escape de barra invertida num script Python gravou um byte CR no `ERROS.md` | Ferramenta | kit de padrões | Resolvido |
 
 ## Registro
 
@@ -441,13 +441,13 @@ uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **C
 - **Virou regra em:** `ERROS.md`, regra 17 (já existente).
 - **Status:** Resolvido
 
-### E-033 · Escape `\r` num script Python gravou um byte CR no `ERROS.md`
+### E-033 · Escape de barra invertida num script Python gravou um byte CR no `ERROS.md`
 - **Data / projeto:** 2026-11-10 · kit de padrões
 - **Categoria:** Ferramenta
 - **Sintoma:** depois de um commit, `git ls-files --eol` passou a mostrar o `ERROS.md` como `-text` (binário) em vez de LF.
 - **Causa raiz:** para escrever o texto "barra e r" na entrada E-032, usei um script Python com uma string comum; o `\r` dentro dela virou o caractere CR de verdade. Um CR solto faz o git, com `text=auto`, tratar o arquivo como binário. A checagem que fiz depois ignorava o byte 13 (CR) por engano e não pegou o problema.
 - **Como foi detectado:** Claude Code, conferindo `git ls-files --eol` depois do commit; o byte foi localizado contando `b"\r"` com Python.
-- **Correção:** troca do byte CR pelo texto "barra e r", sem usar escape; `git ls-files --eol` voltou a `i/lf w/lf`.
+- **Correção:** troca do byte CR pelo texto "barra e r", sem usar escape; `git ls-files --eol` voltou a `i/lf w/lf`. O erro se repetiu ao registrar esta própria entrada (o título no índice ganhou outro CR, também por string Python passada pelo shell); corrigido trocando a linha inteira por um título sem barra invertida.
 - **Como evitar:** para gravar texto com barras invertidas em documentação, usar o Edit ou um heredoc do shell com `'EOF'`, não uma string comum de Python; depois de editar arquivo de texto, conferir `git ls-files --eol` (`-text` é sinal de byte estranho).
 - **Virou regra em:** ainda não (registro de ferramenta).
 - **Status:** Resolvido
