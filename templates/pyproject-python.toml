@@ -1,0 +1,45 @@
+# Modelo de pyproject.toml para projetos Python do kit. Troque o nome e ajuste as dependências.
+
+[project]
+name = "nome-do-projeto"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic>=2",
+  "sqlalchemy>=2",
+  "httpx",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-cov",
+  "ruff",
+  "pip-audit",
+  "respx",   # simula respostas do httpx nos testes, sem rede
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F: erros comuns, I: ordem dos imports, B: armadilhas, UP: Python moderno,
+# S: regras de segurança (equivalentes ao Bandit)
+select = ["E", "F", "I", "B", "UP", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]   # assert é normal em testes
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+source = ["app"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
