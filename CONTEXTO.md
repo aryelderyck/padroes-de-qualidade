@@ -126,6 +126,7 @@ Decisões que valem para vários projetos. Acrescente no topo, com data.
 - **2026-11-10:** o painel entra com busca (SEO) e vários idiomas desde o desenho (`PADROES.md`, seção 9A). Arquitetura e ordem dos idiomas dependem de aprovação.
 - **2026-11-10:** a conta do GitHub passou a se chamar `aryelderyck`; endereços e links foram atualizados (E-021, E-022).
 - **2026-11-10:** ao ensinar, usar diagramas e outros recursos visuais sempre que ajudarem (seção 2, "Ensinar com recursos visuais"). Para o painel, três direções visuais (Dire e Radiant, Mana e Ouro) foram montadas como maquetes com dados fictícios; a escolha é da pessoa.
+- **2026-11-11:** painel: direção visual escolhida pela pessoa (mistura das opções A e B) e uso das imagens oficiais dos heróis, carregadas em tempo de execução e fora do repositório (spec do painel, seção 7).
 - **2026-11-09:** projeto 2 passa a ser o painel de estatísticas de Dota 2 (OpenDota), no lugar do radar de licitações. Motivo: a pessoa não se animou com o tema; busca algo ligado a jogos.
 - **2026-11-09:** criado o kit `padroes-de-qualidade` (padrões, erros, perguntas de revisão, contexto, práticas) para manter a qualidade entre os projetos.
 
