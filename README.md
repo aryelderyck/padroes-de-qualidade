@@ -43,7 +43,7 @@ contexto e tempo sem melhorar o resultado.
 ## Como começar um projeto novo
 
 1. Crie o repositório vazio no GitHub (nome em minúsculas, com hífens).
-2. Defina o **nível** do projeto (1, 2 ou 3) com a tabela da seção 2 do `PADROES.md`.
+2. Defina o **nível** (1, 2 ou 3) e o **ritmo** (rápido ou completo) do projeto com a seção 2 do `PADROES.md`.
 3. Copie para o projeto: `CLAUDE.template.md` como `CLAUDE.md`, `CHECKLIST-PRONTO.md` e `APRENDIZADOS.template.md` como `docs/` e `APRENDIZADOS.md`, e os arquivos `github/` e de stack que usar (em `.github/` e na raiz).
 4. Preencha os `[colchetes]` do `CLAUDE.md`.
 5. No GitHub, ative Dependabot alerts, secret scanning e push protection, e exija o CI antes de mesclar na `main`.

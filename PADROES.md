@@ -19,18 +19,30 @@ começa por aqui e só é considerado **pronto** quando cumpre a Definição de 
 5. **Dados reais nunca entram em repositório público.** Só dados fictícios.
 6. **Erro que ensina é registrado.** O que pode se repetir, custou mais de uns 15 minutos ou chegou à pessoa vai para o [`ERROS.md`](ERROS.md) ao fechar a tarefa, com causa raiz e prevenção ([`REGRAS.md`](REGRAS.md), seção 3).
 7. **Questione antes de entregar:** é a melhor maneira? dá para fazer com menos código? dá para otimizar sem quebrar? ([`REVISAO.md`](REVISAO.md)).
-8. **Simples primeiro.** Cada regra abaixo tem um nível (seção 2). Não aplique o nível 3 num projeto de nível 1.
+8. **Simples primeiro.** Cada regra abaixo tem um nível e um ritmo (seção 2). Não aplique o nível 3 num projeto de nível 1, nem o ritmo completo num projeto rápido.
 
-## 2. Níveis e Definição de Pronto
+## 2. Níveis, ritmo e Definição de Pronto
 
-| Nível | Quando se aplica | Exemplos |
-| --- | --- | --- |
-| **1. Base** | Todo projeto | Landing page |
-| **2. API e dados** | Tem backend, banco ou API externa | Painel de Dota 2, e-commerce |
-| **3. Usuários e dados pessoais** | Tem contas, login ou dados de pessoas | E-commerce, AtendeFlow |
+O nível é decidido pelo que o projeto **hospeda**, não pelo que ele consome.
 
-Cada nível inclui os anteriores. O projeto só é "pronto" com **todos** os itens do seu nível marcados e com a evidência
-(comando, link ou captura) anotada. Use `templates/CHECKLIST-PRONTO.md`.
+| Nível | Quando se aplica | Exemplos | Seções deste documento |
+| --- | --- | --- | --- |
+| **1. Base** | Todo projeto. Inclui front-end sem servidor próprio, mesmo que leia dados públicos de terceiros sem chave | Landing page, explorador de campeões | 1 a 5, 9 (se tem tela), 9A (se quer ser achado na busca) e 11 |
+| **2. API e dados** | Tem servidor próprio (API), banco de dados ou segredo (chave de API) | Painel de Dota 2 | As do nível 1, mais 6, 8 e 10, e a 7 se tocar dado de pessoa |
+| **3. Usuários e dados pessoais** | Tem contas, login ou dados de pessoas | E-commerce, AtendeFlow | Todas |
+
+Cada nível inclui os anteriores. Projeto de nível 1 que chama uma API pública segue também o último item da seção 8
+(tempo limite, erro tratado, cache) e testa sem acessar a internet.
+
+**Ritmo.** É combinado com a pessoa no começo e escrito no `CLAUDE.md` do projeto:
+
+- **Completo** (padrão; obrigatório nos níveis 2 e 3): todos os itens da checklist do nível, com a evidência anotada.
+- **Rápido** (só nível 1, projeto de até uma semana): valem os itens marcados **[E]** (essencial) na checklist. Os outros
+  ficam listados no README como "não feito, de propósito". O que nunca sai: nenhum segredo ou dado real no repositório,
+  testes da lógica, CI verde, verificar antes de afirmar e a pessoa conseguir explicar o que foi feito.
+
+O projeto só é "pronto" com os itens do seu nível e do seu ritmo marcados, com a evidência (comando, link ou captura)
+anotada. Use `templates/CHECKLIST-PRONTO.md`.
 
 ## 3. Repositório (nível 1)
 
@@ -39,7 +51,7 @@ Cada nível inclui os anteriores. O projeto só é "pronto" com **todos** os ite
 - `README.md` em pt-BR com esta ordem: o que é e para quem, aviso se for fictício, como rodar, como testar, decisões e por quê, segurança e LGPD, limitações conhecidas.
 - Commits pequenos, em pt-BR, no formato `tipo: o que mudou` (`feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `ci`).
 - Nos projetos novos: trabalhar em branches curtas e abrir Pull Request, mesmo sozinho. Assim o CI protege a `main`.
-  Ative em *Settings → Branches*: exigir que o CI passe antes de mesclar.
+  Ative em *Settings → Branches*: exigir que o CI passe antes de mesclar. Em ritmo rápido, commit direto na `main` com o CI rodando é aceito.
 - Ative no GitHub (gratuito em repositório público): *Dependabot alerts*, *Dependabot security updates*, *Secret scanning* e *Push protection*.
 - Decisões importantes viram um parágrafo curto na especificação (`docs/superpowers/specs/`). Mudanças depois disso vão em "Desvios".
 - Nunca versione: `.env`, chaves, tokens, dumps de banco, dados reais. Se vazar um segredo, **revogue-o** primeiro e limpe o histórico depois.
