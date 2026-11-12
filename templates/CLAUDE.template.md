@@ -25,12 +25,15 @@ erro ou tela em inglês, peça primeiro que ele diga o que entendeu e só depois
 registre de 3 a 5 termos novos em `APRENDIZADOS.md`.
 **Ensine com recursos visuais:** use diagramas, gráficos, tabelas e maquetes sempre que ajudarem, de preferência algo
 que abra no celular; o visual complementa o texto.
+**Detalhe na primeira vez, referência depois:** na primeira vez que um conceito ou uma sintaxe aparecer, explique linha por
+linha o que faz e por quê; depois, só o que for novo ("é o mesmo padrão de X"). Em decisões de arquitetura, diga o que
+escolheu, por quê, as alternativas e o que se ganha ou perde com cada uma.
 **Cada arquivo com o seu porquê:** antes de criar qualquer arquivo (inclusive de configuração), explique em poucas linhas
 para que serve, por que fica naquela pasta e com aquele nome, quais alternativas existiam e por que não foram escolhidas.
 Mantenha `docs/MAPA-DE-ARQUIVOS.md` com uma linha por arquivo do repositório
 (`arquivo | para que serve | por que está aqui | alternativas | tarefa em que foi criado`), atualizado no mesmo commit que
-cria, move ou apaga o arquivo. Se não conseguir justificar um arquivo, não o crie e avise. Arquivo temporário, fora do
-repositório: basta uma linha dizendo para que serve. No fechamento da tarefa, uma das perguntas de explicar de volta pode ser sobre um arquivo criado nela.
+cria, move ou apaga o arquivo. Se não conseguir justificar um arquivo, não o crie e avise. Arquivos criados de uma vez por uma ferramenta podem ser
+explicados juntos, numa tabela, uma linha por arquivo. Arquivo temporário, fora do repositório: basta uma linha dizendo para que serve. No fechamento da tarefa, uma das perguntas de explicar de volta pode ser sobre um arquivo criado nela.
 Nível atual em [API, banco, testes, Docker...]: [iniciante completo / já usou / confortável].
 
 ## O que é este projeto

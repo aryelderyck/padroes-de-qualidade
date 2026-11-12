@@ -7,6 +7,8 @@ atualize sempre que algo mudar.
 > pessoais sensíveis (saúde, finanças, documentos, endereço, contatos), segredos, nem planos de carreira confidenciais
 > (como nomes de empresas em processo seletivo). Dúvida? Deixe de fora.
 
+> **Leitura:** seções 1 a 5 e 7 no começo de cada projeto. As seções 6 (glossário) e 8 (decisões) são de consulta.
+
 ## 1. Quem e para quê
 
 - **Pessoa:** Aryel, desenvolvedor iniciante, no Brasil. Idioma de tudo: português do Brasil.
@@ -27,6 +29,10 @@ atualize sempre que algo mudar.
   *rate limit*, limite de requisições). Mensagens de erro e telas em inglês não são traduzidas de imediato: primeiro a pessoa
   tenta dizer o que entendeu, depois Claude confirma ou corrige. No fim de cada tarefa, de 3 a 5 termos novos vão para o
   glossário (seção 6) e para o `APRENDIZADOS.md`. O texto visível dos projetos continua em português do Brasil.
+- **Detalhe na primeira vez, referência depois:** a pessoa quer entender cada decisão, a lógica, a sintaxe e cada linha
+  de código. Na primeira vez que um conceito ou uma sintaxe aparece, Claude explica linha por linha o que faz e por quê;
+  nas seguintes, explica só o que é novo e aponta "é o mesmo padrão de X". Em decisões de arquitetura, diz o que escolheu,
+  por quê, quais eram as alternativas e o que se ganha ou perde com cada uma.
 - **Ensinar com recursos visuais:** sempre que ajudar, Claude explica com diagramas (fluxos, arquitetura, o caminho de um
   dado), gráficos, tabelas comparativas e maquetes, e não só com texto. Prefere o que a pessoa consegue abrir no celular
   (artefato, imagem, diagrama inline). O visual complementa a explicação escrita, não a substitui.
@@ -36,18 +42,20 @@ atualize sempre que algo mudar.
   `arquivo | para que serve | por que está aqui | alternativas | tarefa em que foi criado`, atualizada no mesmo commit que
   cria, move ou apaga o arquivo. Arquivo que Claude não consegue justificar não é criado, e a pessoa é avisada. A regra vale
   por inteiro para arquivos do repositório; para arquivos temporários (fora do repositório), basta uma linha dizendo para que
-  servem. No fechamento de cada tarefa, uma das perguntas de explicar de volta pode ser sobre um arquivo criado nela.
-  Situação: em teste no painel (`PRATICAS.md`).
+  servem. Arquivos criados de uma vez por uma ferramenta (por exemplo, pelo gerador do projeto) podem ser explicados
+  juntos, numa tabela, uma linha por arquivo. No fechamento de cada tarefa, uma das perguntas de explicar de volta pode
+  ser sobre um arquivo criado nela. Situação: em teste no painel (`PRATICAS.md`).
 - A pessoa prefere não gastar tempo escrevendo CSS de variáveis (cores e tamanhos); o foco de escrita dela é a lógica (JavaScript/Python), os testes e a API.
 
 ## 3. Mapa dos projetos
 
-| Projeto | Nível | Stack | Situação |
-| --- | --- | --- | --- |
-| Landing page (escritório fictício) | 1 | HTML, CSS, JavaScript, Playwright, GitHub Actions | v1 na `main` (GitHub Pages ainda não ativado); faltam: rodar axe, html-validate, Lighthouse e fontes reais, ativar Pages e as etapas guiadas |
-| Painel de estatísticas de Dota 2 | 2 | Python, FastAPI, SQLAlchemy, pytest | Em desenho (SEO, idiomas e escopo em aprovação; repositório criado só com licença e aviso) |
-| E-commerce | 3 | TypeScript, NestJS, React | Não iniciado |
-| AtendeFlow (CRM, agenda, orçamentos multiempresa, pt/en) | 3 | A definir | Não iniciado |
+| Projeto | Nível e ritmo | Stack | O que pesa mais | Situação |
+| --- | --- | --- | --- | --- |
+| Landing page (escritório fictício) | 1, completo | HTML, CSS, JavaScript, Playwright, GitHub Actions | Front-end, acessibilidade, LGPD sem terceiros, CI e Pages | v1 na `main`, publicada no GitHub Pages; faltam: rodar axe, html-validate, Lighthouse e fontes reais, e as etapas guiadas |
+| Painel de estatísticas de Dota 2 (projeto principal) | 2, completo | Python, FastAPI, Jinja2, PostgreSQL, pytest | API externa e limites, testes sem rede, busca (SEO) e idiomas, direito de apagar dados | Especificação (revisão 4) aprovada; plano 1 em execução no ramo `plano-1-fundacao` (tarefa 1, verificação das fontes de dados) |
+| Explorador de campeões de League of Legends | 1, rápido | React, TypeScript, Vite, Vitest | React e TypeScript, dados públicos sem chave, testes sem rede, acessibilidade | A iniciar, em paralelo ao painel (nome do repositório a confirmar pela pessoa) |
+| E-commerce | 3, completo | TypeScript, NestJS, React | Contas, carrinho, pagamento fictício, autorização, testes de segurança | Não iniciado |
+| AtendeFlow (CRM, agenda, orçamentos multiempresa, pt/en) | 3, completo | A definir | Multiempresa (isolamento entre clientes), permissões, LGPD completa | Não iniciado |
 
 Repositórios antigos já organizados e com README; não são prioridade.
 
@@ -62,7 +70,8 @@ Repositórios antigos já organizados e com README; não são prioridade.
 ## 5. Ambiente de trabalho
 
 - **Claude no chat/nuvem:** bom para planejar, escrever documentos e arquivos; a rede é limitada (muitas vezes sem npm, pip ou acesso a sites de documentação), então não consegue rodar tudo.
-- **Claude Code na máquina da pessoa:** onde o código roda de verdade, com internet. É o lugar certo para instalar dependências, rodar testes e a pessoa escrever código.
+- **Claude Code na máquina da pessoa** (extensão do VS Code): onde o código roda de verdade, com internet. É o lugar certo para instalar dependências, rodar testes e a pessoa escrever código. O login é pela conta do Claude, não pelo Console da API (E-037).
+- O kit fica clonado ao lado de cada projeto (`../padroes-de-qualidade`), para ser lido sem depender de rede.
 - A pessoa cria os repositórios vazios no GitHub; Claude consegue enviar arquivos para repositórios que ela autorizou.
 - Os modelos de CI, Docker e `pyproject` do kit ainda **não foram executados** em um projeto real.
 
@@ -119,14 +128,17 @@ Modelo de nova linha: `| situação | como percebi | o que ajudou ou vai tentar 
 
 Decisões que valem para vários projetos. Acrescente no topo, com data.
 
+- **2026-11-12:** kit na versão 0.5, a pedido da pessoa (regras o mais eficientes possível): o `REGRAS.md` passa a ser a única leitura de toda sessão e o resto é aberto por seção; o nível é decidido pelo que o projeto hospeda; projetos de até uma semana podem usar o ritmo rápido (`PADROES.md`, seção 2); erro só é registrado se pode se repetir, custou mais de uns 15 minutos ou chegou à pessoa; `REVISAO-CRITICA.md` fica obsoleto.
+- **2026-11-12:** novo projeto de portfólio, curto e em paralelo ao painel: explorador de campeões de League of Legends em React e TypeScript, com o catálogo público da Riot (Data Dragon, sem chave). Nível 1, ritmo rápido. Motivo: o portfólio ainda não mostra React nem TypeScript. O painel continua sendo o projeto principal.
+- **2026-11-12:** ao ensinar, detalhe na primeira vez e referência depois (seção 2): cada decisão, lógica, sintaxe e linha explicadas quando aparecem pela primeira vez, com alternativas nas decisões de arquitetura.
 - **2026-11-10:** todo arquivo novo é explicado antes de ser criado e ganha uma linha no `docs/MAPA-DE-ARQUIVOS.md` do repositório; arquivo sem justificativa não é criado (seção 2, "Cada arquivo com o seu porquê"). Vale para o painel e para os próximos projetos.
 - **2026-11-10:** aprender inglês passa a ser objetivo de todos os projetos (seção 2, "Inglês junto com o código").
-- **2026-11-10:** aprovados pela pessoa: arquitetura híbrida (páginas estáticas para busca e API para jogadores), ordem de idiomas (pt-BR e inglês, depois os demais) e versão 1 (heróis e meta, busca de jogador, diagnóstico em pt-BR). Fonte de dados proposta: OpenDota atrás de uma interface própria; limites e regras ainda sem confirmação oficial. Especificação em `painel-dota/docs/superpowers/specs/`, aguardando revisão.
+- **2026-11-10:** aprovados pela pessoa: arquitetura híbrida (páginas estáticas para busca e API para jogadores), ordem de idiomas (pt-BR e inglês, depois os demais) e versão 1 (heróis e meta, busca de jogador, diagnóstico em pt-BR). Fonte de dados proposta: OpenDota atrás de uma interface própria; limites e regras ainda sem confirmação oficial. Especificação em `painel-dota/docs/superpowers/specs/`, aguardando revisão. *(Atualização: limites confirmados na página oficial, 3.000 chamadas por dia e 60 por minuto, e especificação aprovada na revisão 4; evidência em `painel-dota/docs/api-fontes.md`.)*
 - **2026-11-10:** o painel de Dota 2 é um site público para jogadores, com **dados reais em execução** (OpenDota, API da comunidade, não da Valve); o repositório, os testes e os exemplos continuam só com dados fictícios.
 - **2026-11-10:** o painel entra com busca (SEO) e vários idiomas desde o desenho (`PADROES.md`, seção 9A). Arquitetura e ordem dos idiomas dependem de aprovação.
 - **2026-11-10:** a conta do GitHub passou a se chamar `aryelderyck`; endereços e links foram atualizados (E-021, E-022).
 - **2026-11-10:** ao ensinar, usar diagramas e outros recursos visuais sempre que ajudarem (seção 2, "Ensinar com recursos visuais"). Para o painel, três direções visuais (Dire e Radiant, Mana e Ouro) foram montadas como maquetes com dados fictícios; a escolha é da pessoa.
-- **2026-11-11:** painel: direção visual escolhida pela pessoa (mistura das opções A e B) e uso das imagens oficiais dos heróis, carregadas em tempo de execução e fora do repositório (spec do painel, seção 7).
+- **2026-11-11:** painel: direção visual escolhida pela pessoa (mistura das opções A e B) e uso das imagens oficiais de heróis, itens e habilidades e dos textos do jogo, carregados em tempo de execução e fora do repositório (spec do painel, seção 7).
 - **2026-11-09:** projeto 2 passa a ser o painel de estatísticas de Dota 2 (OpenDota), no lugar do radar de licitações. Motivo: a pessoa não se animou com o tema; busca algo ligado a jogos.
 - **2026-11-09:** criado o kit `padroes-de-qualidade` (padrões, erros, perguntas de revisão, contexto, práticas) para manter a qualidade entre os projetos.
 

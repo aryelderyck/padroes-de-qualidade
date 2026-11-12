@@ -177,12 +177,8 @@ sem falhas e o conteúdo realmente útil.
 
 ## 12. Mapa dos projetos
 
-| Projeto | Nível | O que pesa mais |
-| --- | --- | --- |
-| Landing page | 1 | Front-end, acessibilidade, LGPD sem terceiros, CI e Pages |
-| Painel de Dota 2 | 2 | API externa e limites, banco, testes sem rede, direito de apagar dados |
-| E-commerce | 3 | Contas, carrinho, pagamento fictício, autorização, testes de segurança |
-| AtendeFlow | 3 | Multiempresa (isolamento entre clientes), permissões, LGPD completa |
+A lista dos projetos, com nível, ritmo, stack, o que pesa mais e a situação de cada um, fica em um só lugar:
+[`CONTEXTO.md`](CONTEXTO.md), seção 3.
 
 ## 13. Lições já aprendidas
 
