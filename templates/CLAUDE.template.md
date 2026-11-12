@@ -3,22 +3,19 @@
 <!-- Copie este arquivo para a raiz do repositório novo, preencha os [colchetes] e apague os comentários. -->
 
 ## Padrões obrigatórios
-Este projeto segue o kit **padroes-de-qualidade**, versão **[0.4]**, nível **[1, 2 ou 3]**.
-Leia o documento mestre no início do projeto e de cada etapa grande:
-https://raw.githubusercontent.com/aryelderyck/padroes-de-qualidade/main/PADROES.md
-Leia também o contexto geral e as perguntas de revisão, e consulte-os ao longo do trabalho:
-https://raw.githubusercontent.com/aryelderyck/padroes-de-qualidade/main/CONTEXTO.md
-https://raw.githubusercontent.com/aryelderyck/padroes-de-qualidade/main/REVISAO.md
-Antes de decidir algo importante, de otimizar ou de dizer "pronto", passe pelo bloco correspondente do `REVISAO.md`
-(é a melhor maneira? dá para ter o mesmo resultado com menos código? dá para otimizar sem quebrar nada?).
-Práticas novas que valham a pena ficam em `PRATICAS.md`; dificuldades da pessoa, em `CONTEXTO.md` (seção 7).
-Antes de cada etapa, leia também a seção "Regras que saíram dos erros" do catálogo de erros:
-https://raw.githubusercontent.com/aryelderyck/padroes-de-qualidade/main/ERROS.md
-**Ao encontrar um erro, registre-o no catálogo central no mesmo dia** (modelo no próprio `ERROS.md`) e anote o
-resumo em `APRENDIZADOS.md`. O catálogo está no repositório `padroes-de-qualidade`: peça à pessoa para commitar a entrada
-ou, se tiver acesso, abra um Pull Request lá.
-Os critérios de "pronto" estão em `docs/CHECKLIST-PRONTO.md` (cópia do modelo do kit). Desvios vão registrados
-na especificação, na seção "Desvios", com o motivo.
+Este projeto segue o kit **padroes-de-qualidade**, versão **[0.5]**, nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**.
+O kit fica clonado ao lado deste repositório, em `../padroes-de-qualidade`. Se não estiver, peça à pessoa para clonar
+(`https://github.com/aryelderyck/padroes-de-qualidade`) ou leia pelo link "raw"
+(`https://raw.githubusercontent.com/aryelderyck/padroes-de-qualidade/main/<arquivo>`).
+- **Toda sessão:** leia só o `REGRAS.md` do kit. Ele é curto e diz o que mais abrir, e em que momento.
+- **Não leia o kit inteiro.** `PADROES.md`, `CONTEXTO.md`, `REVISAO.md` e `ERROS.md` são abertos por seção, quando o
+  momento pedir (tabela do `REGRAS.md`).
+- Antes de decidir algo importante, de otimizar ou de dizer "pronto", passe pelo bloco correspondente do `REVISAO.md`.
+- Erro que pode se repetir, que custou mais de uns 15 minutos ou que chegou à pessoa ou ao repositório: registre no
+  `ERROS.md` do kit ao fechar a tarefa (commit `docs(kit): ...` no repositório do kit) e resuma em `APRENDIZADOS.md`.
+- Práticas novas que valham a pena ficam em `PRATICAS.md`; dificuldades da pessoa, em `CONTEXTO.md` (seção 7).
+- Os critérios de "pronto" estão em `docs/CHECKLIST-PRONTO.md` (cópia do modelo do kit). Em ritmo rápido valem só os
+  itens marcados **[E]**. Desvios vão na especificação ou no README, na seção "Desvios", com o motivo.
 
 ## Contexto da pessoa
 Aryel é desenvolvedor iniciante e usa o projeto para **aprender** e montar portfólio (freelance ou vaga júnior).

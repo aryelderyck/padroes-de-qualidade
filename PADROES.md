@@ -5,11 +5,10 @@ Versão 0.4 · 2026-11-10 · Dono: Aryel
 Este é o documento mestre. Todo projeto novo (landing, painel, e-commerce, AtendeFlow e os que vierem)
 começa por aqui e só é considerado **pronto** quando cumpre a Definição de Pronto (seção 2).
 
-> **Para Claude e Claude Code:** leia este arquivo, o [`CONTEXTO.md`](CONTEXTO.md) e a seção "Regras que saíram dos
-> erros" do [`ERROS.md`](ERROS.md) no início de cada projeto e de cada etapa grande. Antes de decidir ou entregar,
-> passe pelo bloco certo de [`REVISAO.md`](REVISAO.md). Mapa completo de consulta no `README.md`.
-> Copie `templates/CLAUDE.template.md` para o repositório novo e preencha. Se algum padrão não for cumprido,
-> registre o motivo em uma seção "Desvios" na especificação ou no README. Nunca ignore em silêncio.
+> **Para Claude e Claude Code:** a leitura de toda sessão é o [`REGRAS.md`](REGRAS.md), que é curto e diz o que abrir em
+> cada momento. Deste documento, leia **só as seções do nível do projeto** (tabela na seção 2), no começo do projeto e
+> quando o assunto aparecer. Se algum padrão não for cumprido, registre o motivo em uma seção "Desvios" na especificação
+> ou no README. Nunca ignore em silêncio.
 
 ## 1. Princípios
 
@@ -18,7 +17,7 @@ começa por aqui e só é considerado **pronto** quando cumpre a Definição de 
 3. **Segurança e privacidade desde o primeiro commit**, não no fim.
 4. **Orçamento zero.** Só ferramentas gratuitas. Se uma ferramenta passar a ser paga, troque.
 5. **Dados reais nunca entram em repositório público.** Só dados fictícios.
-6. **Todo erro é registrado.** Erro que aparece vai para o [`ERROS.md`](ERROS.md) no mesmo dia, com causa raiz e regra de prevenção.
+6. **Erro que ensina é registrado.** O que pode se repetir, custou mais de uns 15 minutos ou chegou à pessoa vai para o [`ERROS.md`](ERROS.md) ao fechar a tarefa, com causa raiz e prevenção ([`REGRAS.md`](REGRAS.md), seção 3).
 7. **Questione antes de entregar:** é a melhor maneira? dá para fazer com menos código? dá para otimizar sem quebrar? ([`REVISAO.md`](REVISAO.md)).
 8. **Simples primeiro.** Cada regra abaixo tem um nível (seção 2). Não aplique o nível 3 num projeto de nível 1.
 
@@ -175,24 +174,20 @@ sem falhas e o conteúdo realmente útil.
 
 ## 13. Lições já aprendidas
 
-O registro completo, com causa raiz e correção de cada erro, está em [`ERROS.md`](ERROS.md). Resumo do que mais pesa:
+As regras gerais que saíram dos erros estão no [`REGRAS.md`](REGRAS.md), seção 2. Aqui ficam só as lições técnicas
+que não viraram regra geral:
 
 - **CSP `default-src 'self'` bloqueia script inline e atributo `style=""`.** Use arquivos externos e classes (E-018).
-- **Teste que passa de primeira precisa de mutação,** e teste de "não faz X" deve observar a tentativa, não só o efeito (E-009, E-010).
 - **Gere o `package-lock.json` e use `npm ci` no CI.** Sem isso, o build não é reproduzível (E-005).
-- **Valide YAML e outros arquivos de configuração antes de subir** (E-011, E-016).
-- **O efeito nunca esconde conteúdo:** tarja e luz precisam de plano B (sem JavaScript, movimento reduzido, script que falha).
-- **Capturas de tela mostram o que o código não mostra,** inclusive o meio de uma animação (E-007, E-008).
-- **Ferramentas que não rodaram são declaradas** como não verificadas (E-005, E-013).
-- **Confirme limites e termos de uma API na fonte oficial** antes de desenhar o projeto em torno dela (E-014, E-017).
-- **Endereço público em um só lugar.** Nome de usuário e domínio mudam; URL absoluta espalhada quebra (E-021).
-- **Confira se o clone está em dia antes de editar** (`git status -sb`, `git pull --ff-only`) (E-020).
-- **Diga onde mora o dado real e onde mora o fictício:** dados reais em execução, fictícios no repositório e nos testes (E-024).
+- **O efeito nunca esconde conteúdo:** animação e luz precisam de plano B (sem JavaScript, movimento reduzido, script que falha).
 
 ## 14. Como evoluir este documento
 
-- **Todo erro vira uma entrada no [`ERROS.md`](ERROS.md)** no mesmo dia, antes de seguir. Quem encontra registra
-  (Claude, Claude Code ou a pessoa). Se o erro revela uma regra, ela entra neste documento e a entrada aponta para ela.
+- **Erro que ensina vira uma entrada no [`ERROS.md`](ERROS.md)** ao fechar a tarefa (critério no `REGRAS.md`, seção 3).
+  Quem encontra registra (Claude, Claude Code ou a pessoa). Se o erro revela uma regra geral, ela entra no `REGRAS.md`.
+- **O kit tem de continuar leve.** O `REGRAS.md` tem limite de 80 linhas. Antes de acrescentar uma regra a qualquer
+  arquivo, veja se ela cabe fundida a uma existente ou se substitui uma que perdeu o sentido. Regra que só atrasa, sem
+  ter evitado erro em um projeto inteiro, é candidata a sair.
 - No fim de cada etapa, releia as entradas novas com a pessoa: o que aprendemos e o que mudou no processo.
 - Toda regra nova entra com o motivo e começa em [`PRATICAS.md`](PRATICAS.md) como candidata; só vira obrigatória
   depois de testada em um projeto de verdade.

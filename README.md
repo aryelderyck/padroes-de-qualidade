@@ -12,11 +12,12 @@ Por que cada arquivo existe, onde fica e que alternativas havia: [`docs/MAPA-DE-
 
 | Arquivo | Para que serve |
 | --- | --- |
-| [`PADROES.md`](PADROES.md) | Documento mestre: princípios, níveis, testes, CI/CD, segurança, LGPD, API, front-end, aprendizado e lições |
+| [`REGRAS.md`](REGRAS.md) | **A única leitura de toda sessão:** o que abrir em cada momento, as 18 regras que saíram dos erros e quando registrar um erro |
+| [`PADROES.md`](PADROES.md) | Documento mestre, lido por seção: princípios, níveis e ritmo, testes, CI/CD, segurança, LGPD, API, front-end |
 | [`CONTEXTO.md`](CONTEXTO.md) | Quem é a pessoa, objetivos, restrições, como ensinar, mapa dos projetos, glossário e dificuldades |
 | [`REVISAO.md`](REVISAO.md) | Perguntas de revisão por momento: é a melhor maneira? dá para ter menos código? dá para otimizar sem quebrar? |
 | [`PRATICAS.md`](PRATICAS.md) | Boas práticas candidatas, com ciclo de vida até serem adotadas ou descartadas |
-| [`ERROS.md`](ERROS.md) | Catálogo de erros: regras que saíram deles, índice e registro com causa raiz e prevenção |
+| [`ERROS.md`](ERROS.md) | Catálogo de erros, de consulta: índice e registro com causa raiz e prevenção |
 | [`templates/CHECKLIST-PRONTO.md`](templates/CHECKLIST-PRONTO.md) | Definição de pronto, por nível, com campo de evidência |
 | [`templates/CLAUDE.template.md`](templates/CLAUDE.template.md) | `CLAUDE.md` inicial de cada repositório novo |
 | [`templates/APRENDIZADOS.template.md`](templates/APRENDIZADOS.template.md) | Diário de aprendizado, preenchido a cada etapa |
@@ -24,24 +25,16 @@ Por que cada arquivo existe, onde fica e que alternativas havia: [`docs/MAPA-DE-
 | [`templates/Dockerfile.python`](templates/Dockerfile.python) e [`templates/dockerignore`](templates/dockerignore) | Imagem Docker em múltiplos estágios, sem root |
 | [`templates/github/`](templates/github/) | Workflows de CI (Python e Node), CodeQL e Dependabot |
 
-## Mapa de consulta: em que momento abrir qual arquivo
+## O que ler, e quando
 
-| Momento | Arquivo |
-| --- | --- |
-| Início de projeto ou de sessão | `CONTEXTO.md`, `PADROES.md` (nível e regras) e as regras do `ERROS.md` |
-| Escolher tema, abordagem ou stack | `REVISAO.md` bloco A, `PRATICAS.md` |
-| Escrever código | `REVISAO.md` blocos B e D |
-| Otimizar ou refatorar | `REVISAO.md` bloco C |
-| Testar | `PADROES.md` seção 4 e `REVISAO.md` bloco E |
-| Site público (busca, idiomas, velocidade) | `PADROES.md` seção 9A |
-| Antes de dizer "pronto" | `REVISAO.md` bloco F e `templates/CHECKLIST-PRONTO.md` |
-| Apareceu um erro | `ERROS.md` (consultar se já aconteceu e registrar) |
-| Ensinar um conceito | `CONTEXTO.md` (glossário e dificuldades) e `REVISAO.md` bloco G |
+O kit é lido **aos pedaços**. Toda sessão começa só pelo [`REGRAS.md`](REGRAS.md), que tem a tabela "o que abrir, e
+quando" e manda abrir os outros arquivos por seção, no momento em que servem. Ler tudo no início de cada sessão gastava
+contexto e tempo sem melhorar o resultado.
 
 ## Como Claude consulta e edita o kit
 
-- **Consulta:** em cada projeto, o `CLAUDE.md` aponta para os arquivos pelo link "raw" do GitHub. Em uma sessão com acesso ao
-  repositório, Claude pode também clonar o kit e ler os arquivos locais.
+- **Consulta:** o kit fica clonado ao lado de cada projeto (`../padroes-de-qualidade`) e o `CLAUDE.md` do projeto aponta
+  para ele. Sem o clone, os arquivos são lidos pelo link "raw" do GitHub.
 - **Edição:** Claude **pode e deve** acrescentar erros, dificuldades, perguntas, práticas e termos do glossário. Regras:
   acrescente em vez de apagar (marque como obsoleto, com data e motivo), um assunto por commit com mensagem
   `docs(kit): o que mudou`, anote no `CHANGELOG.md`, e peça aprovação da pessoa antes de mudar a estrutura dos arquivos.
@@ -58,11 +51,11 @@ Por que cada arquivo existe, onde fica e que alternativas havia: [`docs/MAPA-DE-
 
 Frase para abrir uma sessão do Claude Code em um projeto novo:
 
-> Leia o CLAUDE.md e o PADROES.md (link dentro do CLAUDE.md). Este projeto é de nível [N]. Antes de escrever código, proponha o desenho e espere minha aprovação.
+> Leia o CLAUDE.md e o REGRAS.md do kit. Este projeto é de nível [N], ritmo [rápido ou completo]. Antes de escrever código, proponha o desenho e espere minha aprovação.
 
 ## Como este kit evolui
 
-Todo erro vira uma entrada no `ERROS.md` no mesmo dia; se revelar uma regra, ela sobe para o `PADROES.md`.
+Erro que ensina vira uma entrada no `ERROS.md` ao fechar a tarefa; se revelar uma regra geral, ela entra no `REGRAS.md`.
 Práticas novas entram em `PRATICAS.md`, perguntas úteis em `REVISAO.md`, dificuldades e decisões em `CONTEXTO.md`.
 Mudanças do kit ficam no `CHANGELOG.md`.
 Este repositório deve ser **público**: ele não contém segredos e o `CLAUDE.md` dos projetos o lê pelo link "raw".

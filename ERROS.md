@@ -1,16 +1,29 @@
 # Catálogo de erros
 
-Registro de **todo erro relevante** que aparece nos projetos, com a causa raiz e a regra que evita a repetição.
-Erro registrado e esquecido vira erro repetido: por isso este arquivo é consultado **antes** de começar cada etapa.
+Registro dos erros que ensinaram algo, com a causa raiz e o que evita a repetição. As **regras** que saíram deles ficam
+no [`REGRAS.md`](REGRAS.md), que é lido em toda sessão; este arquivo é a memória longa, **de consulta**.
 
-> **Para Claude e Claude Code:** leia a seção "Regras que saíram dos erros" no início de cada projeto e de cada etapa.
-> Ao encontrar um erro (seu, da ferramenta, do ambiente ou do processo), **registre-o aqui no mesmo dia**, antes de
-> seguir. Não espere a pessoa pedir. Se o erro revelar uma regra, leve-a ao `PADROES.md` e anote o link na entrada.
+> **Para Claude e Claude Code:** **não leia este arquivo inteiro.** Leia o `REGRAS.md`. Aqui, procure no índice ou por
+> palavra (`grep`) quando um erro aparecer, e leia só a entrada. Registre erro novo ao fechar a tarefa, no mesmo dia,
+> sem esperar a pessoa pedir. Se o erro revelar uma regra geral, ela entra no `REGRAS.md` (dentro do limite de lá).
 
 ## Como registrar
 
-Copie o modelo abaixo para o fim da seção "Registro", com o próximo número (`E-NNN`). Seja específico e honesto,
-sem culpar ninguém: o objetivo é aprender. Escreva a **causa raiz**, não só o sintoma.
+**O que entra:** erro que pode se repetir, que custou mais de uns 15 minutos ou que chegou à pessoa, ao repositório ou
+ao ar. Deslize corrigido na hora não entra. Escreva a **causa raiz**, não só o sintoma, sem culpar ninguém.
+
+Acrescente no fim da seção "Registro", com o próximo número (`E-NNN`), e uma linha no índice.
+
+**Entrada curta** (erro pequeno, de ferramenta ou de ambiente):
+
+```markdown
+### E-NNN · [título curto]
+- **Data / projeto / categoria:** AAAA-MM-DD · [projeto] · [categoria]
+- **Sintoma e causa raiz:** o que se viu e por que aconteceu.
+- **Como evitar:** o que impede a repetição. **Status:** Resolvido | Aberto
+```
+
+**Entrada completa** (erro que mudou uma decisão, chegou à pessoa ou virou regra):
 
 ```markdown
 ### E-NNN · [título curto]
@@ -28,26 +41,9 @@ sem culpar ninguém: o objetivo é aprender. Escreva a **causa raiz**, não só 
 Categorias: **Processo** (jeito de trabalhar), **Ambiente** (rede, permissões, máquina), **Ferramenta** (comportamento de
 uma ferramenta), **Código**, **Teste**, **Segurança**, **Documentação**, **Comunicação** (o que foi dito à pessoa).
 
-## Regras que saíram dos erros (leia antes de começar)
+## Regras que saíram dos erros
 
-1. **Verifique antes de afirmar ou de pedir algo à pessoa.** Sinal de ferramenta não é fato: tente a ação real (E-001).
-2. **Documentação só descreve comportamento que foi executado.** Rode e leia a saída antes de escrever no README (E-003).
-3. **Teste que passa de primeira merece mutação.** Quebre o código de propósito e veja o teste falhar (E-009, E-010).
-4. **Olhe o resultado de verdade.** Capturas de tela encontram o que o código não mostra (E-007, E-008).
-5. **Valide arquivos de configuração antes de subir** (YAML, JSON, TOML) e leia a primeira linha de diretivas (E-011, E-016).
-6. **Declare o que não foi verificado.** Ferramenta bloqueada não é desculpa para omitir; é item de lista (E-005, E-013).
-7. **Não contorne bloqueio de ambiente.** Se o acesso é negado, diga e adapte, ou peça o arquivo (E-005).
-8. **Confira regras e limites oficiais antes de desenhar** o projeto em torno de uma API ou serviço (E-014).
-9. **Pergunte o que anima a pessoa antes de propor o tema.** Em projeto de aprendizado, motivação é requisito (E-015).
-10. **Não deixe entregas pela metade.** Esqueleto criado precisa ser preenchido ou o estado deve ser dito claramente (E-006).
-11. **Mantenha plano e código alinhados.** Quando o código diverge do plano, registre o desvio (E-012).
-12. **Finais de linha e formatação:** `.gitattributes` com LF desde o primeiro commit (E-004).
-13. **Antes de editar, confira se o clone local está em dia** com o remoto (E-020).
-14. **Endereço público em um só lugar,** com teste que o confere; URL absoluta espalhada quebra na mudança de nome (E-021).
-15. **Autorização de ferramenta depende do nome do repositório.** Depois de renomear conta ou repositório, confirme o acesso antes de prometer o envio (E-022).
-16. **Distinga dado real de dado fictício ao explicar o projeto:** o que o produto mostra em execução e o que o repositório guarda (E-024).
-17. **Verificação que procura a ausência de algo precisa provar que olhou.** Rode-a antes num caso que deve ser encontrado; `git grep` não lê arquivo fora do git sem `--untracked` (E-025).
-18. **Script que gasta chamadas limitadas de uma API roda antes contra um dublê** (resposta inventada, sem rede); só depois vai à API de verdade (E-029).
+Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, com a mesma numeração (1 a 18).
 
 ## Índice
 
