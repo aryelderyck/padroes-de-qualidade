@@ -14,7 +14,8 @@ seção, no momento em que serve** (tabela abaixo). Ler o kit inteiro gasta cont
 | Toda sessão | Este arquivo |
 | Começo de um projeto (uma vez) | `CONTEXTO.md`, seções 1 a 5 e 7 · `PADROES.md`, seções 1 a 5 e as do nível (tabela na seção 2 de lá) · `PRATICAS.md` |
 | Escolher tema, abordagem ou stack | `REVISAO.md`, bloco A |
-| Escrever código | `REVISAO.md`, bloco B (e o D, se houver rota, campo ou dado novo) |
+| Escrever código | `REVISAO.md`, bloco B |
+| Rota, campo, dado, dependência ou chave nova; chamada a API ou a modelo de IA | `PADROES.md`, seção 6 (bloco do nível) · `REVISAO.md`, bloco D |
 | Otimizar ou refatorar | `REVISAO.md`, bloco C |
 | Testar | `PADROES.md`, seção 4 · `REVISAO.md`, bloco E |
 | Site que quer ser achado na busca | `PADROES.md`, seção 9A |

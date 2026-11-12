@@ -60,14 +60,18 @@ nomes genéricos (`utils`, `helper`, `data`), parâmetros booleanos que mudam o 
 **Suspeitos comuns de lentidão:** consulta N+1, falta de índice, listagem sem paginação, carregar tudo em memória,
 chamadas repetidas à mesma API (falta cache), laços aninhados, imagens e fontes pesadas, JavaScript bloqueando a página.
 
-## D. Segurança e dados (a cada rota, campo ou dado novo)
+## D. Segurança e dados (a cada rota, campo, dado, dependência ou chave nova)
 
-1. O que alguém mal-intencionado enviaria aqui? (texto enorme, SQL, HTML, caminho de arquivo, número negativo)
-2. **O usuário A consegue ler ou alterar o dado do usuário B?** Existe teste que prova que não?
-3. Esse dado é pessoal? Preciso mesmo guardá-lo? Por quanto tempo? Entra no log?
-4. Há segredo em lugar errado (código, log, mensagem de erro, imagem Docker)?
-5. A dependência nova é necessária, mantida e sem vulnerabilidade conhecida?
-6. A mensagem de erro entrega informação demais?
+1. Esta rota é pública de propósito? Onde isso está escrito? Se não está, ela exige autenticação.
+2. A rota recebe um ID: o que impede alguém de pedir o ID de outra pessoa? Existe teste que prova?
+3. O que alguém mal-intencionado enviaria aqui? (texto enorme, campo a mais, SQL, HTML, caminho de arquivo, número negativo)
+4. Qual é o tamanho máximo, o teto de itens e o limite de chamadas? O que acontece no milésimo pedido por minuto?
+5. O que volta na resposta que o cliente não precisa ver?
+6. Dado vindo de API de terceiros ou de um modelo de IA está sendo tratado como confiável? Vai parar na tela como HTML?
+7. Há segredo em lugar errado (código, navegador, URL, log, mensagem de erro, imagem Docker)?
+8. Esse dado é pessoal? Preciso mesmo guardá-lo? Por quanto tempo? Entra no log?
+9. A dependência nova existe no registro oficial com esse nome exato, é mantida e não tem vulnerabilidade conhecida?
+10. Este trecho de segurança foi escrito por IA? Quem revisou, além de quem escreveu?
 
 ## E. Testes
 

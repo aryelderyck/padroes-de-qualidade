@@ -27,8 +27,8 @@ O nível é decidido pelo que o projeto **hospeda**, não pelo que ele consome.
 
 | Nível | Quando se aplica | Exemplos | Seções deste documento |
 | --- | --- | --- | --- |
-| **1. Base** | Todo projeto. Inclui front-end sem servidor próprio, mesmo que leia dados públicos de terceiros sem chave | Landing page, explorador de campeões | 1 a 5, 9 (se tem tela), 9A (se quer ser achado na busca) e 11 |
-| **2. API e dados** | Tem servidor próprio (API), banco de dados ou segredo (chave de API) | Painel de Dota 2 | As do nível 1, mais 6, 8 e 10, e a 7 se tocar dado de pessoa |
+| **1. Base** | Todo projeto. Inclui front-end sem servidor próprio, mesmo que leia dados públicos de terceiros sem chave | Landing page, explorador de campeões | 1 a 5, 6.1, 9 (se tem tela), 9A (se quer ser achado na busca) e 11; a 6.4 se chamar IA |
+| **2. API e dados** | Tem servidor próprio (API), banco de dados ou segredo (chave de API) | Painel de Dota 2 | As do nível 1, mais 6.2, 6.5, 8 e 10, e a 7 se tocar dado de pessoa |
 | **3. Usuários e dados pessoais** | Tem contas, login ou dados de pessoas | E-commerce, AtendeFlow | Todas |
 
 Cada nível inclui os anteriores. Projeto de nível 1 que chama uma API pública segue também o último item da seção 8
@@ -90,18 +90,82 @@ Regras do workflow:
 - Verificações lentas ou instáveis (ex.: Lighthouse) ficam em workflow separado e não travam o deploy.
 - O pipeline é parte do aprendizado: o aluno deve conseguir explicar cada etapa.
 
-## 6. Segurança (nível 2 em diante)
+## 6. Segurança (todos os níveis, por bloco)
 
-Base: OWASP Top 10 e OWASP ASVS. Itens mínimos:
+Base: OWASP API Security Top 10 (2023), OWASP Top 10 (2025) e, quando o projeto chama um modelo de IA, o OWASP Top 10
+para aplicações com LLM (2025). O código entre parênteses aponta o risco. Código escrito com ajuda de IA **não é mais
+seguro por padrão**: estudos acharam fraquezas em 24% a 40% dos trechos gerados, e quem usa assistente tende a confiar
+mais do que deveria ([`docs/REFERENCIAS.md`](docs/REFERENCIAS.md), seção 5). Por isso cada item diz como conferir.
 
-- **Entrada:** validar tudo na borda (Pydantic, Zod). Consultas sempre parametrizadas ou via ORM. Nunca montar SQL com texto do usuário.
-- **Segredos:** em variáveis de ambiente. Entregue um `.env.example` sem valores reais. Chave de API nunca no front-end nem no repositório.
-- **Dependências:** versões travadas, `pip-audit` / `npm audit` no CI, Dependabot ligado, dependências novas justificadas.
-- **Erros:** mensagens genéricas para o cliente, detalhes só no log. Nada de stack trace na resposta.
-- **Rede:** HTTPS, CORS restritivo (lista de origens, nunca `*` com credenciais), limite de requisições nas rotas sensíveis, cabeçalhos de segurança, CSP quando houver HTML.
-- **Docker:** imagem base fixada, build em múltiplos estágios, usuário sem privilégio de root, `.dockerignore`, sem segredos na imagem, varredura com Trivy.
-- **Registros (logs):** estruturados, com id de requisição e **sem dados pessoais, senhas, tokens**.
-- **Nível 3, contas e senhas:** hash com argon2 ou bcrypt (nunca criar o próprio), tokens com expiração, autorização verificada em **cada** recurso (evita acessar dado de outro usuário), bloqueio gradual de tentativas de login, redefinição de senha segura, MFA quando fizer sentido.
+### 6.1 Nível 1: front-end que consome dados de fora
+
+- **Nenhuma chave no navegador.** Tudo o que vai para o navegador é público, inclusive variáveis `VITE_*` e
+  `NEXT_PUBLIC_*`. API que exige chave pede um servidor próprio no meio, e o projeto passa a ser nível 2.
+  Conferir: procurar a chave nos arquivos gerados pelo build.
+- **Dado de fora é texto, não HTML** (API10): nunca `innerHTML` nem `dangerouslySetInnerHTML` com dado externo. Se o
+  dado traz marcação, converter para uma lista fixa de elementos permitidos. Conferir: teste com `<script>` e
+  `<img onerror>` no dado simulado.
+- **Resposta de fora é validada** antes de usar (formato, tipos, tamanho), com tempo limite e tela de erro (API10).
+- **CSP** restrita às origens necessárias; `npm audit` no CI.
+- **Dependência nova existe mesmo** (A03): antes de instalar um pacote sugerido por IA, conferir no registro oficial
+  o nome exato, o dono e o repositório. Modelos inventam nomes de pacote, e alguém pode registrar o nome inventado.
+
+### 6.2 Nível 2: quem expõe uma API
+
+- **Fechado por padrão** (API2, API5): toda rota exige autenticação, salvo as de uma lista escrita de rotas públicas.
+  Rota administrativa fica separada e nunca é pública. Conferir: teste que percorre as rotas do OpenAPI sem credencial
+  e espera 401 ou 403 fora da lista.
+- **Quem pede é dono do que pede** (API1): rota que recebe um ID confere a posse no servidor. Conferir: teste em que
+  A pede o recurso de B e recebe 403 ou 404.
+- **Só os campos previstos** (API3): o modelo de entrada recusa campo extra; o de saída é explícito e não devolve o
+  objeto do banco. Conferir: teste que envia um campo interno (por exemplo `is_admin`) e teste do formato da resposta.
+- **Limites em tudo** (API4): tamanho máximo do corpo (413), paginação com teto, tempo limite, limite de requisições
+  por cliente com 429 e `Retry-After`, e teto de gasto para serviço pago por chamada. Conferir: um teste por limite.
+- **Fluxo sensível protegido contra automação** (API6): cadastro, login, busca cara e exclusão têm limite próprio.
+- **O servidor não busca endereço escolhido pelo usuário** (API7): destinos fixos na configuração; identificador do
+  usuário validado antes de montar a URL.
+- **Configuração** (API8): só HTTPS; CORS com lista de origens (nunca `*` com credenciais); cabeçalhos
+  `X-Content-Type-Options: nosniff`, `Content-Security-Policy: frame-ancestors 'none'`, `Strict-Transport-Security` e
+  `Cache-Control: no-store` nas respostas com dado pessoal; método fora da lista devolve 405; depuração desligada.
+  Conferir: teste dos cabeçalhos e do CORS.
+- **Inventário** (API9): OpenAPI igual ao código; nenhuma rota de teste ou de depuração no ar; versão antiga desligada.
+- **API de terceiros é entrada não confiável** (API10): validar o formato, usar tempo limite e nova tentativa com
+  espera, respeitar os limites da fonte, nunca repassar HTML cru.
+- **Entrada** (A05): validar tudo na borda (Pydantic, Zod); consultas parametrizadas ou via ORM; nunca SQL montado
+  com texto do usuário.
+- **Segredos:** em variáveis de ambiente, com `.env.example` sem valores; nunca em URL, log, mensagem de erro, imagem
+  Docker ou front-end; comparação de token em tempo constante. Chave vazada é **revogada** primeiro; o histórico se
+  limpa depois.
+- **Erros** (A10): mensagem genérica e formato único para o cliente, detalhe só no log, nada de *stack trace*.
+- **Registros:** estruturados, com id de requisição; falhas de autenticação e de validação registradas; sem dado
+  pessoal, senha ou token.
+- **Dependências** (A03): versões travadas, `pip-audit` ou `npm audit` no CI, Dependabot, pacote novo conferido no
+  registro oficial.
+- **Docker:** imagem base fixada, build em múltiplos estágios, usuário sem root, `.dockerignore`, sem segredos na
+  imagem, varredura com Trivy.
+
+### 6.3 Nível 3: contas e senhas
+
+- Hash de senha com argon2 ou bcrypt (nunca criar o próprio); tokens com expiração; bloqueio gradual de tentativas de
+  login; redefinição de senha segura; MFA quando fizer sentido.
+- JWT: algoritmo fixo na configuração (nunca lido do próprio token), `exp`, `iss` e `aud` validados, `alg: none` recusado.
+- Autorização verificada em **cada** recurso e em cada função (API1, API5), com teste negativo para cada papel.
+
+### 6.4 Projeto que chama um modelo de IA (qualquer nível)
+
+- **Chave do modelo só no servidor,** com teto de gasto e limite por usuário (LLM10).
+- **Saída do modelo é entrada não confiável** (LLM05): nunca vira HTML cru, SQL, comando ou código executado sem validação.
+- **Conteúdo não dá ordem** (LLM01): texto de usuário, de página ou de documento não muda permissões; ação com efeito
+  (apagar, enviar, pagar) pede confirmação da pessoa.
+- **Menor poder possível** (LLM06): o modelo só alcança as ferramentas e os dados que a tarefa exige, e nunca o dado
+  de outro cliente.
+- **Nada secreto no prompt de sistema** (LLM07, LLM02): nem chave, nem dado pessoal desnecessário.
+
+### 6.5 Código de segurança escrito com IA
+
+Trecho de autenticação, autorização, entrada, segredo, criptografia ou consulta escrito pelo Claude ganha um **teste
+negativo** e uma **revisão independente**: `/security-review` na branch ou o plugin `security-guidance` (`README.md`).
+Quem escreveu não é quem aprova.
 
 ## 7. LGPD (todos os projetos que tocam dados de pessoas)
 
