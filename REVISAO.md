@@ -11,6 +11,9 @@ sair do "funciona" para o "é a melhor forma, é a mais simples, é segura e dá
 
 - **Não é burocracia.** Cada bloco cabe em um minuto. Se uma pergunta não faz sentido no caso, pule e siga.
 - **Proporcional ao nível do projeto** (`PADROES.md`, seção 2): nível 1 usa os blocos A, B, F; níveis 2 e 3 usam todos.
+- **Abra só o bloco do momento** (tabela do [`REGRAS.md`](REGRAS.md)); não leia o arquivo inteiro a cada sessão.
+- **Aplique sem a pessoa pedir:** ao terminar uma etapa, quando um teste passar de primeira, ao ver código copiado ou
+  função grande, e antes de dizer "pronto".
 - **Recomende, não só liste.** Ao apresentar alternativas, diga qual escolheria e por quê.
 - **Esta lista cresce.** Se uma pergunta evitou um erro ou revelou algo, ela ganhou o lugar. Veja "Como evoluir".
 
@@ -37,6 +40,8 @@ sair do "funciona" para o "é a melhor forma, é a mais simples, é segura e dá
 7. Validei na borda (entrada do usuário, resposta de API externa)?
 8. O código é legível sem comentário? O comentário explica o **porquê**, não o que o código já diz?
 9. Entendo cada linha que escrevi? A pessoa entenderia lendo?
+10. Há número ou texto "mágico" que deveria ser uma constante com nome? (2026-11-12)
+11. Algum erro está sendo engolido (bloco de captura vazio, falha sem mensagem útil)? (2026-11-12)
 
 **Sinais de que está complicado demais:** aninhamento acima de 3 níveis, função com mais de ~40 linhas, mais de 4 parâmetros,
 nomes genéricos (`utils`, `helper`, `data`), parâmetros booleanos que mudam o comportamento, copiar e colar com pequenas diferenças.
@@ -50,6 +55,7 @@ nomes genéricos (`utils`, `helper`, `data`), parâmetros booleanos que mudam o 
 5. Se não tenho certeza de que o comportamento fica igual: comparo a saída **antes e depois** com os mesmos dados.
 6. Medi **depois**? Teve ganho real? Se não, desfaça: código mais complexo sem ganho é prejuízo.
 7. Ordem de prioridade: **faça funcionar, faça certo, faça rápido**, nessa ordem.
+8. Refatoração e mudança de comportamento estão em commits separados? (2026-11-12)
 
 **Suspeitos comuns de lentidão:** consulta N+1, falta de índice, listagem sem paginação, carregar tudo em memória,
 chamadas repetidas à mesma API (falta cache), laços aninhados, imagens e fontes pesadas, JavaScript bloqueando a página.
@@ -102,6 +108,25 @@ chamadas repetidas à mesma API (falta cache), laços aninhados, imagens e fonte
 1. Como eu saberia que isso quebrou em produção? Existe log, rota de saúde, alerta?
 2. Como voltamos atrás (reverter o deploy, desfazer a migração)?
 3. O que o próximo desenvolvedor precisa saber para mexer aqui sem medo?
+
+## Perguntas que a pessoa pode fazer a qualquer momento
+
+Para copiar e colar. Cada uma pede resposta com argumento e evidência, não com elogio.
+
+- "Essa é a melhor maneira de fazer isso?" (compara com pelo menos 2 alternativas e recomenda uma)
+- "Daria para ter o mesmo resultado com um código menor?" (mostra o antes e o depois)
+- "Dá para otimizar sem quebrar nada?" (mede primeiro e muda uma coisa por vez, com teste)
+- "O que acontece se isso falhar?" e "E se crescer 10 vezes?"
+- "Um iniciante entenderia isso em 5 minutos?"
+- "Isso é seguro? Como alguém abusaria?"
+- "Preciso mesmo dessa biblioteca, dessa camada ou desse arquivo?"
+- "O que você faria diferente se começasse do zero?"
+- "Como eu provo que isso funciona?"
+- "Explique isso como se eu fosse iniciante."
+
+**Como Claude responde:** com honestidade antes de agradar (se está bom, diz por quê; se não está, mostra); com 2 ou 3
+alternativas e uma recomendação; com evidência (teste, medição, trecho de código, documentação oficial) ou dizendo
+"não medi"; sem otimizar o que não foi medido; e toda mudança sugerida vem com o teste que a protege.
 
 ## Formato curto para mostrar à pessoa
 
