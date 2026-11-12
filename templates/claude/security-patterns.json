@@ -1,0 +1,45 @@
+{
+  "patterns": [
+    {
+      "rule_name": "chave_no_codigo",
+      "substrings": ["sk-ant-", "sk_live_", "AKIA", "ghp_", "github_pat_", "AIza", "xoxb-"],
+      "reminder": "Parece o começo de uma chave de API escrita no código. Leia a chave de uma variável de ambiente e confira se este arquivo não vai para o repositório."
+    },
+    {
+      "rule_name": "segredo_no_navegador",
+      "regex": "(VITE_|NEXT_PUBLIC_|REACT_APP_)[A-Z0-9_]*(KEY|SECRET|TOKEN|PASSWORD|SENHA)",
+      "reminder": "Variável com este prefixo vai para o navegador e é pública. Segredo fica só no servidor; se a API exige chave, coloque um servidor próprio no meio."
+    },
+    {
+      "rule_name": "cors_aberto",
+      "regex": "allow_origins\\s*=\\s*\\[\\s*[\"']\\*[\"']|Access-Control-Allow-Origin[\"']?\\s*[:,]\\s*[\"']\\*",
+      "reminder": "CORS aberto para qualquer origem. Use a lista de origens do projeto; nunca * junto com credenciais."
+    },
+    {
+      "rule_name": "tls_desligado",
+      "regex": "verify\\s*=\\s*False|rejectUnauthorized\\s*:\\s*false",
+      "reminder": "Verificação do certificado desligada. Não desligue o TLS para contornar erro de conexão."
+    },
+    {
+      "rule_name": "sql_montado_com_texto",
+      "regex": "execute\\(\\s*f[\"']|execute\\(\\s*[\"'][^\"']*[\"']\\s*(\\+|%)",
+      "reminder": "SQL montado com texto. Use consulta parametrizada ou o ORM."
+    },
+    {
+      "rule_name": "depuracao_ligada",
+      "regex": "\\b(debug|DEBUG)\\s*=\\s*True\\b",
+      "exclude_paths": ["**/tests/**"],
+      "reminder": "Modo de depuração ligado. Em produção ele expõe detalhes internos; leia o valor de uma variável de ambiente com padrão desligado."
+    },
+    {
+      "rule_name": "segredo_na_url",
+      "regex": "[?&](api_?key|apikey|token|access_token|password|senha)=",
+      "reminder": "Segredo na URL fica gravado em logs e no histórico. Envie no cabeçalho ou no corpo."
+    },
+    {
+      "rule_name": "shell_com_texto",
+      "substrings": ["shell=True"],
+      "reminder": "Comando com shell=True. Passe os argumentos como lista e nunca monte o comando com texto do usuário."
+    }
+  ]
+}

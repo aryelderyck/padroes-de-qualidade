@@ -40,6 +40,10 @@ melhorou (erro evitado, tempo poupado, clareza). Descartar também é aprendizad
 | Plugin `claude-md-management` da Anthropic (skill `claude-md-improver`) para avaliar o `CLAUDE.md` | Dá nota por comandos, arquitetura, concisão e atualidade, e propõe mudanças como diff | Explorador de campeões | Candidata |
 | Conferir o `docs/MAPA-DE-ARQUIVOS.md` contra `git ls-files` por script (no CI ou em hook) | O que tem de valer sempre não deve depender de o Claude lembrar; a documentação recomenda hook nesses casos | Painel, tarefa 2 | Candidata |
 | Empacotar o kit como plugin do Claude Code (skills para as perguntas de revisão e para fechar tarefa, estilo de saída, hooks) | Cada parte carrega só quando serve e a instalação vira um comando | Depois do explorador | Candidata |
+| Plugin `security-guidance` da Anthropic com a orientação e os padrões de `templates/claude/` | Revisão de segurança feita por outro contexto, e não por quem escreveu; a conferência de padrões a cada edição não gasta uso | Painel, a partir da tarefa 2 | Em teste (arquivos validados, plugin ainda não executado) |
+| `/security-review` na branch antes de dizer "pronto" (nível 2 em diante) | Segunda opinião sobre injeção, autenticação, autorização e tratamento de dados | Painel, fim do plano 1 | Em teste (já está na checklist do nível 2) |
+| Teste que percorre as rotas do OpenAPI sem credencial e espera 401 ou 403 fora da lista de rotas públicas | Rota nova esquecida sem proteção é pega pelo CI, sem depender de alguém lembrar | Painel, quando houver a segunda rota | Candidata |
+| Varredura de segredos antes do commit (`gitleaks` em gancho de pre-commit) | Pega a chave antes de ela chegar ao histórico; o *push protection* do GitHub só age no envio | Painel | Candidata |
 
 ## Como acrescentar
 

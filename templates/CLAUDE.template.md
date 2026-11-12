@@ -26,11 +26,15 @@ Dados e nomes no repositório são **fictícios**. [Se o produto mostra dado rea
 - Commits pequenos, em português, no formato `tipo: o que mudou`.
 
 **Pergunte antes**
-- Acrescentar dependência, mudar a estrutura de pastas, apagar arquivo ou mexer no CI.
+- Acrescentar dependência (confira antes se o pacote existe no registro oficial), mudar a estrutura de pastas, apagar
+  arquivo ou mexer no CI.
+- Criar rota pública, mudar CORS, autenticação ou permissões.
 - Escrever um arquivo da lista "A pessoa escreve".
 
 **Nunca**
-- Dado real, segredo, token ou e-mail em arquivo, commit ou conversa. Segredo fica em `.env`, fora do git.
+- Dado real, segredo, token ou e-mail em arquivo, commit ou conversa. Segredo fica em `.env`, fora do git, e nunca em
+  código que vai para o navegador.
+- Dado de fora (API de terceiros, usuário, modelo de IA) inserido na página como HTML cru.
 - [Proibições do projeto: recurso de terceiros no navegador, teste que acessa a internet...]
 
 ## A pessoa e o jeito de ensinar
@@ -43,7 +47,7 @@ Se a sessão não estiver nesse estilo, avise a pessoa uma vez e siga as instru�
 2. [arquivo ou módulo]
 
 ## Kit de padrões
-Kit **padroes-de-qualidade** [0.6], nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**, clonado em `../padroes-de-qualidade`
+Kit **padroes-de-qualidade** [0.7], nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**, clonado em `../padroes-de-qualidade`
 (se faltar, peça à pessoa para clonar `https://github.com/aryelderyck/padroes-de-qualidade`).
 - Toda sessão: leia só o `REGRAS.md` do kit. Ele diz o que mais abrir, e quando. Não leia o kit inteiro.
 - "Pronto" é o `docs/CHECKLIST-PRONTO.md` (em ritmo rápido, só os itens **[E]**). Desvio vai na seção "Desvios" da

@@ -3,7 +3,7 @@
 Kit de padrões que mantém o mesmo nível de qualidade em todos os projetos de portfólio do Aryel
 (landing page, painel de Dota 2, e-commerce, AtendeFlow e os próximos).
 
-> Versão **0.6**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
+> Versão **0.7**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
 > O primeiro projeto que usar cada um deve validar e corrigir o modelo aqui.
 
 ## O que tem aqui
@@ -21,6 +21,7 @@ Por que cada arquivo existe, onde fica e que alternativas havia: [`docs/MAPA-DE-
 | [`templates/CHECKLIST-PRONTO.md`](templates/CHECKLIST-PRONTO.md) | Definição de pronto, por nível, com campo de evidência |
 | [`templates/CLAUDE.template.md`](templates/CLAUDE.template.md) | `CLAUDE.md` inicial de cada repositório novo |
 | [`templates/output-styles/professor.md`](templates/output-styles/professor.md) | Estilo de saída do Claude Code com o jeito de ensinar (instalado uma vez por máquina) |
+| [`templates/claude/`](templates/claude/) | Orientação e padrões de segurança para o plugin `security-guidance` (copiados para o `.claude/` de cada projeto) |
 | [`templates/APRENDIZADOS.template.md`](templates/APRENDIZADOS.template.md) | Diário de aprendizado, preenchido a cada etapa |
 | [`templates/pyproject-python.toml`](templates/pyproject-python.toml) | Configuração de ruff, pytest e cobertura para projetos Python |
 | [`templates/Dockerfile.python`](templates/Dockerfile.python) e [`templates/dockerignore`](templates/dockerignore) | Imagem Docker em múltiplos estágios, sem root |
@@ -48,6 +49,21 @@ vale para todos os projetos da máquina e liga ou desliga com um comando.
 
 O Claude Code também traz estilos prontos: **Learning** (explica e deixa trechos para a pessoa escrever, em inglês) e
 **Explanatory** (só explica). O Professor é o Learning adaptado ao que a pessoa pediu.
+
+## Segurança: revisão que não depende de quem escreveu
+
+Quem usa assistente de IA tende a achar o código mais seguro do que ele é (`docs/REFERENCIAS.md`, seção 5). Por isso o
+kit pede revisão independente, em três camadas. **Nenhuma delas foi executada ainda com os modelos do kit.**
+
+1. **Enquanto o Claude escreve:** plugin oficial `security-guidance`. Instalar uma vez (no VS Code, em *Manage plugins*;
+   no terminal, `/plugin install security-guidance@claude-plugins-official`). Precisa de Python no computador. A
+   conferência de padrões a cada edição não gasta uso; as revisões de fim de turno e de commit gastam.
+   Em cada projeto, copie `templates/claude/claude-security-guidance.md` e `templates/claude/security-patterns.json`
+   para a pasta `.claude/` e ajuste a lista de rotas públicas.
+2. **Antes de dizer "pronto":** `/security-review` na branch (item da checklist do nível 2).
+3. **No CI:** `pip-audit` ou `npm audit`, CodeQL e, no GitHub, *secret scanning* com *push protection*.
+
+As regras em si estão no `PADROES.md`, seção 6, por nível.
 
 ## Ferramentas do Claude Code que vale usar junto
 
