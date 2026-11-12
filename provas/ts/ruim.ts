@@ -28,3 +28,10 @@ export function compararFrouxo(a: number, b: number): boolean {
 export function agendar(): void {
   setTimeout("alert('oi')", 100);
 }
+
+export function retornoIrregular(valor: number): number | undefined {
+  if (valor > 0) {
+    return valor;
+  }
+  return;
+}

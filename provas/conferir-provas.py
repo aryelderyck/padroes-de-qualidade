@@ -40,6 +40,7 @@ ESPERADO_TS = {
     "@typescript-eslint/no-floating-promises": "promessa sem await",
     "@typescript-eslint/no-implied-eval": "código em texto no setTimeout",
     "eqeqeq": "comparação com conversão implícita",
+    "@typescript-eslint/consistent-return": "função que às vezes retorna valor e às vezes não",
 }
 EXTENSOES_DE_TEXTO = {".md", ".py", ".js", ".jsx", ".mjs", ".json", ".toml", ".yml", ".yaml", ""}
 PASTAS_IGNORADAS = {".git", ".mypy_cache", ".ruff_cache", "__pycache__", "node_modules"}
@@ -750,7 +751,8 @@ def provar_typescript(base: Path) -> None:
     formato = rodar(
         [node, str(modulos / "prettier" / "bin" / "prettier.cjs"), "--check", "."], pasta
     )
-    conferir(formato.returncode == 0, "prettier --check . passa no projeto montado", formato.stdout)
+    fora = [linha for linha in formato.stdout.splitlines() if linha.startswith("[warn]")]
+    conferir(formato.returncode == 0, "prettier --check . passa no projeto montado", fora)
     copiar(PROVAS / "ts" / "ruim.ts", pasta / "src" / "ruim.ts")
     apontadas = apontamentos_do_eslint(eslint, pasta, "src/ruim.ts").get("ruim.ts", set())
     for regra, significado in ESPERADO_TS.items():

@@ -31,6 +31,9 @@ export default defineConfig(
       // O switch sem "default" deixa o TypeScript avisar quando surge um caso novo.
       "default-case": "off",
       "@typescript-eslint/switch-exhaustiveness-check": "error",
+      // A versão com tipos entende que um switch completo sempre retorna.
+      "consistent-return": "off",
+      "@typescript-eslint/consistent-return": "error",
     },
   },
   { files: ["**/*.{jsx,tsx}"], rules: regrasParaComponentes },
@@ -38,6 +41,11 @@ export default defineConfig(
     // Arquivos JavaScript soltos (configuração, hooks) ficam fora do tsconfig: sem regras de tipo.
     files: ["**/*.{js,mjs,cjs}"],
     extends: [tseslint.configs.disableTypeChecked],
+  },
+  {
+    // Arquivo de configuração é feito de números e listas: os limites ficam declarados nele.
+    files: ["**/*.config.*", "eslint.regras.mjs"],
+    rules: { "no-magic-numbers": "off" },
   },
   {
     // Números de exemplo e funções longas são normais em testes.
