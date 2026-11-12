@@ -41,23 +41,26 @@ A pessoa prefere não gastar tempo escrevendo CSS de variáveis (cores e tamanho
 
 ## 3. Mapa dos projetos
 
-| Projeto | Nível e ritmo | Stack | O que pesa mais | Situação |
+Aqui fica só o estado geral, que muda pouco. O andamento de cada projeto está no repositório dele (`README.md` e
+`docs/PASSAGEM.md`), para esta tabela não ficar desatualizada.
+
+| Projeto | Nível e ritmo | Stack | O que pesa mais | Estado |
 | --- | --- | --- | --- | --- |
-| Landing page (escritório fictício) | 1, completo | HTML, CSS, JavaScript, Playwright, GitHub Actions | Front-end, acessibilidade, LGPD sem terceiros, CI e Pages | v1 na `main`, publicada no GitHub Pages; faltam: rodar axe, html-validate, Lighthouse e fontes reais, e as etapas guiadas |
-| Painel de estatísticas de Dota 2 (projeto principal) | 2, completo | Python, FastAPI, Jinja2, PostgreSQL, pytest | API externa e limites, testes sem rede, busca (SEO) e idiomas, direito de apagar dados | Especificação (revisão 4) aprovada; plano 1 em execução no ramo `plano-1-fundacao` (tarefa 1, verificação das fontes de dados) |
-| Explorador de campeões de League of Legends | 1, rápido | React, TypeScript, Vite, Vitest | React e TypeScript, dados públicos sem chave, testes sem rede, acessibilidade | A iniciar, em paralelo ao painel (nome do repositório a confirmar pela pessoa) |
+| Landing page (escritório fictício) | 1, completo | HTML, CSS, JavaScript, Playwright, GitHub Actions | Front-end, acessibilidade, LGPD sem terceiros, CI e Pages | Publicada (v1) |
+| Painel de estatísticas de Dota 2 (projeto principal) | 2, completo | Python, FastAPI, Jinja2, PostgreSQL, pytest | API externa e limites, testes sem rede, busca (SEO) e idiomas, direito de apagar dados | Em andamento |
+| Explorador de campeões de League of Legends | 1, rápido | React, TypeScript, Vite, Vitest | React e TypeScript, dados públicos sem chave, testes sem rede, acessibilidade | A iniciar (nome do repositório a confirmar pela pessoa) |
 | E-commerce | 3, completo | TypeScript, NestJS, React | Contas, carrinho, pagamento fictício, autorização, testes de segurança | Não iniciado |
 | AtendeFlow (CRM, agenda, orçamentos multiempresa, pt/en) | 3, completo | A definir | Multiempresa (isolamento entre clientes), permissões, LGPD completa | Não iniciado |
 
 Repositórios antigos já organizados e com README; não são prioridade.
 
-## 4. Decisões técnicas já tomadas
+## 4. Decisões técnicas que valem para todos os projetos
 
 - Fluxo de trabalho: ideia, especificação, plano, implementação (skills *superpowers*), com aprovação da pessoa a cada etapa.
-- Python: FastAPI, Pydantic, SQLAlchemy 2, httpx, pytest, ruff, Docker. Banco: SQLite no início, PostgreSQL perto do fim.
-- Fontes e recursos hospedados no próprio projeto, sem terceiros (LGPD).
+- Stack e arquitetura de cada projeto ficam na especificação dele, não aqui.
+- Recursos de terceiros no navegador: nenhum por padrão. Exceção só com o motivo escrito na especificação (por exemplo,
+  imagens oficiais de um jogo carregadas em tempo de execução).
 - CI com GitHub Actions; publicação gratuita no GitHub Pages quando for site estático.
-- Ordem de aprendizado do painel: consumir uma API, guardar no banco, criar a própria API, testar, proteger, entregar.
 
 ## 5. Ambiente de trabalho
 
@@ -65,11 +68,11 @@ Repositórios antigos já organizados e com README; não são prioridade.
 - **Claude Code na máquina da pessoa** (extensão do VS Code): onde o código roda de verdade, com internet. É o lugar certo para instalar dependências, rodar testes e a pessoa escrever código. O login é pela conta do Claude, não pelo Console da API (E-037).
 - O kit fica clonado ao lado de cada projeto (`../padroes-de-qualidade`), para ser lido sem depender de rede.
 - A pessoa cria os repositórios vazios no GitHub; Claude consegue enviar arquivos para repositórios que ela autorizou.
-- Os modelos de CI, Docker e `pyproject` do kit ainda **não foram executados** em um projeto real.
 
 ## 6. Glossário vivo
 
-Definições curtas, para consulta rápida. Acrescente termos novos ao longo dos projetos.
+Definições curtas, **para a pessoa consultar**. Claude abre esta seção só para não definir de outro jeito um termo que
+já foi ensinado. Acrescente termos novos ao longo dos projetos.
 
 | Termo | O que é, em uma frase |
 | --- | --- |
@@ -118,24 +121,24 @@ Modelo de nova linha: `| situação | como percebi | o que ajudou ou vai tentar 
 
 ## 8. Registro de decisões
 
-Decisões que valem para vários projetos. Acrescente no topo, com data.
+Só decisões que valem para **vários projetos**. Decisão de um projeto só fica na especificação dele (as do painel
+estão em `painel-dota/docs/superpowers/specs/`; foram tiradas daqui em 2026-11-12 e continuam no histórico do git).
+Acrescente no topo, com data.
 
-- **2026-11-12:** kit na versão 0.5, a pedido da pessoa (regras o mais eficientes possível): o `REGRAS.md` passa a ser a única leitura de toda sessão e o resto é aberto por seção; o nível é decidido pelo que o projeto hospeda; projetos de até uma semana podem usar o ritmo rápido (`PADROES.md`, seção 2); erro só é registrado se pode se repetir, custou mais de uns 15 minutos ou chegou à pessoa; `REVISAO-CRITICA.md` fica obsoleto.
+- **2026-11-12:** kit na versão 0.6: o jeito de ensinar passa a morar no estilo de saída Professor, um só lugar para todos os projetos (seção 2); as regras foram reescritas como gatilho e ação; as fontes ficam em `docs/REFERENCIAS.md`.
+- **2026-11-12:** kit na versão 0.5, a pedido da pessoa (regras o mais eficientes possível): o `REGRAS.md` é a única leitura de toda sessão e o resto é aberto por seção; o nível é decidido pelo que o projeto hospeda; projetos de até uma semana podem usar o ritmo rápido (`PADROES.md`, seção 2); erro só é registrado se pode se repetir, custou mais de uns 15 minutos ou chegou à pessoa; `REVISAO-CRITICA.md` fica obsoleto.
 - **2026-11-12:** novo projeto de portfólio, curto e em paralelo ao painel: explorador de campeões de League of Legends em React e TypeScript, com o catálogo público da Riot (Data Dragon, sem chave). Nível 1, ritmo rápido. Motivo: o portfólio ainda não mostra React nem TypeScript. O painel continua sendo o projeto principal.
-- **2026-11-12:** ao ensinar, detalhe na primeira vez e referência depois (seção 2): cada decisão, lógica, sintaxe e linha explicadas quando aparecem pela primeira vez, com alternativas nas decisões de arquitetura.
-- **2026-11-10:** todo arquivo novo é explicado antes de ser criado e ganha uma linha no `docs/MAPA-DE-ARQUIVOS.md` do repositório; arquivo sem justificativa não é criado (seção 2, "Cada arquivo com o seu porquê"). Vale para o painel e para os próximos projetos.
-- **2026-11-10:** aprender inglês passa a ser objetivo de todos os projetos (seção 2, "Inglês junto com o código").
-- **2026-11-10:** aprovados pela pessoa: arquitetura híbrida (páginas estáticas para busca e API para jogadores), ordem de idiomas (pt-BR e inglês, depois os demais) e versão 1 (heróis e meta, busca de jogador, diagnóstico em pt-BR). Fonte de dados proposta: OpenDota atrás de uma interface própria; limites e regras ainda sem confirmação oficial. Especificação em `painel-dota/docs/superpowers/specs/`, aguardando revisão. *(Atualização: limites confirmados na página oficial, 3.000 chamadas por dia e 60 por minuto, e especificação aprovada na revisão 4; evidência em `painel-dota/docs/api-fontes.md`.)*
-- **2026-11-10:** o painel de Dota 2 é um site público para jogadores, com **dados reais em execução** (OpenDota, API da comunidade, não da Valve); o repositório, os testes e os exemplos continuam só com dados fictícios.
-- **2026-11-10:** o painel entra com busca (SEO) e vários idiomas desde o desenho (`PADROES.md`, seção 9A). Arquitetura e ordem dos idiomas dependem de aprovação.
+- **2026-11-12:** ao ensinar, detalhe na primeira vez e referência depois: cada decisão, lógica, sintaxe e linha explicadas quando aparecem pela primeira vez, com alternativas nas decisões de arquitetura.
+- **2026-11-10:** ao ensinar, usar diagramas e outros recursos visuais sempre que ajudarem.
+- **2026-11-10:** todo arquivo novo é explicado antes de ser criado e ganha uma linha no `docs/MAPA-DE-ARQUIVOS.md` do repositório; arquivo sem justificativa não é criado.
+- **2026-11-10:** aprender inglês passa a ser objetivo de todos os projetos.
+- **2026-11-10:** produto público pode mostrar **dados reais em execução**; o repositório, os testes e os exemplos continuam só com dados fictícios (E-024).
 - **2026-11-10:** a conta do GitHub passou a se chamar `aryelderyck`; endereços e links foram atualizados (E-021, E-022).
-- **2026-11-10:** ao ensinar, usar diagramas e outros recursos visuais sempre que ajudarem (seção 2, "Ensinar com recursos visuais"). Para o painel, três direções visuais (Dire e Radiant, Mana e Ouro) foram montadas como maquetes com dados fictícios; a escolha é da pessoa.
-- **2026-11-11:** painel: direção visual escolhida pela pessoa (mistura das opções A e B) e uso das imagens oficiais de heróis, itens e habilidades e dos textos do jogo, carregados em tempo de execução e fora do repositório (spec do painel, seção 7).
-- **2026-11-09:** projeto 2 passa a ser o painel de estatísticas de Dota 2 (OpenDota), no lugar do radar de licitações. Motivo: a pessoa não se animou com o tema; busca algo ligado a jogos.
-- **2026-11-09:** criado o kit `padroes-de-qualidade` (padrões, erros, perguntas de revisão, contexto, práticas) para manter a qualidade entre os projetos.
+- **2026-11-09:** projeto 2 passa a ser o painel de estatísticas de Dota 2, no lugar do radar de licitações. Motivo: a pessoa não se animou com o tema; busca algo ligado a jogos.
+- **2026-11-09:** criado o kit `padroes-de-qualidade` para manter a qualidade entre os projetos.
 
 ## 9. Como evoluir
 
-- Atualize a seção 3 quando um projeto mudar de estado, a seção 6 a cada termo novo, a seção 7 a cada dificuldade e a seção 8 a cada decisão.
+- Atualize a seção 3 só quando um projeto mudar de estado geral (iniciado, publicado), a seção 6 a cada termo novo, a seção 7 a cada dificuldade e a seção 8 a cada decisão.
 - Antes de gravar algo sobre a pessoa, confirme que é adequado a um repositório público.
 - Registre a mudança no `CHANGELOG.md`.
