@@ -33,5 +33,4 @@ export function retornoIrregular(valor: number): number | undefined {
   if (valor > 0) {
     return valor;
   }
-  return;
 }

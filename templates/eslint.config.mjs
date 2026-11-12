@@ -31,9 +31,8 @@ export default defineConfig(
       // O switch sem "default" deixa o TypeScript avisar quando surge um caso novo.
       "default-case": "off",
       "@typescript-eslint/switch-exhaustiveness-check": "error",
-      // A versão com tipos entende que um switch completo sempre retorna.
+      // Quem confere os retornos é o compilador: ligue "noImplicitReturns" no tsconfig.json.
       "consistent-return": "off",
-      "@typescript-eslint/consistent-return": "error",
     },
   },
   { files: ["**/*.{jsx,tsx}"], rules: regrasParaComponentes },
