@@ -44,3 +44,32 @@ adultos aprendendo com um assistente de programação.
 
 - Gloaguen e outros, [Evaluating AGENTS.md](https://arxiv.org/abs/2602.11988) (preprint, 2026): arquivos de contexto tenderam a reduzir a taxa de sucesso dos agentes e aumentaram o custo em mais de 20%; os autores recomendam só requisitos mínimos. Aponta na mesma direção do kit 0.5, mas é preprint.
 - Chatlatanagulchai e outros, [Agent READMEs](https://arxiv.org/abs/2511.12884) (2.303 arquivos de contexto): crescem por pequenos acréscimos, ficam difíceis de ler e quase não tratam de segurança (14,8%) e desempenho (14,5%). Tem DOI da ACM, mas a página não abriu para confirmar onde saiu.
+
+## 5. Segurança (levantamento de 2026-11-12)
+
+### Padrões e documentação oficial
+
+| Fonte | O que sustenta no kit |
+| --- | --- |
+| [OWASP API Security Top 10, 2023](https://api-security.owasp.org/editions/2023/en/0x11-t10/) | Os códigos API1 a API10 da seção 6.2 do `PADROES.md`: posse do recurso, autenticação, campos previstos, limites, função, fluxo sensível, SSRF, configuração, inventário e consumo de API de terceiros |
+| [OWASP Top 10, 2025](https://owasp.org/Top10/2025/0x00_2025-Introduction/) | A03 (cadeia de suprimentos), A05 (injeção) e A10 (tratamento de erros) |
+| [OWASP Top 10 para aplicações com LLM, 2025](https://genai.owasp.org/llm-top-10/) | A seção 6.4: injeção de prompt, saída sem validação, poder em excesso, vazamento do prompt de sistema e consumo sem limite |
+| [OWASP REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html) | Cabeçalhos de segurança, CORS, códigos 405, 413 e 429, segredo fora da URL, erro genérico, regras de JWT |
+| [Plugin `security-guidance` (Claude Code Docs)](https://code.claude.com/docs/en/security-guidance) | As três camadas de revisão, o formato de `claude-security-guidance.md` e de `security-patterns.json`, e a ideia de que quem escreveu não é quem confere |
+| [`/security-review` (Central de Ajuda do Claude)](https://support.claude.com/en/articles/11932705-automated-security-reviews-in-claude-code) | Revisão sob demanda da branch; a própria página diz que complementa, e não substitui, as outras práticas |
+
+### Artigos revisados por pares
+
+Resumo lido em todos. Local de publicação conferido na página do evento ou em índice (Pearce, Spracklen, Meli, Fu);
+o de Perry, pelo DOI da ACM.
+
+| Artigo | Onde saiu | O que sustenta no kit |
+| --- | --- | --- |
+| Pearce e outros, [Asleep at the Keyboard?](https://arxiv.org/abs/2108.09293) | IEEE Symposium on Security and Privacy, 2022 | Em 89 cenários de risco, cerca de 40% dos 1.689 programas gerados pelo Copilot eram vulneráveis: código de IA não é seguro por padrão |
+| Perry e outros, [Do Users Write More Insecure Code with AI Assistants?](https://arxiv.org/abs/2211.03622) | ACM CCS, 2023 | Quem usou assistente escreveu código menos seguro e acreditou mais que estava seguro: revisão independente (seção 6.5) |
+| Fu e outros, [Security Weaknesses of Copilot-Generated Code in GitHub Projects](https://arxiv.org/abs/2310.02059) | ACM TOSEM, 2025 | Em 733 trechos reais, 29,5% dos de Python e 24,2% dos de JavaScript tinham fraquezas; pedir a correção à IA resolveu até 55,5%: revisar ajuda, mas não basta |
+| Spracklen e outros, [We Have a Package for You!](https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen) | USENIX Security, 2025 | Modelos inventaram nomes de pacote em pelo menos 5,2% (comerciais) e 21,7% (abertos) dos casos: conferir a dependência no registro oficial |
+| Meli, McNiece e Reaves, [How Bad Can It Git?](https://ndss-symposium.org/ndss-paper/how-bad-can-it-git-characterizing-secret-leakage-in-public-github-repositories) | NDSS, 2019 | Mais de 100.000 repositórios públicos com segredos e milhares de segredos novos por dia: varredura de segredos e revogação imediata |
+
+**Limites.** Os estudos de código gerado usaram assistentes mais antigos que os atuais (Copilot e Codex de 2021 a 2023);
+a taxa de hoje não foi medida aqui. As listas do OWASP são consenso de especialistas, não artigos revisados por pares.

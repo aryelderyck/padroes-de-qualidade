@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.7 · 2026-11-12
+Revisão da segurança contra o OWASP, a documentação do Claude Code e artigos revisados por pares
+(`docs/REFERENCIAS.md`, seção 5).
+- `PADROES.md`, seção 6, reescrita por nível: 6.1 front-end que consome dados de fora, 6.2 quem expõe uma API (os dez
+  riscos do OWASP API Security Top 10), 6.3 contas e senhas, 6.4 projeto que chama modelo de IA, 6.5 código de
+  segurança escrito com IA. Cada item diz como conferir.
+- `CHECKLIST-PRONTO.md`: nível 2 com itens de API que pedem o teste que os prova (rotas fechadas por padrão, posse do
+  recurso, campos previstos, limites, CORS e cabeçalhos, revisão independente); dois itens essenciais novos no nível 1.
+- `REVISAO.md`, bloco D, com dez perguntas voltadas a API, dado de terceiros, segredo e dependência.
+- Novos `templates/claude/claude-security-guidance.md` e `templates/claude/security-patterns.json`, para o plugin
+  oficial `security-guidance`. O JSON e as expressões foram validados com casos que devem e que não devem ser pegos;
+  **o plugin ainda não foi executado com eles.**
+- `CLAUDE.template.md`: limites novos (rota pública, CORS e permissões pedem pergunta; dado de fora nunca como HTML cru).
+- `README.md`: as três camadas de revisão de segurança. `PRATICAS.md`: quatro práticas de segurança.
+
 ## 0.6 · 2026-11-12
 Revisão do kit contra a documentação oficial do Claude Code, exemplos do GitHub e artigos revisados por pares
 (fontes em `docs/REFERENCIAS.md`).

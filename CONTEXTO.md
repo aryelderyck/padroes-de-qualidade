@@ -125,6 +125,7 @@ Só decisões que valem para **vários projetos**. Decisão de um projeto só fi
 estão em `painel-dota/docs/superpowers/specs/`; foram tiradas daqui em 2026-11-12 e continuam no histórico do git).
 Acrescente no topo, com data.
 
+- **2026-11-12:** kit na versão 0.7: segurança reescrita por nível, com os riscos de API do OWASP e o modo de conferir cada item (`PADROES.md`, seção 6); código de segurança escrito com IA passa por teste negativo e revisão independente; modelos para o plugin `security-guidance` em `templates/claude/`.
 - **2026-11-12:** kit na versão 0.6: o jeito de ensinar passa a morar no estilo de saída Professor, um só lugar para todos os projetos (seção 2); as regras foram reescritas como gatilho e ação; as fontes ficam em `docs/REFERENCIAS.md`.
 - **2026-11-12:** kit na versão 0.5, a pedido da pessoa (regras o mais eficientes possível): o `REGRAS.md` é a única leitura de toda sessão e o resto é aberto por seção; o nível é decidido pelo que o projeto hospeda; projetos de até uma semana podem usar o ritmo rápido (`PADROES.md`, seção 2); erro só é registrado se pode se repetir, custou mais de uns 15 minutos ou chegou à pessoa; `REVISAO-CRITICA.md` fica obsoleto.
 - **2026-11-12:** novo projeto de portfólio, curto e em paralelo ao painel: explorador de campeões de League of Legends em React e TypeScript, com o catálogo público da Riot (Data Dragon, sem chave). Nível 1, ritmo rápido. Motivo: o portfólio ainda não mostra React nem TypeScript. O painel continua sendo o projeto principal.
