@@ -108,7 +108,7 @@ As regras em si estão no `PADROES.md`, seção 6, por nível.
   para ele. Sem o clone, os arquivos são lidos pelo link "raw" do GitHub.
 - **Edição:** Claude **pode e deve** acrescentar erros, dificuldades, perguntas, práticas e termos do glossário. Regras:
   acrescente em vez de apagar (marque como obsoleto, com data e motivo), um assunto por commit com mensagem
-  `docs(kit): o que mudou`, anote no `CHANGELOG.md`, e peça aprovação da pessoa antes de mudar a estrutura dos arquivos.
+  `tipo(kit): o que mudou` (`docs`, `feat`, `fix`, `test`, `refactor` ou `chore`; as provas conferem o formato), anote no `CHANGELOG.md`, e peça aprovação da pessoa antes de mudar a estrutura dos arquivos.
 - **Privacidade:** o repositório é público; nada sensível sobre a pessoa entra aqui (ver `CONTEXTO.md`).
 
 ## Como começar um projeto novo

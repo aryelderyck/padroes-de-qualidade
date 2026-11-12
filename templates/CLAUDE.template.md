@@ -55,4 +55,4 @@ Kit **padroes-de-qualidade** [0.8], nível **[1, 2 ou 3]**, ritmo **[rápido ou 
 - "Pronto" é o `docs/CHECKLIST-PRONTO.md` (em ritmo rápido, só os itens **[E]**). Desvio vai na seção "Desvios" da
   especificação ou do README, com o motivo.
 - Erro que pode se repetir, que custou mais de uns 15 minutos ou que chegou à pessoa: `ERROS.md` do kit, ao fechar a
-  tarefa (commit `docs(kit): ...` no repositório do kit).
+  tarefa (commit `docs(kit): ...` no repositório do kit, depois de ler as regras de commit de lá).

@@ -87,6 +87,7 @@ Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, c
 | E-036 | Projeto só de front-end classificado como nível 2 | Processo | explorador de campeões e kit | Resolvido |
 | E-037 | Claude Code no VS Code respondia só "Credit balance is too low" | Ambiente | painel | Resolvido |
 | E-038 | Linha do changelog anexada no fim do arquivo caiu na versão 0.1 | Documentação | kit de padrões | Resolvido |
+| E-039 | Commit do kit com `feat(kit):` quando a regra só previa `docs(kit):` (repetição do E-034) | Processo | kit de padrões | Resolvido |
 
 ## Registro
 
@@ -495,3 +496,8 @@ Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, c
 - **Data / projeto / categoria:** 2026-11-10 · kit de padrões · Documentação
 - **Sintoma e causa raiz:** a nota da regra "ensinar com recursos visuais" foi acrescentada no fim do `CHANGELOG.md`, e o arquivo tem a versão mais nova em cima; a linha ficou dentro da versão 0.1. Achado dois dias depois, ao escrever a versão 0.5, e movido para ela.
 - **Como evitar:** em arquivo com seções, inserir sob o título certo e reler o trecho; nunca anexar no fim sem olhar a ordem. **Status:** Resolvido
+
+### E-039 · Commit do kit com `feat(kit):` quando a regra só previa `docs(kit):` (repetição do E-034)
+- **Data / projeto / categoria:** 2026-11-12 · kit de padrões · Processo
+- **Sintoma e causa raiz:** o commit `e53c603` foi enviado como `feat(kit): ...`, e o `README.md` do kit só previa `docs(kit): ...`. O kit passou a ter código (provas, hooks, scripts) e a regra de commit não acompanhou; além disso ela dependia de alguém lembrar, a mesma causa do E-034. O histórico já enviado não foi reescrito.
+- **Como evitar:** a regra agora aceita `docs`, `feat`, `fix`, `test`, `refactor` e `chore`, sempre com `(kit)`, e as provas conferem o formato do último commit no CI. O que tem de valer sempre vira verificação automática, não lembrete. **Status:** Resolvido

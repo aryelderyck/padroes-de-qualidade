@@ -21,6 +21,7 @@ PROVAS = RAIZ / "provas"
 LIMITE_DE_LINHAS_DO_REGRAS = 80
 SAIDA_DE_PROBLEMA_DO_HOOK = 2
 EXTENSOES_DE_TEXTO = {".md", ".py", ".js", ".mjs", ".json", ".toml", ".yml", ".yaml", ".txt", ""}
+FORMATO_DO_COMMIT = re.compile(r"^(docs|feat|fix|test|refactor|chore)\(kit\): \S|^Merge ")
 PASTAS_IGNORADAS = {".git", ".mypy_cache", ".ruff_cache", "__pycache__", "node_modules"}
 
 # O que o linter do kit PRECISA apontar em provas/python/ruim.py.
@@ -161,6 +162,11 @@ def provar_estrutura() -> None:
                 {"name", "description"} <= set(cabecalho),
                 f"cabeçalho com name e description: {arquivo.relative_to(RAIZ)}",
             )
+
+    git = shutil.which("git")
+    if git is not None and (RAIZ / ".git").exists():
+        assunto = rodar([git, "log", "-1", "--format=%s"], RAIZ).stdout.strip()
+        conferir(bool(FORMATO_DO_COMMIT.search(assunto)), f"último commit no formato tipo(kit): o que mudou [{assunto[:60]}]")
 
     com_cr = [
         str(arquivo.relative_to(RAIZ))
