@@ -100,3 +100,62 @@ def aninhado(matriz):
 
 def sem_uso(a, b):
     return a
+
+
+def comparar_texto(valor):
+    return valor is "sim"
+
+
+def normalizar(nomes):
+    for nome in nomes:
+        nome = nome.strip()
+        print(nome)
+
+
+class Carrinho:
+    itens = []
+
+
+def longa(total):
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    total += 1
+    return total

@@ -1,13 +1,17 @@
 """Conferência completa do projeto, em um comando só: `python conferir.py`.
 
 Roda, nesta ordem, formatação, linter, tipos e testes, e para na primeira etapa que falhar.
-É o mesmo conjunto de etapas do CI: se passa aqui, passa lá. Copie para a raiz do projeto.
+São as mesmas quatro etapas do começo do CI; o CI ainda mede a cobertura dos testes e audita as
+dependências. Copie para a raiz do projeto.
 """
 
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
+RAIZ = Path(__file__).resolve().parent
+SAIDA_SEM_FERRAMENTA = 3
 ETAPAS: list[tuple[str, list[str]]] = [
     ("Formatação (ruff format)", ["ruff", "format", "--check", "."]),
     ("Linter (ruff check)", ["ruff", "check", "."]),
@@ -16,18 +20,27 @@ ETAPAS: list[tuple[str, list[str]]] = [
 ]
 
 
-def comando(ferramenta: str, argumentos: list[str]) -> list[str]:
-    """Usa o executável do PATH; se não houver, chama a ferramenta como módulo deste Python."""
-    executavel = shutil.which(ferramenta)
-    if executavel:
-        return [executavel, *argumentos]
-    return [sys.executable, "-m", ferramenta, *argumentos]
+def achar(ferramenta: str) -> str | None:
+    """Prefere a ferramenta do ambiente virtual do projeto; depois, a do PATH."""
+    for pasta, sufixo in ((".venv/Scripts", ".exe"), (".venv/bin", "")):
+        candidato = RAIZ / pasta / f"{ferramenta}{sufixo}"
+        if candidato.exists():
+            return str(candidato)
+    return shutil.which(ferramenta)
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     for nome, (ferramenta, *argumentos) in ETAPAS:
         print(f"\n== {nome}", flush=True)
-        resultado = subprocess.run(comando(ferramenta, argumentos), check=False)
+        executavel = achar(ferramenta)
+        if executavel is None:
+            print(f"\nNÃO RODOU: a ferramenta '{ferramenta}' não foi encontrada.")
+            print("Crie o ambiente virtual em .venv e instale as dependências de desenvolvimento:")
+            print('  python -m venv .venv   e depois   .venv/Scripts/pip install -e ".[dev]"')
+            return SAIDA_SEM_FERRAMENTA
+        resultado = subprocess.run([executavel, *argumentos], cwd=RAIZ, check=False)
         if resultado.returncode != 0:
             print(f"\nFALHOU em: {nome}. Corrija e rode de novo.")
             return resultado.returncode

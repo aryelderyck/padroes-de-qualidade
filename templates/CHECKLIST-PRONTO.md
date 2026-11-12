@@ -5,6 +5,7 @@ Um item que não se aplica é riscado com o motivo. Item não verificado fica de
 **Ritmo rápido** (só nível 1): valem os itens marcados **[E]**; os outros vão para o README como "não feito, de propósito".
 
 ## Nível 1 (todo projeto)
+
 - [ ] **[E]** README completo (o que é, rodar, testar, decisões, segurança e LGPD, limitações) · evidência:
 - [ ] **[E]** `.gitignore`, `.gitattributes`, `LICENSE`, `CLAUDE.md` presentes · evidência:
 - [ ] **[E]** Dependabot alerts, secret scanning e push protection ativados · evidência:
@@ -26,7 +27,9 @@ Um item que não se aplica é riscado com o motivo. Item não verificado fica de
 - [ ] Acessibilidade (axe sem violações) e Lighthouse >= 95, se houver front-end · números:
 
 ## Nível 2 (API e dados)
+
 Segurança da API: `PADROES.md`, seção 6.2. Cada item pede o teste que o prova.
+
 - [ ] Lista escrita de rotas públicas; todas as outras recusam pedido sem credencial (401 ou 403) · teste:
 - [ ] Rota que recebe ID confere a posse: A não acessa o recurso de B · teste:
 - [ ] Entrada validada em todas as rotas e campo extra recusado; resposta com modelo explícito · teste:
@@ -35,7 +38,7 @@ Segurança da API: `PADROES.md`, seção 6.2. Cada item pede o teste que o prova
 - [ ] Consultas parametrizadas ou via ORM, sem SQL montado com texto do usuário · evidência:
 - [ ] Nenhum segredo em URL, log, mensagem de erro, imagem ou front-end; `.env.example` sem valores · como verifiquei:
 - [ ] Dado de API de terceiros (ou de modelo de IA) validado e nunca repassado como HTML cru · teste:
-- [ ] Erro com formato único e mensagem genérica, sem *stack trace*; códigos de status corretos · teste:
+- [ ] Erro com formato único e mensagem genérica, sem _stack trace_; códigos de status corretos · teste:
 - [ ] Migrações versionadas; chaves estrangeiras e restrições no banco · evidência:
 - [ ] OpenAPI igual ao código, rota `/saude` sem dado sensível, nenhuma rota de teste no ar · evidência:
 - [ ] Chamadas externas com tempo limite, nova tentativa, limite de requisições e cache · evidência:
@@ -48,6 +51,7 @@ Segurança da API: `PADROES.md`, seção 6.2. Cada item pede o teste que o prova
 - [ ] Se o projeto chama um modelo de IA: chave só no servidor, teto de gasto, saída tratada como não confiável (seção 6.4) · evidência:
 
 ## Nível 3 (usuários e dados pessoais)
+
 - [ ] Tabela de dados pessoais (dado, finalidade, base legal, retenção) escrita · local:
 - [ ] Direitos do titular implementados (acessar, corrigir, excluir, exportar) · evidência:
 - [ ] Política de privacidade publicada · link:

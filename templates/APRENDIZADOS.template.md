@@ -8,6 +8,7 @@ volte ao conceito e peça um exemplo menor.
 **O que eu construí:**
 
 **Conceitos novos** (explique em uma ou duas frases cada):
+
 - [ex.: endpoint] é...
 - [ex.: chave estrangeira] serve para...
 
@@ -18,4 +19,5 @@ volte ao conceito e peça um exemplo menor.
 **Como eu testaria se o que escrevi continua funcionando:**
 
 ---
+
 <!-- Copie o bloco "Etapa" para cada etapa nova. -->

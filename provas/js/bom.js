@@ -33,3 +33,16 @@ export function somarPositivos(matriz) {
 export function classificar(numero) {
   return NOMES_DOS_NUMEROS.get(numero) ?? "outro";
 }
+
+export function resumirJogador(dados) {
+  const { account_id: idDaConta, personaname: apelido } = dados;
+  return { id: idDaConta, apelido };
+}
+
+export function porcentagem(parte, total) {
+  return Math.round((parte / total) * 100);
+}
+
+export async function buscarTodos(urls) {
+  return Promise.all(urls.map((url) => fetch(url)));
+}

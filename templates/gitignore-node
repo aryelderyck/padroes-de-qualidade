@@ -1,0 +1,27 @@
+# Copie para a raiz do projeto com o nome .gitignore
+# Segredos: nunca vão para o repositório. O .env.example (sem valores) vai.
+.env
+.env.*
+!.env.example
+
+# Dependências, build e caches
+node_modules/
+dist/
+build/
+coverage/
+.vite/
+*.tsbuildinfo
+.eslintcache
+
+# Relatórios de teste
+playwright-report/
+test-results/
+*.log
+
+# Editor e sistema
+.idea/
+.DS_Store
+Thumbs.db
+
+# Configuração pessoal do Claude Code (a do projeto, .claude/settings.json, é versionada)
+.claude/settings.local.json

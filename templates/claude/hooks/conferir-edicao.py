@@ -33,7 +33,7 @@ def main() -> int:
     except json.JSONDecodeError:
         return 0
     caminho = str(dados.get("tool_input", {}).get("file_path", ""))
-    if not caminho.endswith(".py"):
+    if not caminho.endswith(".py") or not Path(caminho).is_file():
         return 0
     raiz = Path(os.environ.get("CLAUDE_PROJECT_DIR") or dados.get("cwd") or ".")
     ruff = achar_ruff(raiz)

@@ -1,0 +1,6 @@
+# Copie para a raiz do projeto com o nome .prettierignore
+dist
+build
+coverage
+playwright-report
+test-results

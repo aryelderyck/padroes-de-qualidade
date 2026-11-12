@@ -1,5 +1,5 @@
-# CI do próprio kit: roda as provas a cada envio. Regra automática sem prova não entra.
-# As versões abaixo são as que foram usadas para escrever e conferir as provas.
+# CI do próprio kit: roda as provas a cada envio, em Linux e em Windows.
+# Regra automática sem prova não entra. As versões fixadas são as usadas para escrever as provas.
 name: Provas do kit
 
 on:
@@ -12,7 +12,15 @@ permissions:
 
 jobs:
   provas:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    env:
+      PROVAS_COM_REDE: "1"
+      PYTHONUTF8: "1"
     steps:
       - uses: actions/checkout@v4
 

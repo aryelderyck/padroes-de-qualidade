@@ -1,0 +1,31 @@
+# Copie para a raiz do projeto com o nome .gitignore
+# Segredos: nunca vão para o repositório. O .env.example (sem valores) vai.
+.env
+.env.*
+!.env.example
+
+# Ambiente e caches do Python
+.venv/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Banco local e arquivos de trabalho
+*.sqlite3
+*.db
+*.log
+
+# Editor e sistema (o .vscode do projeto pode ser versionado; o resto, não)
+.idea/
+.DS_Store
+Thumbs.db
+
+# Configuração pessoal do Claude Code (a do projeto, .claude/settings.json, é versionada)
+.claude/settings.local.json

@@ -9,6 +9,7 @@ import path from "node:path";
 import process from "node:process";
 
 const SAIDA_COM_PROBLEMA = 2;
+const SAIDA_DE_ERRO_DO_ESLINT = 1;
 const ENTRADA_PADRAO = 0;
 const FORMATAVEIS = new Set([
   ".js",
@@ -46,26 +47,34 @@ function rodar(raiz, binario, argumentos) {
   });
 }
 
+function conferirComEslint(raiz, arquivo) {
+  // Variável ainda sem uso é comum no meio de uma edição; o comando completo confere depois.
+  const lint = rodar(raiz, "eslint/bin/eslint.js", ["--rule", "no-unused-vars: off", arquivo]);
+  if (lint === null) {
+    process.stderr.write("conferir-edicao: ESLint não encontrado; rode npm install.\n");
+    return 0;
+  }
+  if (lint.status === 0) {
+    return 0;
+  }
+  const titulo =
+    lint.status === SAIDA_DE_ERRO_DO_ESLINT
+      ? "O ESLint apontou problemas neste arquivo. Corrija antes de seguir:"
+      : "O ESLint não conseguiu rodar (configuração ou instalação). Corrija antes de seguir:";
+  process.stderr.write(`${titulo}\n${(lint.stdout || lint.stderr).trim()}\n`);
+  return SAIDA_COM_PROBLEMA;
+}
+
 function main() {
   const dados = lerEntrada();
   const arquivo = String(dados.tool_input?.file_path ?? "");
   const extensao = path.extname(arquivo);
-  if (!FORMATAVEIS.has(extensao)) {
+  if (!FORMATAVEIS.has(extensao) || !existsSync(arquivo)) {
     return 0;
   }
   const raiz = process.env.CLAUDE_PROJECT_DIR || dados.cwd || process.cwd();
   rodar(raiz, "prettier/bin/prettier.cjs", ["--write", "--log-level", "silent", arquivo]);
-  if (!CODIGO.has(extensao)) {
-    return 0;
-  }
-  // Variável ainda sem uso é comum no meio de uma edição; o comando completo confere depois.
-  const lint = rodar(raiz, "eslint/bin/eslint.js", ["--rule", "no-unused-vars: off", arquivo]);
-  if (lint !== null && lint.status !== 0) {
-    process.stderr.write("O ESLint apontou problemas neste arquivo. Corrija antes de seguir:\n");
-    process.stderr.write(`${(lint.stdout || lint.stderr).trim()}\n`);
-    return SAIDA_COM_PROBLEMA;
-  }
-  return 0;
+  return CODIGO.has(extensao) ? conferirComEslint(raiz, arquivo) : 0;
 }
 
 process.exit(main());
