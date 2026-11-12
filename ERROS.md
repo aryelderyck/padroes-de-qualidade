@@ -84,6 +84,8 @@ Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, c
 | E-033 | Escape de barra invertida num script Python gravou um byte CR no `ERROS.md` | Ferramenta | kit de padrões | Resolvido |
 | E-034 | Commits do kit sem o formato `docs(kit):` e com vários assuntos juntos | Processo | kit de padrões | Resolvido |
 | E-035 | Identidade do git da máquina expõe usuário do Windows e nome do computador | Segurança | painel e kit | Resolvido |
+| E-036 | Projeto só de front-end classificado como nível 2 | Processo | explorador de campeões e kit | Resolvido |
+| E-037 | Claude Code no VS Code respondia só "Credit balance is too low" | Ambiente | painel | Resolvido |
 
 ## Registro
 
@@ -471,3 +473,19 @@ Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, c
 - **Como evitar:** antes do primeiro commit numa máquina nova, conferir `git config user.name` e `git config user.email`; a verificação de dados pessoais antes de enviar inclui o histórico (`git log -p` e os autores), não só a versão final dos arquivos.
 - **Virou regra em:** ainda não. Observação: `git config --local` fica em `.git/config` e não viaja com o clone; em cada máquina nova é preciso configurar de novo.
 - **Status:** Resolvido
+
+### E-036 · Projeto só de front-end classificado como nível 2
+- **Data / projeto:** 2026-11-12 · explorador de campeões e kit de padrões
+- **Categoria:** Processo
+- **Sintoma:** o texto de abertura do explorador de campeões (React, sem servidor) pedia o **nível 2** do kit, que exige migrações, OpenAPI, rota `/saude` e Docker. Nada disso existe num projeto só de front-end.
+- **Causa raiz:** a tabela de níveis dizia "tem backend, banco ou API externa", e "ler dados públicos de fora" foi lido como "API externa". A tabela não separava **consumir** um dado público de **hospedar** um servidor.
+- **Como foi detectado:** na revisão do kit pedida pela pessoa, no mesmo dia, relendo a tabela contra o projeto novo.
+- **Correção:** tabela reescrita: o nível é decidido pelo que o projeto hospeda (servidor, banco, segredo, contas), não pelo que consome. A linha corrigida do texto de abertura foi entregue à pessoa.
+- **Como evitar:** ao escolher o nível, perguntar "o que este projeto hospeda?"; front-end sem servidor próprio é nível 1.
+- **Virou regra em:** `PADROES.md`, seção 2.
+- **Status:** Resolvido
+
+### E-037 · Claude Code no VS Code respondia só "Credit balance is too low"
+- **Data / projeto / categoria:** 2026-11-11 · painel (máquina nova) · Ambiente
+- **Sintoma e causa raiz:** a extensão respondia "Credit balance is too low" a qualquer mensagem. A sessão estava usando a cobrança por créditos da API, que é separada da conta do Claude com assinatura. Os passos tentados foram sair e entrar de novo pela conta do Claude, procurar a variável `ANTHROPIC_API_KEY` e olhar as configurações da extensão; depois deles funcionou, mas não ficou registrado qual resolveu.
+- **Como evitar:** em máquina nova, entrar pela conta do Claude (não pelo Console da API) e conferir o método de login com `/status` antes de começar; se o erro aparecer, `/logout`, reabrir o VS Code e `/login`, e conferir que não há `ANTHROPIC_API_KEY` definida. **Status:** Resolvido
