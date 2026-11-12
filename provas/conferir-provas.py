@@ -700,7 +700,7 @@ def montar_projeto_typescript(pasta: Path) -> None:
     )
     copiar(PROVAS / "ts" / "tsconfig.json", pasta / "tsconfig.json")
     copiar(PROVAS / "ts" / "bom.ts", pasta / "src" / "bom.ts")
-    escrever(pasta / "package.json", '{ "type": "module", "private": true }\n')
+    escrever(pasta / "package.json", '{\n  "type": "module",\n  "private": true\n}\n')
 
 
 def apontamentos_do_eslint(comando: list[str], pasta: Path, alvo: str) -> dict[str, set[str]]:
