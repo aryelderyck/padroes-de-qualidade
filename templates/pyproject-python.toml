@@ -17,21 +17,64 @@ dev = [
   "pytest",
   "pytest-cov",
   "ruff",
+  "mypy",
   "pip-audit",
   "respx",   # simula respostas do httpx nos testes, sem rede
 ]
+
+# ---------------------------------------------------------------------------
+# Conferência de código (PADROES.md, seção 4A). Cada regra abaixo tem prova em
+# provas/ no kit: um exemplo ruim que ela pega e um bom que ela deixa passar.
+# ---------------------------------------------------------------------------
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
 
+[tool.ruff.format]
+# Indentação e formatação não se discutem: quem decide é o formatador.
+indent-style = "space"     # 4 espaços (PEP 8)
+quote-style = "double"
+line-ending = "lf"
+
 [tool.ruff.lint]
-# E/F: erros comuns, I: ordem dos imports, B: armadilhas, UP: Python moderno,
-# S: regras de segurança (equivalentes ao Bandit)
-select = ["E", "F", "I", "B", "UP", "S"]
+select = [
+  "E", "W", "F",   # erros de sintaxe e de uso: variável não usada, comparação com None
+  "I",             # ordem dos imports
+  "N",             # nomes no padrão da linguagem
+  "UP",            # Python moderno
+  "B",             # armadilhas: valor padrão mutável, variável de laço em closure
+  "A",             # nome que esconde função embutida (list, id, type)
+  "C4", "SIM", "RET", "PERF",  # o mesmo resultado com menos código e menos custo
+  "C90", "PL",     # Código Limpo com limite: complexidade, parâmetros, tamanho, número mágico
+  "ARG",           # parâmetro não usado
+  "ERA",           # código comentado
+  "BLE",           # except genérico que engole o erro
+  "DTZ",           # data e hora sem fuso
+  "T20",           # print esquecido
+  "PT",            # testes no padrão do pytest
+  "S",             # segurança: SQL montado com texto, senha no código, chamada sem tempo limite
+  "RUF",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-args = 5
+max-branches = 12
+max-returns = 6
+max-statements = 40
+# Aninhamento: a regra do ruff (PLR1702) ainda é experimental; a complexidade (C901) cobre por ora.
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101"]   # assert é normal em testes
+"tests/**" = ["S101", "PLR2004"]            # assert e números de exemplo são normais em testes
+"conferir.py" = ["T201", "S603"]            # script de terminal: imprime e chama as ferramentas
+".claude/**" = ["S603"]                     # ganchos do Claude Code chamam o formatador e o linter
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

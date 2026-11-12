@@ -1,5 +1,6 @@
 # Copie para .github/workflows/ci.yml. Não foi executado ainda: valide no primeiro projeto.
-# Pré-requisito: package-lock.json commitado e scripts "lint", "test" e "build" no package.json.
+# Pré-requisito: package-lock.json commitado e scripts "conferir" e "build" no package.json.
+# "conferir": "prettier --check . && eslint . && tsc --noEmit && vitest run"  (PADROES.md, seção 4A)
 name: CI
 
 on:
@@ -24,11 +25,8 @@ jobs:
       - name: Instalar dependências (versões travadas)
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Testes
-        run: npm test
+      - name: Conferência completa (formatação, linter, tipos e testes)
+        run: npm run conferir
 
       - name: Auditoria de dependências
         run: npm audit --audit-level=high

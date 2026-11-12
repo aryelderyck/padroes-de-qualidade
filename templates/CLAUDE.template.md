@@ -12,7 +12,7 @@ Dados e nomes no repositório são **fictícios**. [Se o produto mostra dado rea
 - Instalar: `[comando]`
 - Rodar: `[comando]`
 - Testes: `[comando]` · um teste só: `[comando]`
-- Lint e formatação: `[comando]`
+- Conferência completa (formatação, linter, tipos e testes): `[python conferir.py ou npm run conferir]`
 
 ## Estrutura
 - `[pasta]/`: [o que mora aqui]
@@ -23,6 +23,7 @@ Dados e nomes no repositório são **fictícios**. [Se o produto mostra dado rea
 **Sempre**
 - Teste antes do código (TDD): ver o teste falhar pelo motivo certo, depois implementar.
 - Rodar o comando e ler a saída antes de dizer que funciona; listar o que não foi verificado.
+- Conferência completa antes de cada commit; `/conferir-codigo` antes de dizer que a tarefa está pronta.
 - Commits pequenos, em português, no formato `tipo: o que mudou`.
 
 **Pergunte antes**
@@ -35,6 +36,7 @@ Dados e nomes no repositório são **fictícios**. [Se o produto mostra dado rea
 - Dado real, segredo, token ou e-mail em arquivo, commit ou conversa. Segredo fica em `.env`, fora do git, e nunca em
   código que vai para o navegador.
 - Dado de fora (API de terceiros, usuário, modelo de IA) inserido na página como HTML cru.
+- SQL montado com texto, ou regra do linter desligada no projeto para o código passar (exceção é na linha, com o motivo).
 - [Proibições do projeto: recurso de terceiros no navegador, teste que acessa a internet...]
 
 ## A pessoa e o jeito de ensinar
@@ -47,7 +49,7 @@ Se a sessão não estiver nesse estilo, avise a pessoa uma vez e siga as instru�
 2. [arquivo ou módulo]
 
 ## Kit de padrões
-Kit **padroes-de-qualidade** [0.7], nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**, clonado em `../padroes-de-qualidade`
+Kit **padroes-de-qualidade** [0.8], nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**, clonado em `../padroes-de-qualidade`
 (se faltar, peça à pessoa para clonar `https://github.com/aryelderyck/padroes-de-qualidade`).
 - Toda sessão: leia só o `REGRAS.md` do kit. Ele diz o que mais abrir, e quando. Não leia o kit inteiro.
 - "Pronto" é o `docs/CHECKLIST-PRONTO.md` (em ritmo rápido, só os itens **[E]**). Desvio vai na seção "Desvios" da

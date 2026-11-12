@@ -1,0 +1,34 @@
+# CI do próprio kit: roda as provas a cada envio. Regra automática sem prova não entra.
+# As versões abaixo são as que foram usadas para escrever e conferir as provas.
+name: Provas do kit
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  provas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar as ferramentas conferidas
+        run: |
+          python -m pip install --upgrade pip
+          pip install "ruff==0.16.9" "mypy==2.3.1" "pytest==9.1.1" pyyaml
+          npm install --global "eslint@10.1.0" "prettier@3.8.1"
+
+      - name: Rodar as provas
+        run: python provas/conferir-provas.py

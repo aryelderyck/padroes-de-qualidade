@@ -27,10 +27,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Formatação e lint (inclui regras de segurança)
-        run: |
-          ruff format --check .
-          ruff check .
+      # As quatro etapas abaixo são as mesmas do conferir.py (PADROES.md, seção 4A), com cobertura nos testes.
+      - name: Formatação e indentação
+        run: ruff format --check .
+
+      - name: Linter (Código Limpo com limite e regras de segurança)
+        run: ruff check .
+
+      - name: Tipos
+        run: mypy .
 
       - name: Testes com cobertura mínima
         run: pytest --cov --cov-fail-under=80

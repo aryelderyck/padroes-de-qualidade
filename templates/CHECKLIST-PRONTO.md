@@ -9,6 +9,8 @@ Um item que não se aplica é riscado com o motivo. Item não verificado fica de
 - [ ] **[E]** `.gitignore`, `.gitattributes`, `LICENSE`, `CLAUDE.md` presentes · evidência:
 - [ ] **[E]** Dependabot alerts, secret scanning e push protection ativados · evidência:
 - [ ] **[E]** Testes cobrem os comportamentos da lógica, inclusive erros e casos de borda · saída dos testes:
+- [ ] **[E]** Comando de conferência (formatação, linter, tipos e testes) passa na máquina e no CI, sem regra desligada no projeto · saída:
+- [ ] Conferência independente (`/conferir-codigo`) sem achado alto ou médio em aberto · relatório:
 - [ ] **[E]** Teste de mutação manual em pelo menos 3 pontos críticos (ritmo rápido: pelo menos 1) · o que foi quebrado:
 - [ ] **[E]** CI roda na `main` (e em todo Pull Request, quando houver) e está verde · link:
 - [ ] **[E]** Deploy (se houver) só ocorre com CI verde · link:
