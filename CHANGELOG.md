@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.5 · 2026-11-12
+Objetivo da versão, a pedido da pessoa: regras o mais eficientes possível, sem atrasar os projetos.
+- Novo `REGRAS.md`: única leitura de toda sessão (tabela "o que abrir, e quando", as 18 regras que saíram dos erros e
+  o critério para registrar erro), com limite de 80 linhas. As regras saíram do `ERROS.md`, que passa a ser de consulta.
+- `PADROES.md`, `README.md` e `CLAUDE.template.md`: leitura por seção, conforme o nível e o momento, no lugar de ler
+  quatro arquivos inteiros no início de cada etapa. O kit é lido do clone ao lado do projeto (`../padroes-de-qualidade`).
+- `PADROES.md`, seção 2: o nível é decidido pelo que o projeto **hospeda** (front-end sem servidor próprio é nível 1) e
+  cada nível lista as seções que lhe cabem. Novo **ritmo rápido** para projetos de nível 1 de até uma semana.
+- `CHECKLIST-PRONTO.md`: itens essenciais marcados com **[E]**; item novo de teclado, foco e contraste conferidos à mão.
+- Registro de erros: só o que pode se repetir, custou mais de uns 15 minutos ou chegou à pessoa, ao repositório ou ao
+  ar; ao fechar a tarefa; com **entrada curta** para erro pequeno. Antes era "todo erro, antes de seguir".
+- `REVISAO.md` recebeu o que era só do `REVISAO-CRITICA.md` (perguntas que a pessoa pode fazer, como Claude responde,
+  gatilhos e três perguntas), e o `REVISAO-CRITICA.md` ficou marcado como obsoleto.
+- `PADROES.md`: seção 12 aponta para o mapa dos projetos do `CONTEXTO.md` (um só lugar) e a seção 13 guarda só as
+  lições técnicas que não viraram regra geral.
+- `CONTEXTO.md`: situação dos projetos atualizada, novo projeto (explorador de campeões de League of Legends, nível 1,
+  ritmo rápido), regra "detalhe na primeira vez, referência depois", regra "ensinar com recursos visuais" (de
+  2026-11-10), ambiente (Claude Code no VS Code) e decisões de 2026-11-11 e 2026-11-12.
+- `ERROS.md`: entradas E-036 (nível errado em projeto de front-end), E-037 (cobrança pela API no Claude Code) e E-038
+  (linha do changelog anexada na versão errada).
+
 ## 0.4 · 2026-11-10
 - `PADROES.md`: nova seção 9A (web pública: indexação, idiomas com `hreflang`, Core Web Vitals, testes de SEO) e três
   lições novas na seção 13.
@@ -39,4 +60,3 @@
   modelos de CI (Python e Node), CodeQL, Dependabot, `pyproject` e Dockerfile.
 - Lições iniciais vindas da landing page.
 - Pendente: validar os modelos em um projeto real (nenhum foi executado).
-- `CONTEXTO.md` e `CLAUDE.template.md`: regra "ensinar com recursos visuais" (diagramas, gráficos e maquetes).

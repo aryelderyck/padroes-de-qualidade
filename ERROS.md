@@ -86,6 +86,7 @@ Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, c
 | E-035 | Identidade do git da máquina expõe usuário do Windows e nome do computador | Segurança | painel e kit | Resolvido |
 | E-036 | Projeto só de front-end classificado como nível 2 | Processo | explorador de campeões e kit | Resolvido |
 | E-037 | Claude Code no VS Code respondia só "Credit balance is too low" | Ambiente | painel | Resolvido |
+| E-038 | Linha do changelog anexada no fim do arquivo caiu na versão 0.1 | Documentação | kit de padrões | Resolvido |
 
 ## Registro
 
@@ -489,3 +490,8 @@ Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, c
 - **Data / projeto / categoria:** 2026-11-11 · painel (máquina nova) · Ambiente
 - **Sintoma e causa raiz:** a extensão respondia "Credit balance is too low" a qualquer mensagem. A sessão estava usando a cobrança por créditos da API, que é separada da conta do Claude com assinatura. Os passos tentados foram sair e entrar de novo pela conta do Claude, procurar a variável `ANTHROPIC_API_KEY` e olhar as configurações da extensão; depois deles funcionou, mas não ficou registrado qual resolveu.
 - **Como evitar:** em máquina nova, entrar pela conta do Claude (não pelo Console da API) e conferir o método de login com `/status` antes de começar; se o erro aparecer, `/logout`, reabrir o VS Code e `/login`, e conferir que não há `ANTHROPIC_API_KEY` definida. **Status:** Resolvido
+
+### E-038 · Linha do changelog anexada no fim do arquivo caiu na versão 0.1
+- **Data / projeto / categoria:** 2026-11-10 · kit de padrões · Documentação
+- **Sintoma e causa raiz:** a nota da regra "ensinar com recursos visuais" foi acrescentada no fim do `CHANGELOG.md`, e o arquivo tem a versão mais nova em cima; a linha ficou dentro da versão 0.1. Achado dois dias depois, ao escrever a versão 0.5, e movido para ela.
+- **Como evitar:** em arquivo com seções, inserir sob o título certo e reler o trecho; nunca anexar no fim sem olhar a ordem. **Status:** Resolvido

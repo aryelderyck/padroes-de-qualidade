@@ -3,7 +3,7 @@
 Kit de padrões que mantém o mesmo nível de qualidade em todos os projetos de portfólio do Aryel
 (landing page, painel de Dota 2, e-commerce, AtendeFlow e os próximos).
 
-> Versão **0.4**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
+> Versão **0.5**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
 > O primeiro projeto que usar cada um deve validar e corrigir o modelo aqui.
 
 ## O que tem aqui
