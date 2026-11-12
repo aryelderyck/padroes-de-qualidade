@@ -35,6 +35,11 @@ melhorou (erro evitado, tempo poupado, clareza). Descartar também é aprendizad
 | Feature flags simples | Liga e desliga recursos novos sem novo deploy | AtendeFlow | Candidata |
 | Revisão por um segundo agente, independente | Quem revisa não é quem escreveu; útil em trabalho de alto risco | Qualquer etapa crítica (segurança, pagamentos) | Candidata |
 | Cada arquivo com o seu porquê: explicar antes de criar (para que serve, pasta, nome, alternativas) e manter `docs/MAPA-DE-ARQUIVOS.md`, atualizado no mesmo commit do arquivo; temporários ganham uma linha | A pessoa entende a estrutura do projeto, e arquivo sem motivo não nasce; vira pergunta do `/fechar-tarefa` | Painel de Dota 2 (desde o plano 1) e o próprio kit | Em teste (painel) |
+| Estilo de saída Professor (`templates/output-styles/professor.md`) no lugar das regras de ensino repetidas em cada `CLAUDE.md` | Um só lugar, liga e desliga com um comando e não pesa em sessão só de execução | Explorador de campeões | Em teste (ainda não executado no Claude Code) |
+| Auditar os arquivos de instrução com `/doctor prompt-audit` do Claude Code ao fim de cada projeto | Acha instrução desatualizada, contraditória ou que aponta para arquivo que não existe | Fim do plano 1 do painel | Candidata |
+| Plugin `claude-md-management` da Anthropic (skill `claude-md-improver`) para avaliar o `CLAUDE.md` | Dá nota por comandos, arquitetura, concisão e atualidade, e propõe mudanças como diff | Explorador de campeões | Candidata |
+| Conferir o `docs/MAPA-DE-ARQUIVOS.md` contra `git ls-files` por script (no CI ou em hook) | O que tem de valer sempre não deve depender de o Claude lembrar; a documentação recomenda hook nesses casos | Painel, tarefa 2 | Candidata |
+| Empacotar o kit como plugin do Claude Code (skills para as perguntas de revisão e para fechar tarefa, estilo de saída, hooks) | Cada parte carrega só quando serve e a instalação vira um comando | Depois do explorador | Candidata |
 
 ## Como acrescentar
 

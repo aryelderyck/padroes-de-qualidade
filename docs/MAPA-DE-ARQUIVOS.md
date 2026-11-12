@@ -1,7 +1,7 @@
 # Mapa de arquivos do kit
 
 Uma linha por arquivo do repositório: para que serve, por que está aqui e o que mais poderia ter sido feito.
-Regra (`CONTEXTO.md`, seção 2, "Cada arquivo com o seu porquê", em teste no painel): todo arquivo é explicado **antes**
+Regra (`CONTEXTO.md`, seção 2; em teste no painel): todo arquivo é explicado **antes**
 de ser criado, e esta tabela muda no mesmo commit que cria, move ou apaga um arquivo. Para conferir se falta alguém:
 `git ls-files`. O `README.md` traz o índice curto e o mapa de consulta; aqui fica o porquê.
 

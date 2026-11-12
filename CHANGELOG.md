@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6 · 2026-11-12
+Revisão do kit contra a documentação oficial do Claude Code, exemplos do GitHub e artigos revisados por pares
+(fontes em `docs/REFERENCIAS.md`).
+- Novo `templates/output-styles/professor.md`: o jeito de ensinar vira um estilo de saída do Claude Code, um só lugar
+  para todos os projetos, que liga e desliga com um comando. **Ainda não executado no Claude Code.**
+- `CONTEXTO.md`, seção 2: sai o texto longo das regras de ensino (repetido em três lugares) e entra uma tabela com o
+  porquê de cada princípio. Conferir o aprendizado pelo que a pessoa faz, não pelo "entendi".
+- `CLAUDE.template.md` reescrito (52 linhas): projeto e stack, comandos no começo, estrutura, limites em três níveis
+  (sempre, pergunte antes, nunca) e o apontamento para o kit.
+- `REGRAS.md`: as 18 regras reescritas como gatilho e ação, com a mesma numeração.
+- `CONTEXTO.md`: mapa dos projetos só com o estado geral; decisões de um projeto só saem para a especificação dele;
+  sai a stack que contradizia a especificação do painel.
+- Novo `docs/REFERENCIAS.md` e cinco práticas candidatas no `PRATICAS.md` (auditoria com `/doctor prompt-audit`, plugin
+  `claude-md-management`, conferência automática do mapa de arquivos, kit como plugin).
+
 ## 0.5 · 2026-11-12
 Objetivo da versão, a pedido da pessoa: regras o mais eficientes possível, sem atrasar os projetos.
 - Novo `REGRAS.md`: única leitura de toda sessão (tabela "o que abrir, e quando", as 18 regras que saíram dos erros e
