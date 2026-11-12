@@ -19,33 +19,25 @@ atualize sempre que algo mudar.
 
 ## 2. Como ensinar
 
-- **Liberação gradual:** primeiro Claude mostra e explica; depois fazem juntos, com lacunas para a pessoa preencher; depois a pessoa escreve e Claude só revisa.
-- Explicar cada conceito novo em poucas linhas, com um exemplo mínimo, **antes** de usá-lo.
-- Cada etapa termina com algo **visível funcionando** e com um teste.
-- Perguntar, em vez de entregar a resposta, quando o arquivo faz parte do plano de aprendizado.
-- Linguagem direta, sem jargão não explicado. Quando usar um termo técnico novo, definir e, se for importante, acrescentar ao glossário (seção 6).
-- **Inglês junto com o código:** a pessoa quer aprender inglês e praticar com as telas e mensagens em inglês das ferramentas.
-  As explicações continuam em português. Termos técnicos aparecem em inglês com a tradução na primeira vez (por exemplo,
-  *rate limit*, limite de requisições). Mensagens de erro e telas em inglês não são traduzidas de imediato: primeiro a pessoa
-  tenta dizer o que entendeu, depois Claude confirma ou corrige. No fim de cada tarefa, de 3 a 5 termos novos vão para o
-  glossário (seção 6) e para o `APRENDIZADOS.md`. O texto visível dos projetos continua em português do Brasil.
-- **Detalhe na primeira vez, referência depois:** a pessoa quer entender cada decisão, a lógica, a sintaxe e cada linha
-  de código. Na primeira vez que um conceito ou uma sintaxe aparece, Claude explica linha por linha o que faz e por quê;
-  nas seguintes, explica só o que é novo e aponta "é o mesmo padrão de X". Em decisões de arquitetura, diz o que escolheu,
-  por quê, quais eram as alternativas e o que se ganha ou perde com cada uma.
-- **Ensinar com recursos visuais:** sempre que ajudar, Claude explica com diagramas (fluxos, arquitetura, o caminho de um
-  dado), gráficos, tabelas comparativas e maquetes, e não só com texto. Prefere o que a pessoa consegue abrir no celular
-  (artefato, imagem, diagrama inline). O visual complementa a explicação escrita, não a substitui.
-- **Cada arquivo com o seu porquê:** antes de criar qualquer arquivo (inclusive de configuração), Claude explica em poucas
-  linhas para que serve, por que fica naquela pasta e com aquele nome, quais alternativas existiam e por que não foram
-  escolhidas. Cada repositório mantém `docs/MAPA-DE-ARQUIVOS.md`, com uma linha por arquivo nas colunas
-  `arquivo | para que serve | por que está aqui | alternativas | tarefa em que foi criado`, atualizada no mesmo commit que
-  cria, move ou apaga o arquivo. Arquivo que Claude não consegue justificar não é criado, e a pessoa é avisada. A regra vale
-  por inteiro para arquivos do repositório; para arquivos temporários (fora do repositório), basta uma linha dizendo para que
-  servem. Arquivos criados de uma vez por uma ferramenta (por exemplo, pelo gerador do projeto) podem ser explicados
-  juntos, numa tabela, uma linha por arquivo. No fechamento de cada tarefa, uma das perguntas de explicar de volta pode
-  ser sobre um arquivo criado nela. Situação: em teste no painel (`PRATICAS.md`).
-- A pessoa prefere não gastar tempo escrevendo CSS de variáveis (cores e tamanhos); o foco de escrita dela é a lógica (JavaScript/Python), os testes e a API.
+As instruções de ensino, na forma que o Claude Code executa, ficam em **um só lugar**: o estilo de saída
+[`templates/output-styles/professor.md`](templates/output-styles/professor.md), instalado uma vez por máquina e ligado
+ou desligado com um comando (`README.md`, "Estilo de saída Professor"). Aqui fica o porquê de cada princípio; as fontes
+estão em [`docs/REFERENCIAS.md`](docs/REFERENCIAS.md).
+
+| Princípio | Por quê |
+| --- | --- |
+| Liberação gradual: Claude mostra, depois fazem juntos com lacunas, depois a pessoa escreve e Claude revisa | Passar do exemplo resolvido para o problema aos poucos funciona melhor do que pular direto (Renkl e Atkinson, 2003) |
+| Detalhe na primeira vez, referência depois: cada decisão, sintaxe e linha explicadas quando aparecem; depois, só o que é novo | Orientação detalhada ajuda quem está começando e atrapalha quem já sabe (Kalyuga e outros, 2003); pedido da pessoa (2026-11-12) |
+| Dica em vez de resposta nas tarefas que a pessoa escreve | IA sem salvaguardas pode prejudicar o aprendizado; salvaguardas que fazem raciocinar o protegem (Bastani e outros, 2025) |
+| Conferir pelo que a pessoa faz (explicar de volta, prever, escrever sem olhar), não pelo "entendi" | Lembrar ativamente fixa mais do que reler (Roediger e Karpicke, 2006); iniciantes com IA tendem a achar que sabem mais do que sabem (Prather e outros, 2024) |
+| Claude escreve o repetitivo; a pessoa escreve a lógica | Gerar código com IA não piorou o desempenho de iniciantes sem IA, e quem sabia mais aproveitou mais (Kazemitabaar e outros, 2023) |
+| Explicar cada arquivo antes de criar (para que serve, pasta, nome, alternativas) e manter o `docs/MAPA-DE-ARQUIVOS.md` | Pedido da pessoa (2026-11-10); em teste no painel (`PRATICAS.md`) |
+| Termos em inglês com tradução; a pessoa tenta ler o erro antes da explicação | Pedido da pessoa (2026-11-10): aprender inglês junto com o código |
+| Diagramas e outros recursos visuais, de preferência algo que abra no celular | Pedido da pessoa (2026-11-10) |
+| Cada etapa termina com algo visível funcionando e com um teste | Motivação e prova de que funciona |
+
+A pessoa prefere não gastar tempo escrevendo CSS de variáveis (cores e tamanhos); o foco de escrita dela é a lógica
+(JavaScript, TypeScript, Python), os testes e a API.
 
 ## 3. Mapa dos projetos
 

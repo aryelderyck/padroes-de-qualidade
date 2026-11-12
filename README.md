@@ -20,6 +20,7 @@ Por que cada arquivo existe, onde fica e que alternativas havia: [`docs/MAPA-DE-
 | [`ERROS.md`](ERROS.md) | Catálogo de erros, de consulta: índice e registro com causa raiz e prevenção |
 | [`templates/CHECKLIST-PRONTO.md`](templates/CHECKLIST-PRONTO.md) | Definição de pronto, por nível, com campo de evidência |
 | [`templates/CLAUDE.template.md`](templates/CLAUDE.template.md) | `CLAUDE.md` inicial de cada repositório novo |
+| [`templates/output-styles/professor.md`](templates/output-styles/professor.md) | Estilo de saída do Claude Code com o jeito de ensinar (instalado uma vez por máquina) |
 | [`templates/APRENDIZADOS.template.md`](templates/APRENDIZADOS.template.md) | Diário de aprendizado, preenchido a cada etapa |
 | [`templates/pyproject-python.toml`](templates/pyproject-python.toml) | Configuração de ruff, pytest e cobertura para projetos Python |
 | [`templates/Dockerfile.python`](templates/Dockerfile.python) e [`templates/dockerignore`](templates/dockerignore) | Imagem Docker em múltiplos estágios, sem root |
@@ -30,6 +31,23 @@ Por que cada arquivo existe, onde fica e que alternativas havia: [`docs/MAPA-DE-
 O kit é lido **aos pedaços**. Toda sessão começa só pelo [`REGRAS.md`](REGRAS.md), que tem a tabela "o que abrir, e
 quando" e manda abrir os outros arquivos por seção, no momento em que servem. Ler tudo no início de cada sessão gastava
 contexto e tempo sem melhorar o resultado.
+
+## Estilo de saída Professor
+
+O jeito de ensinar (explicar cada arquivo e cada decisão, sintaxe nova linha por linha, trechos para a pessoa escrever,
+inglês junto) não fica mais repetido no `CLAUDE.md` de cada projeto. Fica num **estilo de saída** do Claude Code, que
+vale para todos os projetos da máquina e liga ou desliga com um comando.
+
+> **Ainda não testado.** O arquivo segue o formato da documentação oficial, mas não foi executado no Claude Code.
+> O primeiro uso deve conferir os três passos abaixo e corrigir aqui o que não bater.
+
+1. Instalar, uma vez por máquina (PowerShell, na pasta do kit):
+   `New-Item -ItemType Directory -Force "$HOME\.claude\output-styles" | Out-Null; Copy-Item templates\output-styles\professor.md "$HOME\.claude\output-styles\"`
+2. Reabrir o Claude Code e escolher o estilo: `/output-style professor` (no VS Code, digite `/` e escolha **Output styles**).
+3. Para uma sessão sem aula, só de execução: `/output-style default`. Para voltar: `/output-style professor`.
+
+O Claude Code também traz estilos prontos: **Learning** (explica e deixa trechos para a pessoa escrever, em inglês) e
+**Explanatory** (só explica). O Professor é o Learning adaptado ao que a pessoa pediu.
 
 ## Como Claude consulta e edita o kit
 

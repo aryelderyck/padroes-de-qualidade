@@ -1,64 +1,52 @@
 # CLAUDE.md: [NOME DO PROJETO]
 
-<!-- Copie este arquivo para a raiz do repositório novo, preencha os [colchetes] e apague os comentários. -->
+<!-- Copie para a raiz do repositório novo, preencha os [colchetes] e apague os comentários.
+     Este arquivo é carregado em toda sessão: mantenha abaixo de 100 linhas. Para cada linha, pergunte
+     "se eu tirar, o Claude erra?". Se não erra, tire. Instrução boa é concreta o bastante para conferir. -->
 
-## Padrões obrigatórios
-Este projeto segue o kit **padroes-de-qualidade**, versão **[0.5]**, nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**.
-O kit fica clonado ao lado deste repositório, em `../padroes-de-qualidade`. Se não estiver, peça à pessoa para clonar
-(`https://github.com/aryelderyck/padroes-de-qualidade`) ou leia pelo link "raw"
-(`https://raw.githubusercontent.com/aryelderyck/padroes-de-qualidade/main/<arquivo>`).
-- **Toda sessão:** leia só o `REGRAS.md` do kit. Ele é curto e diz o que mais abrir, e em que momento.
-- **Não leia o kit inteiro.** `PADROES.md`, `CONTEXTO.md`, `REVISAO.md` e `ERROS.md` são abertos por seção, quando o
-  momento pedir (tabela do `REGRAS.md`).
-- Antes de decidir algo importante, de otimizar ou de dizer "pronto", passe pelo bloco correspondente do `REVISAO.md`.
-- Erro que pode se repetir, que custou mais de uns 15 minutos ou que chegou à pessoa ou ao repositório: registre no
-  `ERROS.md` do kit ao fechar a tarefa (commit `docs(kit): ...` no repositório do kit) e resuma em `APRENDIZADOS.md`.
-- Práticas novas que valham a pena ficam em `PRATICAS.md`; dificuldades da pessoa, em `CONTEXTO.md` (seção 7).
-- Os critérios de "pronto" estão em `docs/CHECKLIST-PRONTO.md` (cópia do modelo do kit). Em ritmo rápido valem só os
-  itens marcados **[E]**. Desvios vão na especificação ou no README, na seção "Desvios", com o motivo.
-
-## Contexto da pessoa
-Aryel é desenvolvedor iniciante e usa o projeto para **aprender** e montar portfólio (freelance ou vaga júnior).
-Orçamento zero: só ferramentas gratuitas. Explique em português, de forma direta.
-Aryel também quer **aprender inglês**: use o termo técnico em inglês com a tradução na primeira vez; diante de mensagem de
-erro ou tela em inglês, peça primeiro que ele diga o que entendeu e só depois confirme ou corrija; ao fechar cada tarefa,
-registre de 3 a 5 termos novos em `APRENDIZADOS.md`.
-**Ensine com recursos visuais:** use diagramas, gráficos, tabelas e maquetes sempre que ajudarem, de preferência algo
-que abra no celular; o visual complementa o texto.
-**Detalhe na primeira vez, referência depois:** na primeira vez que um conceito ou uma sintaxe aparecer, explique linha por
-linha o que faz e por quê; depois, só o que for novo ("é o mesmo padrão de X"). Em decisões de arquitetura, diga o que
-escolheu, por quê, as alternativas e o que se ganha ou perde com cada uma.
-**Cada arquivo com o seu porquê:** antes de criar qualquer arquivo (inclusive de configuração), explique em poucas linhas
-para que serve, por que fica naquela pasta e com aquele nome, quais alternativas existiam e por que não foram escolhidas.
-Mantenha `docs/MAPA-DE-ARQUIVOS.md` com uma linha por arquivo do repositório
-(`arquivo | para que serve | por que está aqui | alternativas | tarefa em que foi criado`), atualizado no mesmo commit que
-cria, move ou apaga o arquivo. Se não conseguir justificar um arquivo, não o crie e avise. Arquivos criados de uma vez por uma ferramenta podem ser
-explicados juntos, numa tabela, uma linha por arquivo. Arquivo temporário, fora do repositório: basta uma linha dizendo para que serve. No fechamento da tarefa, uma das perguntas de explicar de volta pode ser sobre um arquivo criado nela.
-Nível atual em [API, banco, testes, Docker...]: [iniciante completo / já usou / confortável].
-
-## O que é este projeto
-[Uma ou duas frases: o que faz, para quem, e se os dados/nomes são fictícios.]
-
-## Regras que não podem ser quebradas
-- Dados reais nunca entram no repositório. Só dados fictícios.
-- Segredos nunca no código: variáveis de ambiente e `.env.example` sem valores.
-- Nada de "funciona" sem rodar o comando e ler a saída. O que não foi verificado é dito.
-- [Regras específicas do projeto: stack, proibições, restrições de LGPD.]
+## O projeto
+[Uma ou duas frases: o que faz e para quem.] Stack: [linguagem e versão, framework e versão, ferramenta de teste].
+Dados e nomes no repositório são **fictícios**. [Se o produto mostra dado real em execução, diga de onde ele vem.]
 
 ## Comandos
 - Instalar: `[comando]`
 - Rodar: `[comando]`
-- Testes: `[comando]`
+- Testes: `[comando]` · um teste só: `[comando]`
 - Lint e formatação: `[comando]`
 
-## Como trabalhar
-- Mudou comportamento? Escreva ou ajuste o teste antes (TDD) e veja falhar pelo motivo certo.
-- Ao fim de cada etapa: atualize `APRENDIZADOS.md` com a pessoa, rode a checklist do nível e commite.
-- Teste que passa de primeira: quebre o código de propósito para confirmar que o teste falha.
-- Commits pequenos, em português, `tipo: o que mudou`. Branch curta e Pull Request com CI verde.
+## Estrutura
+- `[pasta]/`: [o que mora aqui]
+- `docs/MAPA-DE-ARQUIVOS.md`: uma linha por arquivo (`arquivo | para que serve | por que está aqui | alternativas | tarefa`),
+  atualizada no mesmo commit que cria, move ou apaga o arquivo. Arquivo que não dá para justificar não é criado.
 
-## Plano de aprendizado
-Método: Claude mostra, depois fazem juntos com lacunas, depois a pessoa escreve e Claude revisa.
-Arquivos que a pessoa deve escrever (Claude **não** entrega a solução, guia por perguntas):
+## Limites
+**Sempre**
+- Teste antes do código (TDD): ver o teste falhar pelo motivo certo, depois implementar.
+- Rodar o comando e ler a saída antes de dizer que funciona; listar o que não foi verificado.
+- Commits pequenos, em português, no formato `tipo: o que mudou`.
+
+**Pergunte antes**
+- Acrescentar dependência, mudar a estrutura de pastas, apagar arquivo ou mexer no CI.
+- Escrever um arquivo da lista "A pessoa escreve".
+
+**Nunca**
+- Dado real, segredo, token ou e-mail em arquivo, commit ou conversa. Segredo fica em `.env`, fora do git.
+- [Proibições do projeto: recurso de terceiros no navegador, teste que acessa a internet...]
+
+## A pessoa e o jeito de ensinar
+Aryel é desenvolvedor iniciante e usa o projeto para **aprender** e montar portfólio. Orçamento zero. Português do Brasil.
+O jeito de ensinar está no estilo de saída **Professor** (`../padroes-de-qualidade/templates/output-styles/professor.md`).
+Se a sessão não estiver nesse estilo, avise a pessoa uma vez e siga as instruções daquele arquivo.
+
+**A pessoa escreve** (não entregue a solução; dê uma dica por vez, quando ela pedir):
 1. [arquivo ou módulo]
 2. [arquivo ou módulo]
+
+## Kit de padrões
+Kit **padroes-de-qualidade** [0.6], nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**, clonado em `../padroes-de-qualidade`
+(se faltar, peça à pessoa para clonar `https://github.com/aryelderyck/padroes-de-qualidade`).
+- Toda sessão: leia só o `REGRAS.md` do kit. Ele diz o que mais abrir, e quando. Não leia o kit inteiro.
+- "Pronto" é o `docs/CHECKLIST-PRONTO.md` (em ritmo rápido, só os itens **[E]**). Desvio vai na seção "Desvios" da
+  especificação ou do README, com o motivo.
+- Erro que pode se repetir, que custou mais de uns 15 minutos ou que chegou à pessoa: `ERROS.md` do kit, ao fechar a
+  tarefa (commit `docs(kit): ...` no repositório do kit).

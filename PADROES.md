@@ -171,8 +171,8 @@ sem falhas e o conteúdo realmente útil.
 
 - Cada projeto tem `APRENDIZADOS.md` (modelo em `templates/`). Ao fim de cada etapa a pessoa escreve, **com as próprias palavras**: o que aprendeu, o erro que cometeu e como corrigiu.
 - Dificuldades de aprendizado e o que ajuda ficam na seção 7 do [`CONTEXTO.md`](CONTEXTO.md).
-- Método de ensino: o professor (Claude) mostra, depois fazem juntos com lacunas, depois a pessoa escreve sozinha e Claude só revisa. Cada etapa termina com algo visível e um teste.
-- Todo conceito novo (API, endpoint, tabela, migração, token…) ganha uma explicação de poucas linhas com exemplo mínimo antes de ser usado.
+- O jeito de ensinar fica em um só lugar: o estilo de saída Professor (`templates/output-styles/professor.md`). Os
+  motivos de cada princípio estão no [`CONTEXTO.md`](CONTEXTO.md), seção 2.
 - `README.md` conta as decisões e as limitações com honestidade, incluindo o que **não** foi verificado.
 
 ## 12. Mapa dos projetos
