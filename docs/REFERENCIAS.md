@@ -73,3 +73,35 @@ o de Perry, pelo DOI da ACM.
 
 **Limites.** Os estudos de código gerado usaram assistentes mais antigos que os atuais (Copilot e Codex de 2021 a 2023);
 a taxa de hoje não foi medida aqui. As listas do OWASP são consenso de especialistas, não artigos revisados por pares.
+
+## 6. Qualidade do código (levantamento de 2026-11-12)
+
+### Documentação oficial e ferramentas
+
+| Fonte | O que sustenta no kit |
+| --- | --- |
+| [Hooks do Claude Code: guia](https://code.claude.com/docs/en/hooks-guide.md) e [referência](https://code.claude.com/docs/en/hooks.md) | O que tem de acontecer sempre vira hook, e não instrução; formato do `settings.json`; saída 2 no `PostToolUse` devolve a mensagem ao Claude |
+| [Skills do Claude Code](https://code.claude.com/docs/en/skills.md) | Skill com arquivos de apoio carregados sob demanda e execução em subagente isolado (`context: fork`) |
+| [`/code-review` (Claude Code Docs)](https://code.claude.com/docs/en/code-review-local) | Revisão em subagente com contexto próprio; `/simplify` e `/verify` como comandos vizinhos |
+
+### Artigos revisados por pares
+
+Resumo lido em todos os cinco. Local conferido na página do periódico ou da instituição; o de Muñoz Barón, pelo DOI da ACM.
+
+| Artigo | Onde saiu | O que sustenta no kit |
+| --- | --- | --- |
+| Hanenberg, Morzeck e Gruhn, [Indentation and reading time](https://link.springer.com/article/10.1007/s10664-024-10531-y) | *Empirical Software Engineering*, 2024 | Com 27 participantes, ler código sem indentação levou 2,13 vezes o tempo do indentado: formatador obrigatório |
+| Muñoz Barón, Wyrich e Wagner, [An Empirical Validation of Cognitive Complexity](https://arxiv.org/abs/2007.12520) | ESEM 2020 | Em 427 trechos, a complexidade se correlaciona com o tempo de compreensão e com a nota dada por quem lê; para acertos, o resultado foi misto: limite de complexidade |
+| Hofmeister, Siegmund e Holt, [Shorter Identifier Names Take Longer to Comprehend](https://www.se.cs.uni-saarland.de/publications/docs/HoSeHo17.pdf) | SANER 2017 | Com 72 profissionais, nomes com palavras inteiras foram 19% mais rápidos de entender que letras ou abreviações: regras de nome |
+| Tornhill e Borg, [Code Red: The Business Impact of Code Quality](https://arxiv.org/abs/2203.04374v1) | TechDebt 2022 | Em 39 bases de código, o código de baixa qualidade teve 15 vezes mais defeitos e correções 124% mais demoradas: vale ter a conferência |
+| Gao, Bird e Barr, [To Type or Not to Type](https://neverworkintheory.org/2021/09/08/to-type-or-not-to-type.html) | ICSE 2017 | Tipos estáticos teriam pegado 15% dos defeitos públicos analisados em JavaScript: verificador de tipos obrigatório |
+
+**Limites.** Os números dos limites do kit (10, 5, 40, 50) são convenção das ferramentas, não resultado desses
+estudos: os artigos sustentam a direção, não o valor. O estudo de Tornhill e Borg usa a métrica da ferramenta da
+empresa dos autores. O estudo de tipos olhou defeitos que já tinham passado por teste e revisão.
+
+### Fora da conta
+
+- *Clean Code*, de Robert C. Martin (2008): livro de recomendações de um autor, não revisado por pares. É a origem das regras de `codigo-limpo.md`.
+- OWASP SQL Injection Prevention Cheat Sheet: a página não abriu nesta sessão; a regra do kit (consulta parametrizada e lista fixa para o que não pode ser parâmetro) foi escrita de memória.
+- Liu e outros, "Refining ChatGPT-Generated Code" (ACM TOSEM, 2024): título e periódico conferidos, mas o resumo não abriu nesta sessão; não foi usado para sustentar nada.

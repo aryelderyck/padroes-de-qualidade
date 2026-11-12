@@ -3,7 +3,7 @@
 Kit de padrões que mantém o mesmo nível de qualidade em todos os projetos de portfólio do Aryel
 (landing page, painel de Dota 2, e-commerce, AtendeFlow e os próximos).
 
-> Versão **0.7**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
+> Versão **0.8**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
 > O primeiro projeto que usar cada um deve validar e corrigir o modelo aqui.
 
 ## O que tem aqui
@@ -21,7 +21,10 @@ Por que cada arquivo existe, onde fica e que alternativas havia: [`docs/MAPA-DE-
 | [`templates/CHECKLIST-PRONTO.md`](templates/CHECKLIST-PRONTO.md) | Definição de pronto, por nível, com campo de evidência |
 | [`templates/CLAUDE.template.md`](templates/CLAUDE.template.md) | `CLAUDE.md` inicial de cada repositório novo |
 | [`templates/output-styles/professor.md`](templates/output-styles/professor.md) | Estilo de saída do Claude Code com o jeito de ensinar (instalado uma vez por máquina) |
-| [`templates/claude/`](templates/claude/) | Orientação e padrões de segurança para o plugin `security-guidance` (copiados para o `.claude/` de cada projeto) |
+| [`templates/claude/`](templates/claude/) | Para o `.claude/` de cada projeto: orientação e padrões de segurança do plugin `security-guidance`, e o hook que formata e confere cada arquivo editado |
+| [`templates/skills/conferir-codigo/`](templates/skills/conferir-codigo/) | Skill de revisão independente do código, com a lista de armadilhas e o Código Limpo adotado (instalada uma vez por máquina) |
+| `templates/conferir.py`, `eslint.regras.mjs`, `eslint.config.mjs`, `prettierrc.json`, `editorconfig` | Formatação, linter com limites e comando único de conferência, por linguagem |
+| [`provas/`](provas/) | Exemplo ruim e exemplo bom por linguagem, e o script que prova que cada regra automática funciona |
 | [`templates/APRENDIZADOS.template.md`](templates/APRENDIZADOS.template.md) | Diário de aprendizado, preenchido a cada etapa |
 | [`templates/pyproject-python.toml`](templates/pyproject-python.toml) | Configuração de ruff, pytest e cobertura para projetos Python |
 | [`templates/Dockerfile.python`](templates/Dockerfile.python) e [`templates/dockerignore`](templates/dockerignore) | Imagem Docker em múltiplos estágios, sem root |
@@ -49,6 +52,33 @@ vale para todos os projetos da máquina e liga ou desliga com um comando.
 
 O Claude Code também traz estilos prontos: **Learning** (explica e deixa trechos para a pessoa escrever, em inglês) e
 **Explanatory** (só explica). O Professor é o Learning adaptado ao que a pessoa pediu.
+
+## Conferência de código: três camadas
+
+Regras em `PADROES.md`, seção 4A. Todo código passa por formatação, linter, tipos e testes, e por uma revisão feita
+por quem não escreveu.
+
+**O que foi executado de verdade no kit** (`python provas/conferir-provas.py`, que também roda no CI do kit): as regras
+do ruff e do ESLint pegando o exemplo ruim e liberando o bom; os dois formatadores; o `mypy` estrito; o `conferir.py`;
+e os dois scripts de hook, alimentados com a mesma entrada que o Claude Code envia.
+**O que ainda não foi executado:** o Claude Code disparando o hook a partir do `settings.json`; a skill
+`/conferir-codigo`; o `eslint.config.mjs` com o `typescript-eslint`; e tudo isso no Windows.
+
+Em cada projeto:
+
+1. **Formatação e regras.** Copie `templates/editorconfig` como `.editorconfig`.
+   Python: use o `templates/pyproject-python.toml` e copie `templates/conferir.py` para a raiz.
+   Node: copie `eslint.regras.mjs` e `eslint.config.mjs` para a raiz, `prettierrc.json` como `.prettierrc.json`, e crie
+   o script `"conferir": "prettier --check . && eslint . && tsc --noEmit && vitest run"` no `package.json`.
+2. **Hook de edição.** Copie `templates/claude/settings.python.json` (ou `settings.node.json`) como
+   `.claude/settings.json` e o `conferir-edicao.py` (ou `.mjs`) para `.claude/hooks/`. Se o projeto já tiver
+   `settings.json`, junte só o bloco `hooks`. No Linux e no macOS, troque `python` por `python3` se for preciso.
+3. **CI.** Use `templates/github/ci-python.yml` ou `ci-node.yml`: são as mesmas etapas do comando único.
+
+Uma vez por máquina, a skill de revisão (PowerShell, na pasta do kit):
+`New-Item -ItemType Directory -Force "$HOME\.claude\skills" | Out-Null; Copy-Item -Recurse -Force templates\skills\conferir-codigo "$HOME\.claude\skills\"`
+
+Depois, no Claude Code: `/conferir-codigo` (confere a branch atual) ou `/conferir-codigo src/arquivo.py`.
 
 ## Segurança: revisão que não depende de quem escreveu
 

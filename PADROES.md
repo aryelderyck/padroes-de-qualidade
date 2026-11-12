@@ -1,6 +1,6 @@
 # Padrões de qualidade dos projetos
 
-Versão 0.7 · 2026-11-12 · Dono: Aryel
+Versão 0.8 · 2026-11-12 · Dono: Aryel
 
 Este é o documento mestre. Todo projeto novo (landing, painel, e-commerce, AtendeFlow e os que vierem)
 começa por aqui e só é considerado **pronto** quando cumpre a Definição de Pronto (seção 2).
@@ -27,7 +27,7 @@ O nível é decidido pelo que o projeto **hospeda**, não pelo que ele consome.
 
 | Nível | Quando se aplica | Exemplos | Seções deste documento |
 | --- | --- | --- | --- |
-| **1. Base** | Todo projeto. Inclui front-end sem servidor próprio, mesmo que leia dados públicos de terceiros sem chave | Landing page, explorador de campeões | 1 a 5, 6.1, 9 (se tem tela), 9A (se quer ser achado na busca) e 11; a 6.4 se chamar IA |
+| **1. Base** | Todo projeto. Inclui front-end sem servidor próprio, mesmo que leia dados públicos de terceiros sem chave | Landing page, explorador de campeões | 1 a 5 (com a 4A), 6.1, 9 (se tem tela), 9A (se quer ser achado na busca) e 11; a 6.4 se chamar IA |
 | **2. API e dados** | Tem servidor próprio (API), banco de dados ou segredo (chave de API) | Painel de Dota 2 | As do nível 1, mais 6.2, 6.5, 8 e 10, e a 7 se tocar dado de pessoa |
 | **3. Usuários e dados pessoais** | Tem contas, login ou dados de pessoas | E-commerce, AtendeFlow | Todas |
 
@@ -67,7 +67,46 @@ anotada. Use `templates/CHECKLIST-PRONTO.md`.
 - **Teste de mutação manual.** Teste que passa de primeira merece desconfiança. Quebre o código de propósito e confirme que algum teste falha.
 - Nível 3: testes **negativos** de segurança (usuário A não lê dado do usuário B, rota protegida sem login devolve 401/403).
 
+## 4A. Conferência de código (todo código, todos os níveis)
+
+Todo código novo ou alterado passa por **três camadas**, da mais barata para a mais cara. O que uma ferramenta consegue
+conferir não fica por conta de quem escreveu, seja pessoa ou IA: a ferramenta não esquece e não se convence de que
+está bom. As fontes estão em [`docs/REFERENCIAS.md`](docs/REFERENCIAS.md), seção 6.
+
+| Camada | Quando | O que confere | Como |
+| --- | --- | --- | --- |
+| 1. Na edição | A cada arquivo que o Claude edita | Indentação e formatação (corrige sozinho) e regras do linter (devolve ao Claude) | Hook `conferir-edicao` (`templates/claude/`) |
+| 2. Comando único | Antes de cada commit e no CI | Formatação, linter, tipos e testes, nessa ordem, parando na primeira falha | Python: `python conferir.py` · Node: `npm run conferir` |
+| 3. Revisão independente | Antes de dizer "pronto" | O que a ferramenta não vê: erro de lógica, armadilhas de modelagem e de algoritmo, injeção, simplificação e Código Limpo | Skill `/conferir-codigo`, que roda num subagente sem o contexto de quem escreveu; `/code-review` e `/security-review` como complemento |
+
+- **Formatação e indentação** não se discutem nem se pedem por instrução: quem decide é o formatador (`ruff format` em
+  Python, Prettier no resto), e o `.editorconfig` cobre os outros arquivos. Código fora do formato não passa no CI.
+- **Código Limpo com limite medido.** O linter recusa função com complexidade acima de 10, com mais de 5 parâmetros
+  (4 em JavaScript) ou longa demais (40 instruções em Python, 50 linhas em JavaScript), aninhamento acima de 3 níveis
+  (JavaScript), número mágico, código comentado, variável ou parâmetro sem uso, exceção engolida e nome fora do padrão
+  da linguagem. Os limites são convenção, não ciência exata: exceção se justifica **na linha**, com o motivo
+  (`# noqa: CÓDIGO motivo` ou `// eslint-disable-next-line regra -- motivo`), nunca desligando a regra no projeto. O que
+  o linter não mede (nome que diz a intenção, função que faz uma coisa só, comentário que explica o porquê) está em
+  `codigo-limpo.md`, na pasta da skill.
+- **SQL nunca é montado com texto:** consulta parametrizada ou ORM; nome de tabela, de coluna e direção de ordenação
+  saem de uma lista fixa no código. Conferem: a regra `S608`, o padrão `sql_montado_com_texto` do plugin de segurança
+  e um teste com `' OR '1'='1` em cada entrada que chega ao banco.
+- **Tipos:** `mypy` em modo estrito no Python; em TypeScript, `strict`, `noUncheckedIndexedAccess` e nenhum `any`.
+- **Armadilhas de modelagem e de algoritmos:** a lista está em `armadilhas.md`, na pasta da skill (dinheiro em ponto
+  flutuante, data sem fuso, erro de um a mais, consulta por item, conferir e depois agir, e outras).
+- **Simplificar sem perder nada.** (1) Testes verdes antes. (2) Uma simplificação por vez, nesta ordem: apagar o que
+  não é usado, desfazer abstração sem segundo uso, achatar aninhamento com retorno antecipado, renomear, trocar código
+  próprio por função da biblioteca padrão. (3) Nunca sai validação, checagem de permissão, limite, tempo limite,
+  parametrização nem registro de segurança. (4) Se o trecho é caminho quente ou a ordem de grandeza do algoritmo muda,
+  medir antes e depois. (5) Conferência verde depois. (6) Commit `refactor:` separado.
+- **As regras do kit têm prova.** A pasta `provas/` guarda um exemplo ruim e um bom por linguagem.
+  `python provas/conferir-provas.py` confirma que cada regra pega o ruim e deixa passar o bom, e roda no CI do próprio
+  kit. Regra automática nova só entra com a sua prova.
+
 ## 5. Pipeline de CI/CD
+
+As etapas 2 a 4 são o comando de conferência da seção 4A: o CI roda o mesmo que a pessoa roda antes do commit.
+
 
 Ordem das etapas (para na primeira que falhar):
 
@@ -257,6 +296,8 @@ que não viraram regra geral:
 
 - **Erro que ensina vira uma entrada no [`ERROS.md`](ERROS.md)** ao fechar a tarefa (critério no `REGRAS.md`, seção 3).
   Quem encontra registra (Claude, Claude Code ou a pessoa). Se o erro revela uma regra geral, ela entra no `REGRAS.md`.
+- **Regra automática só entra com prova:** um exemplo ruim que ela pega e um bom que ela deixa passar, em `provas/`
+  (seção 4A). Sem a prova, a regra é só intenção.
 - **O kit tem de continuar leve.** O `REGRAS.md` tem limite de 80 linhas. Antes de acrescentar uma regra a qualquer
   arquivo, veja se ela cabe fundida a uma existente ou se substitui uma que perdeu o sentido. Regra que só atrasa, sem
   ter evitado erro em um projeto inteiro, é candidata a sair.

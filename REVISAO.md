@@ -31,6 +31,9 @@ sair do "funciona" para o "é a melhor forma, é a mais simples, é segura e dá
 
 ## B. Enquanto escreve (código)
 
+Versão de bolso, para usar enquanto escreve. A conferência completa (lógica, armadilhas, SQL, simplificação e
+Código Limpo) é a skill `/conferir-codigo`, feita por um revisor que não escreveu o código (`PADROES.md`, seção 4A).
+
 1. **Dá para ter o mesmo resultado com um código menor e mais enxuto?** O que posso apagar sem perder comportamento?
 2. A função faz **uma coisa só**? O nome diz o que ela faz, sem precisar ler o corpo?
 3. Isso é duplicação **real** (terceira vez) ou só parecida? Não abstraia cedo: três repetições antes de extrair.

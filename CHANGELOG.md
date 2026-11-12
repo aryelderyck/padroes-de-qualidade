@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.8 · 2026-11-12
+Conferência obrigatória de todo código, com as regras provadas por execução (`docs/REFERENCIAS.md`, seção 6).
+- `PADROES.md`, nova seção 4A: três camadas (hook na edição, comando único, revisão independente), formatação decidida
+  pelo formatador, Código Limpo com limite medido, SQL sempre parametrizado, tipos estritos, armadilhas de modelagem e
+  de algoritmos e o roteiro de simplificação sem perda de segurança nem de desempenho.
+- Nova pasta `provas/` e CI do próprio kit (`.github/workflows/kit.yml`): 17 regras de Python e 17 de JavaScript, os
+  dois formatadores, o `mypy` estrito, o `conferir.py`, os dois hooks e os padrões de segurança são conferidos contra
+  um exemplo ruim e um bom. Regra automática nova só entra com prova.
+- A primeira execução das provas achou três falhas antes de qualquer projeto usar: a regra de aninhamento do ruff
+  (`PLR1702`) é experimental e não disparava; o hook de Python acusava a si mesmo; dois modelos estavam fora do formato.
+- Modelos novos: `conferir.py`, `editorconfig`, `prettierrc.json`, `eslint.regras.mjs`, `eslint.config.mjs`, os hooks
+  `conferir-edicao` (Python e Node) com os `settings` correspondentes, e a skill `conferir-codigo` com `armadilhas.md`
+  e `codigo-limpo.md`. `pyproject-python.toml` com 22 grupos de regras, limites e `mypy` estrito.
+- `ci-python.yml` e `ci-node.yml` rodam as mesmas etapas do comando único. Checklist, `REGRAS.md` e `CLAUDE.template.md`
+  apontam para a conferência.
+- **Ainda não executado:** o disparo do hook pelo Claude Code, a skill, o `eslint.config.mjs` com `typescript-eslint`,
+  o CI do kit no GitHub e tudo isso no Windows.
+
 ## 0.7 · 2026-11-12
 Revisão da segurança contra o OWASP, a documentação do Claude Code e artigos revisados por pares
 (`docs/REFERENCIAS.md`, seção 5).
