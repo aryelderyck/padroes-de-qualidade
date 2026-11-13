@@ -2,5 +2,5 @@
 # e a prova do ambiente virtual usa este arquivo como limite de versões (pip install -c).
 ruff==0.16.9
 mypy==2.3.1
-pytest==9.1.1
+pytest==9.2.0
 pyyaml>=6
