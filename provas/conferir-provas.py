@@ -19,6 +19,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 MODELOS = RAIZ / "templates"
 PROVAS = RAIZ / "provas"
+INSTALADOR = RAIZ / "instalar.py"
 LIMITE_DE_LINHAS_DO_REGRAS = 80
 SAIDA_DE_PROBLEMA_DO_HOOK = 2
 SAIDA_SEM_FERRAMENTA = 3
@@ -493,6 +494,7 @@ def provar_scripts_do_kit(base: Path, ruff: str, mypy: str | None) -> None:
     hooks = MODELOS / "claude" / "hooks"
     copiar(hooks / "conferir-edicao.py", pasta / "kit" / "conferir_edicao.py")
     copiar(hooks / "conferir-fim.py", pasta / "kit" / "conferir_fim.py")
+    copiar(INSTALADOR, pasta / "kit" / "instalar.py")
     excecoes = [
         parte
         for regra in EXCECOES_DOS_SCRIPTS_DO_KIT
@@ -850,17 +852,157 @@ def provar_js(base: Path) -> set[str]:
     return regras
 
 
+# --------------------------------------------------------------------------- [12] instalador
+ESPERADO_NO_PROJETO = {
+    "python": [
+        "pyproject.toml",
+        "conferir.py",
+        ".claude/hooks/conferir-edicao.py",
+        ".claude/hooks/conferir-fim.py",
+    ],
+    "node": [
+        "eslint.config.mjs",
+        "eslint.regras.mjs",
+        ".prettierrc.json",
+        ".prettierignore",
+        "tsconfig.json",
+    ],
+    "comum": [
+        ".editorconfig",
+        ".gitattributes",
+        ".gitignore",
+        ".githooks/pre-commit",
+        ".claude/settings.json",
+        ".claude/claude-security-guidance.md",
+        ".claude/security-patterns.json",
+        "CLAUDE.md",
+        "APRENDIZADOS.md",
+        "docs/CHECKLIST-PRONTO.md",
+        ".github/workflows/ci.yml",
+        ".github/workflows/codeql.yml",
+        ".github/dependabot.yml",
+        ".kit-versao",
+    ],
+}
+ECOSSISTEMAS_ESPERADOS = {"python": {"pip", "github-actions"}, "node": {"npm", "github-actions"}}
+LINGUAGEM_ESPERADA = {"python": "[python]", "node": "[javascript-typescript]"}
+
+
+def instalar_kit(*argumentos: str) -> subprocess.CompletedProcess[str]:
+    return rodar([sys.executable, str(INSTALADOR), *argumentos], RAIZ)
+
+
+def provar_instalacao(base: Path, tipo: str, git: str) -> Path:
+    pasta = base / f"instalado-{tipo}"
+    pasta.mkdir()
+    rodar([git, "init", "-q"], pasta)
+    primeira = instalar_kit("projeto", str(pasta), "--tipo", tipo)
+    conferir(
+        primeira.returncode == 0, f"{tipo}: instala sem erro", primeira.stdout + primeira.stderr
+    )
+    faltando = [
+        a
+        for a in ESPERADO_NO_PROJETO[tipo] + ESPERADO_NO_PROJETO["comum"]
+        if not (pasta / a).is_file()
+    ]
+    conferir(not faltando, f"{tipo}: todos os arquivos esperados foram criados", faltando)
+    ajustes = json.loads(ler(pasta / ".claude" / "settings.json"))["hooks"]
+    alvos = [
+        hook["args"][0].replace("${CLAUDE_PROJECT_DIR}/", "")
+        for evento in ajustes.values()
+        for grupo in evento
+        for hook in grupo["hooks"]
+    ]
+    orfaos = [alvo for alvo in alvos if not (pasta / alvo).is_file()]
+    conferir(
+        len(alvos) > 1 and not orfaos,
+        f"{tipo}: todo hook do settings.json aponta para arquivo instalado",
+        orfaos,
+    )
+    dependabot = ler(pasta / ".github" / "dependabot.yml")
+    ecossistemas = set(re.findall(r'package-ecosystem: "([a-z-]+)"', dependabot))
+    conferir(
+        ecossistemas == ECOSSISTEMAS_ESPERADOS[tipo],
+        f"{tipo}: dependabot só com o que o projeto usa",
+        ecossistemas,
+    )
+    codeql = ler(pasta / ".github" / "workflows" / "codeql.yml")
+    conferir(
+        f"language: {LINGUAGEM_ESPERADA[tipo]}" in codeql, f"{tipo}: CodeQL na linguagem do projeto"
+    )
+    trava = rodar([git, "config", "core.hooksPath"], pasta).stdout.strip()
+    conferir(trava == ".githooks", f"{tipo}: trava do commit ligada no git", trava)
+
+    escrever(pasta / "CLAUDE.md", "# Editado pela pessoa\n")
+    segunda = instalar_kit("projeto", str(pasta), "--tipo", tipo)
+    conferir(
+        "criado" not in segunda.stdout, f"{tipo}: instalar de novo não cria nada", segunda.stdout
+    )
+    conferir(
+        ler(pasta / "CLAUDE.md") == "# Editado pela pessoa\n",
+        f"{tipo}: arquivo editado pela pessoa é mantido",
+    )
+    forcada = instalar_kit("projeto", str(pasta), "--tipo", tipo, "--forcar")
+    substituiu = "substituído" in forcada.stdout and "Editado pela pessoa" not in ler(
+        pasta / "CLAUDE.md"
+    )
+    conferir(substituiu, f"{tipo}: --forcar substitui o arquivo")
+    return pasta
+
+
+def provar_instalador(base: Path) -> None:
+    titulo("[12] Instalador (instalar.py)")
+    git = shutil.which("git")
+    if git is None:
+        avisos.append("git ausente: o instalador NÃO foi conferido")
+        return
+    python = provar_instalacao(base, "python", git)
+    provar_instalacao(base, "node", git)
+    if shutil.which("ruff") and shutil.which("mypy") and shutil.which("pytest"):
+        copiar(PROVAS / "python" / "bom.py", python / "app" / "bom.py")
+        escrever(python / "app" / "__init__.py", "")
+        escrever(python / "tests" / "__init__.py", "")
+        escrever(python / "tests" / "test_bom.py", TESTE_TIPICO)
+        confere = rodar([sys.executable, "conferir.py"], python)
+        conferir(
+            confere.returncode == 0,
+            "python: projeto recém-instalado passa na conferência",
+            confere.stdout[-TAMANHO_DO_TRECHO:],
+        )
+
+    casa = base / "casa"
+    maquina = instalar_kit("maquina", "--pasta", str(casa))
+    esperados = ["skills/conferir-codigo/SKILL.md", "skills/conferir-codigo/armadilhas.md"]
+    esperados += ["skills/conferir-codigo/codigo-limpo.md", "output-styles/professor.md"]
+    faltando = [a for a in esperados if not (casa / a).is_file()]
+    conferir(
+        maquina.returncode == 0 and not faltando,
+        "máquina: skill e estilo de saída instalados",
+        faltando,
+    )
+    conferir(
+        "criado" not in instalar_kit("maquina", "--pasta", str(casa)).stdout,
+        "máquina: instalar de novo não cria nada",
+    )
+
+    inexistente = instalar_kit("projeto", str(base / "nao-existe"), "--tipo", "python")
+    conferir(
+        inexistente.returncode == SAIDA_DE_PROBLEMA_DO_HOOK and "não existe" in inexistente.stdout,
+        "pasta inexistente: recusa e explica",
+    )
+    no_kit = instalar_kit("projeto", str(RAIZ), "--tipo", "python")
+    conferir(no_kit.returncode == SAIDA_DE_PROBLEMA_DO_HOOK, "pasta do próprio kit: recusa")
+    conferir(not (RAIZ / ".kit-versao").exists(), "pasta do próprio kit: nada foi copiado")
+    tipo_errado = instalar_kit("projeto", str(base), "--tipo", "java")
+    conferir(tipo_errado.returncode != 0, "tipo de projeto desconhecido: recusa")
+    conferir(instalar_kit().returncode != 0, "sem argumentos: mostra o uso e não faz nada")
+
+
 # --------------------------------------------------------------------------- [11] TypeScript
 def montar_projeto_typescript(pasta: Path) -> None:
-    copiar(MODELOS / "eslint.regras.mjs", pasta / "eslint.regras.mjs")
-    copiar(MODELOS / "eslint.config.mjs", pasta / "eslint.config.mjs")
-    copiar(MODELOS / "prettierrc.json", pasta / ".prettierrc.json")
-    copiar(MODELOS / "prettierignore", pasta / ".prettierignore")
-    copiar(
-        MODELOS / "claude" / "hooks" / "conferir-edicao.mjs",
-        pasta / ".claude" / "hooks" / "conferir-edicao.mjs",
-    )
-    copiar(MODELOS / "tsconfig.json", pasta / "tsconfig.json")
+    """Monta o projeto com o instalador do kit: é o que um projeto de verdade recebe."""
+    pasta.mkdir(parents=True)
+    rodar([sys.executable, str(INSTALADOR), "projeto", str(pasta), "--tipo", "node"], RAIZ)
     copiar(PROVAS / "ts" / "bom.ts", pasta / "src" / "bom.ts")
     escrever(pasta / "package.json", '{\n  "type": "module",\n  "private": true\n}\n')
 
@@ -984,6 +1126,7 @@ def main() -> int:
         provar_python(base)
         regras_js = provar_js(base)
         provar_modelos_de_git(base)
+        provar_instalador(base)
         provar_typescript(base)
     provar_padroes_de_seguranca()
     titulo("[10] Coerência entre as listas da skill e as provas")
