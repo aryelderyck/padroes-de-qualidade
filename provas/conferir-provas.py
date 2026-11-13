@@ -27,10 +27,10 @@ TAMANHO_DO_TRECHO = 300
 SEM_FERRAMENTAS = {"PATH": "", "SYSTEMROOT": os.environ.get("SYSTEMROOT", "")}
 PACOTES_DE_TYPESCRIPT = [
     "eslint@10.1.0",
-    "@eslint/js",
-    "typescript-eslint",
-    "typescript",
-    "globals",
+    "@eslint/js@10.0.1",
+    "typescript-eslint@8.72.2",
+    "typescript@6.0.3",
+    "globals@17.14.0",
     "prettier@3.8.1",
 ]
 # O que a configuração de TypeScript do kit PRECISA apontar em provas/ts/ruim.ts.
@@ -185,6 +185,15 @@ def escrever(arquivo: Path, texto: str) -> None:
 def copiar(origem: Path, destino: Path) -> None:
     destino.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(origem, destino)
+
+
+def instalar_no_venv(pasta: Path, nomes: list[str]) -> None:
+    """Copia as ferramentas para o ambiente virtual do projeto, como um `pip install` deixaria."""
+    destino = pasta / ".venv" / ("Scripts" if os.name == "nt" else "bin")
+    for nome in nomes:
+        origem = shutil.which(nome)
+        if origem is not None:
+            copiar(Path(origem), destino / Path(origem).name)
 
 
 def entrada_do_hook(pasta: Path, arquivo: Path) -> str:
@@ -394,6 +403,14 @@ def provar_hook_python(pasta: Path, ruff: str) -> None:
         "sem o ruff: avisa e não trava",
         sem_ruff.stderr,
     )
+    instalar_no_venv(pasta, ["ruff"])
+    copiar(PROVAS / "python" / "ruim.py", pasta / "app" / "ruim.py")
+    do_venv = rodar(hook, pasta, entrada_do_hook(pasta, pasta / "app" / "ruim.py"), SEM_FERRAMENTAS)
+    conferir(
+        do_venv.returncode == SAIDA_DE_PROBLEMA_DO_HOOK and "S608" in do_venv.stderr,
+        "ruff só no .venv do projeto (fora do PATH): o hook o encontra e confere",
+        do_venv.stderr,
+    )
 
 
 def provar_conferir(pasta: Path) -> None:
@@ -413,6 +430,13 @@ def provar_conferir(pasta: Path) -> None:
     conferir(explicou, "sem as ferramentas: diz que não rodou e como instalar", sem_nada.stdout)
     conferir(
         "FALHOU em" not in sem_nada.stdout, "sem as ferramentas: não diz que o código está errado"
+    )
+    instalar_no_venv(pasta, ["ruff", "mypy", "pytest"])
+    do_venv = rodar(comando, pasta, ambiente=SEM_FERRAMENTAS)
+    conferir(
+        do_venv.returncode == 0 and "tudo passou" in do_venv.stdout,
+        "ferramentas só no .venv do projeto (fora do PATH): passa nas quatro etapas",
+        do_venv.stdout[-TAMANHO_DO_TRECHO:],
     )
 
     escrever(pasta / "app" / "feio.py", "def  f( ):\n  return  1\n")
@@ -698,7 +722,7 @@ def montar_projeto_typescript(pasta: Path) -> None:
         MODELOS / "claude" / "hooks" / "conferir-edicao.mjs",
         pasta / ".claude" / "hooks" / "conferir-edicao.mjs",
     )
-    copiar(PROVAS / "ts" / "tsconfig.json", pasta / "tsconfig.json")
+    copiar(MODELOS / "tsconfig.json", pasta / "tsconfig.json")
     copiar(PROVAS / "ts" / "bom.ts", pasta / "src" / "bom.ts")
     escrever(pasta / "package.json", '{\n  "type": "module",\n  "private": true\n}\n')
 

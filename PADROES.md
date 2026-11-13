@@ -1,6 +1,6 @@
 # Padrões de qualidade dos projetos
 
-Versão 0.8 · 2026-11-12 · Dono: Aryel
+Versão 0.9 · 2026-11-12 · Dono: Aryel
 
 Este é o documento mestre. Todo projeto novo (landing, painel, e-commerce, AtendeFlow e os que vierem)
 começa por aqui e só é considerado **pronto** quando cumpre a Definição de Pronto (seção 2).
@@ -91,7 +91,8 @@ está bom. As fontes estão em [`docs/REFERENCIAS.md`](docs/REFERENCIAS.md), se�
 - **SQL nunca é montado com texto:** consulta parametrizada ou ORM; nome de tabela, de coluna e direção de ordenação
   saem de uma lista fixa no código. Conferem: a regra `S608`, o padrão `sql_montado_com_texto` do plugin de segurança
   e um teste com `' OR '1'='1` em cada entrada que chega ao banco.
-- **Tipos:** `mypy` em modo estrito no Python; em TypeScript, `strict`, `noUncheckedIndexedAccess` e nenhum `any`.
+- **Tipos:** `mypy` em modo estrito no Python; em TypeScript, as opções de `templates/tsconfig.json`
+  (`strict`, `noUncheckedIndexedAccess`, `noImplicitReturns`) e nenhum `any`. Aviso do ESLint também reprova (`--max-warnings 0`).
 - **Armadilhas de modelagem e de algoritmos:** a lista está em `armadilhas.md`, na pasta da skill (dinheiro em ponto
   flutuante, data sem fuso, erro de um a mais, consulta por item, conferir e depois agir, e outras).
 - **Simplificar sem perder nada.** (1) Testes verdes antes. (2) Uma simplificação por vez, nesta ordem: apagar o que

@@ -1,6 +1,6 @@
 # Copie para .github/workflows/ci.yml. Não foi executado ainda: valide no primeiro projeto.
 # Pré-requisito: package-lock.json commitado e scripts "conferir" e "build" no package.json.
-# "conferir": "prettier --check . && eslint . && tsc --noEmit && vitest run"  (PADROES.md, seção 4A)
+# "conferir": "prettier --check . && eslint . --max-warnings 0 && tsc --noEmit && vitest run"  (PADROES.md, seção 4A)
 name: CI
 
 on:

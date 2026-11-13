@@ -3,8 +3,11 @@
 Kit de padrões que mantém o mesmo nível de qualidade em todos os projetos de portfólio do Aryel
 (landing page, painel de Dota 2, e-commerce, AtendeFlow e os próximos).
 
-> Versão **0.8**. Os modelos de CI, Docker e `pyproject` ainda **não foram executados** em um projeto real.
-> O primeiro projeto que usar cada um deve validar e corrigir o modelo aqui.
+> Versão **0.9**. **O uso é opcional:** o kit só vale num projeto ou numa sessão quando a pessoa pede (por exemplo,
+> "siga o kit padroes-de-qualidade"). Nada aqui se instala nem se aplica sozinho.
+>
+> O que é regra automática tem prova executada no CI do kit, em Linux e em Windows (`provas/`). Ainda **não foram
+> executados**: os modelos de CI e de Docker dentro de um projeto real, e o Claude Code disparando os hooks e a skill.
 
 ## O que tem aqui
 
@@ -61,15 +64,18 @@ por quem não escreveu.
 **O que foi executado de verdade no kit** (`python provas/conferir-provas.py`, que também roda no CI do kit): as regras
 do ruff e do ESLint pegando o exemplo ruim e liberando o bom; os dois formatadores; o `mypy` estrito; o `conferir.py`;
 e os dois scripts de hook, alimentados com a mesma entrada que o Claude Code envia.
-**O que ainda não foi executado:** o Claude Code disparando o hook a partir do `settings.json`; a skill
-`/conferir-codigo`; o `eslint.config.mjs` com o `typescript-eslint`; e tudo isso no Windows.
+As provas rodam em Linux e em Windows e incluem o `eslint.config.mjs` com o `typescript-eslint`.
+**O que ainda não foi executado:** o Claude Code disparando o hook a partir do `settings.json` e a skill
+`/conferir-codigo`. Isso só dá para conferir numa sessão real do Claude Code.
 
 Em cada projeto:
 
 1. **Formatação e regras.** Copie `templates/editorconfig` como `.editorconfig`.
    Python: use o `templates/pyproject-python.toml` e copie `templates/conferir.py` para a raiz.
-   Node: copie `eslint.regras.mjs` e `eslint.config.mjs` para a raiz, `prettierrc.json` como `.prettierrc.json`, e crie
-   o script `"conferir": "prettier --check . && eslint . && tsc --noEmit && vitest run"` no `package.json`.
+   Node: copie `eslint.regras.mjs` e `eslint.config.mjs` para a raiz, `prettierrc.json` como `.prettierrc.json`,
+   `prettierignore` como `.prettierignore`, confira o `tsconfig.json` contra o `templates/tsconfig.json` e crie o script
+   `"conferir": "prettier --check . && eslint . --max-warnings 0 && tsc --noEmit && vitest run"` no `package.json`.
+   Nos dois casos, copie `gitattributes` como `.gitattributes` e `gitignore-python` (ou `gitignore-node`) como `.gitignore`.
 2. **Hook de edição.** Copie `templates/claude/settings.python.json` (ou `settings.node.json`) como
    `.claude/settings.json` e o `conferir-edicao.py` (ou `.mjs`) para `.claude/hooks/`. Se o projeto já tiver
    `settings.json`, junte só o bloco `hooks`. No Linux e no macOS, troque `python` por `python3` se for preciso.

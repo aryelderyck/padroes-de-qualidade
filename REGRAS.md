@@ -1,6 +1,6 @@
 # Regras de toda sessão
 
-**Única leitura obrigatória do kit no início de cada sessão**, em qualquer projeto. O `CLAUDE.md` do projeto, que o
+**Única leitura obrigatória do kit no início de cada sessão em que a pessoa pediu para seguir o kit** (o uso é opcional). O `CLAUDE.md` do projeto, que o
 Claude Code já carrega sozinho, traz o contexto da pessoa e as regras do projeto. Todo o resto do kit é aberto **por
 seção, no momento em que serve** (tabela abaixo). Ler o kit inteiro gasta contexto e tempo sem melhorar o resultado.
 
