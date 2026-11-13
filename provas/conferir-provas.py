@@ -106,6 +106,10 @@ CASOS_DE_SEGURANCA = {
     ),
 }
 
+BOM_PY = '"""Módulo novo."""\n\n\ndef um() -> int:\n    return 1\n'
+BOM_JS = "export function um() {\n  return 1;\n}\n"
+RUIM_JS = "export function um(a) {\n    return a == 1\n}\n"
+
 TESTE_TIPICO = """from app.bom import classificar
 
 
@@ -310,6 +314,10 @@ def montar_projeto_python(pasta: Path) -> None:
         MODELOS / "claude" / "hooks" / "conferir-edicao.py",
         pasta / ".claude" / "hooks" / "conferir-edicao.py",
     )
+    copiar(
+        MODELOS / "claude" / "hooks" / "conferir-fim.py",
+        pasta / ".claude" / "hooks" / "conferir-fim.py",
+    )
     copiar(PROVAS / "python" / "bom.py", pasta / "app" / "bom.py")
     escrever(pasta / "app" / "__init__.py", "")
     escrever(pasta / "tests" / "__init__.py", "")
@@ -482,9 +490,9 @@ def provar_scripts_do_kit(base: Path, ruff: str, mypy: str | None) -> None:
     copiar(MODELOS / "pyproject-python.toml", pasta / "pyproject.toml")
     copiar(PROVAS / "conferir-provas.py", pasta / "kit" / "conferir_provas.py")
     copiar(MODELOS / "conferir.py", pasta / "kit" / "conferir.py")
-    copiar(
-        MODELOS / "claude" / "hooks" / "conferir-edicao.py", pasta / "kit" / "conferir_edicao.py"
-    )
+    hooks = MODELOS / "claude" / "hooks"
+    copiar(hooks / "conferir-edicao.py", pasta / "kit" / "conferir_edicao.py")
+    copiar(hooks / "conferir-fim.py", pasta / "kit" / "conferir_fim.py")
     excecoes = [
         parte
         for regra in EXCECOES_DOS_SCRIPTS_DO_KIT
@@ -569,6 +577,48 @@ def provar_trava_do_commit(base: Path, projeto_python: Path) -> None:
     )
 
 
+def provar_trava_do_pronto(
+    nome: str, hook: list[str], pasta: Path, arquivo: str, textos: tuple[str, str]
+) -> None:
+    """A pasta chega com tudo commitado; o arquivo novo simula o que um comando criou."""
+    titulo(f"[4B] Trava do pronto para {nome} (conferir-fim)")
+    ruim, bom = textos
+    parar = json.dumps({"cwd": str(pasta), "stop_hook_active": False})
+    conferir(rodar(hook, pasta, parar).returncode == 0, "nada alterado: deixa encerrar")
+    escrever(pasta / arquivo, ruim)
+    travou = rodar(hook, pasta, parar)
+    conferir(
+        travou.returncode == SAIDA_DE_PROBLEMA_DO_HOOK and Path(arquivo).name in travou.stderr,
+        "arquivo novo com problema (criado por comando): não deixa encerrar e diz qual é",
+        travou.stderr,
+    )
+    de_novo = json.dumps({"cwd": str(pasta), "stop_hook_active": True})
+    conferir(
+        rodar(hook, pasta, de_novo).returncode == 0,
+        "segunda tentativa seguida: deixa encerrar (sem laço)",
+    )
+    escrever(pasta / arquivo, bom)
+    liberou = rodar(hook, pasta, parar)
+    conferir(liberou.returncode == 0, "arquivo corrigido: deixa encerrar", liberou.stderr)
+    (pasta / arquivo).unlink()
+    conferir(
+        rodar(hook, pasta, "isto não é JSON").returncode == 0,
+        "entrada inválida: não trava o trabalho",
+    )
+    conferir(
+        rodar(hook, pasta, "[]").returncode == 0,
+        "entrada em formato inesperado: não trava o trabalho",
+    )
+    fora = pasta.parent / f"sem-git-{nome.lower()}"
+    escrever(fora / arquivo, ruim)
+    sem_git = rodar(hook, fora, json.dumps({"cwd": str(fora)}))
+    conferir(
+        sem_git.returncode == 0,
+        "pasta que não é repositório git: não trava o trabalho",
+        sem_git.stderr,
+    )
+
+
 def provar_python(base: Path) -> None:
     ruff, mypy = ferramenta("ruff"), ferramenta("mypy")
     if ruff is None:
@@ -582,6 +632,10 @@ def provar_python(base: Path) -> None:
     else:
         provar_conferir(pasta)
         provar_trava_do_commit(base, pasta)
+        hook = [sys.executable, str(pasta / ".claude" / "hooks" / "conferir-fim.py")]
+        provar_trava_do_pronto(
+            "Python", hook, pasta, "app/novo.py", ("def  f( ):\n  return  1\n", BOM_PY)
+        )
     provar_scripts_do_kit(base, ruff, mypy)
 
 
@@ -648,6 +702,7 @@ def provar_regras_js(eslint: list[str], prettier: list[str]) -> set[str]:
         "provas/js/bom.js",
         "provas/js/componente-bom.jsx",
         "templates/claude/hooks/conferir-edicao.mjs",
+        "templates/claude/hooks/conferir-fim.mjs",
     ]
     for arquivo in bons:
         apontadas = regras_apontadas(eslint, arquivo)
@@ -703,8 +758,13 @@ def montar_projeto_node(pasta: Path, modulo_eslint: Path, modulo_prettier: Path)
         MODELOS / "claude" / "hooks" / "conferir-edicao.mjs",
         pasta / ".claude" / "hooks" / "conferir-edicao.mjs",
     )
+    copiar(
+        MODELOS / "claude" / "hooks" / "conferir-fim.mjs",
+        pasta / ".claude" / "hooks" / "conferir-fim.mjs",
+    )
     copiar(MODELOS / "eslint.regras.mjs", pasta / "eslint.regras.mjs")
     copiar(MODELOS / "prettierrc.json", pasta / ".prettierrc.json")
+    copiar(MODELOS / "gitignore-node", pasta / ".gitignore")
     escrever(
         pasta / "eslint.config.mjs",
         'import { regrasDoKit } from "./eslint.regras.mjs";\n\n'
@@ -763,6 +823,21 @@ def provar_hook_node(
         "projeto sem node_modules: avisa e não trava",
         sem_modulos.stderr,
     )
+    git = shutil.which("git")
+    if git is None:
+        avisos.append("git ausente: a trava do pronto em Node NÃO foi conferida")
+        return
+    (pasta / "src" / "ruim.js").unlink()
+    for comando in (
+        ["init", "-q"],
+        ["config", "user.name", "Prova do Kit"],
+        ["config", "user.email", "prova@exemplo.test"],
+        ["config", "commit.gpgsign", "false"],
+    ):
+        rodar([git, *comando], pasta)
+    tentar_commit(git, pasta, "feat: projeto bom")
+    fim = [node, str(pasta / ".claude" / "hooks" / "conferir-fim.mjs")]
+    provar_trava_do_pronto("Node", fim, pasta, "src/novo.js", (RUIM_JS, BOM_JS))
 
 
 def provar_js(base: Path) -> set[str]:
