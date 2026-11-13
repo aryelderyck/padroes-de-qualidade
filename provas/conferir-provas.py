@@ -1200,7 +1200,7 @@ def preparar_destino(base: Path, nome: str, tipo: str, git: str) -> Path:
         rodar([git, "config", *ajuste], pasta)
     rodar([git, "config", "commit.gpgsign", "false"], pasta)
     if tipo == "node":
-        escrever(pasta / "package.json", '{ "scripts": {} }\n')
+        escrever(pasta / "package.json", '{\n  "scripts": {}\n}\n')
         rodar([git, "add", "-A"], pasta)
         rodar([git, "commit", "-q", "-m", "chore: projeto criado"], pasta)
     return pasta
