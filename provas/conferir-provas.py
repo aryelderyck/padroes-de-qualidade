@@ -507,6 +507,68 @@ def provar_scripts_do_kit(base: Path, ruff: str, mypy: str | None) -> None:
         )
 
 
+def preparar_repositorio(git: str, pasta: Path) -> None:
+    """Cria um repositório com a trava do commit instalada do jeito que o kit ensina."""
+    copiar(MODELOS / "githooks" / "pre-commit", pasta / ".githooks" / "pre-commit")
+    (pasta / ".githooks" / "pre-commit").chmod(0o755)
+    for comando in (
+        ["init", "-q"],
+        ["config", "user.name", "Prova do Kit"],
+        ["config", "user.email", "prova@exemplo.test"],
+        ["config", "commit.gpgsign", "false"],
+        ["config", "core.hooksPath", ".githooks"],
+    ):
+        rodar([git, *comando], pasta)
+
+
+def tentar_commit(git: str, pasta: Path, mensagem: str) -> subprocess.CompletedProcess[str]:
+    rodar([git, "add", "-A"], pasta)
+    return rodar([git, "commit", "-q", "-m", mensagem], pasta)
+
+
+def provar_trava_do_commit(base: Path, projeto_python: Path) -> None:
+    titulo("[4A] Trava do commit (templates/githooks/pre-commit)")
+    git = shutil.which("git")
+    if git is None:
+        avisos.append("git ausente: a trava do commit NÃO foi conferida")
+        return
+    copiar(MODELOS / "gitignore-python", projeto_python / ".gitignore")
+    preparar_repositorio(git, projeto_python)
+    bom = tentar_commit(git, projeto_python, "feat: projeto bom")
+    conferir(bom.returncode == 0, "projeto Python bom: o commit é aceito", bom.stdout + bom.stderr)
+    escrever(projeto_python / "app" / "feio.py", "def  f( ):\n  return  1\n")
+    ruim = tentar_commit(git, projeto_python, "feat: código fora do formato")
+    recusou = ruim.returncode != 0 and "FALHOU em" in ruim.stdout + ruim.stderr
+    conferir(recusou, "projeto Python com código fora do formato: o commit é recusado", ruim.stdout)
+    registrados = rodar([git, "log", "--oneline"], projeto_python).stdout.strip().splitlines()
+    conferir(len(registrados) == 1, "o commit recusado não entrou no histórico", registrados)
+    (projeto_python / "app" / "feio.py").unlink()
+
+    if shutil.which("npm") is None:
+        avisos.append("npm ausente: a trava do commit em projeto Node NÃO foi conferida")
+    else:
+        for nome, saida, esperado in (("node-bom", 0, True), ("node-ruim", 1, False)):
+            pasta = base / f"trava-{nome}"
+            script = f'node -e "process.exit({saida})"'
+            escrever(pasta / "package.json", json.dumps({"scripts": {"conferir": script}}) + "\n")
+            preparar_repositorio(git, pasta)
+            aceito = tentar_commit(git, pasta, "feat: teste").returncode == 0
+            situacao = "aceito" if esperado else "recusado"
+            conferir(
+                aceito == esperado,
+                f"projeto Node com conferência {situacao[:-1]}a: commit {situacao}",
+            )
+    vazio = base / "trava-sem-conferencia"
+    escrever(vazio / "leia.txt", "sem comando de conferência\n")
+    preparar_repositorio(git, vazio)
+    sem = tentar_commit(git, vazio, "feat: teste")
+    conferir(
+        sem.returncode != 0 and "não tem comando de conferência" in sem.stderr,
+        "projeto sem comando de conferência: commit recusado com explicação",
+        sem.stderr,
+    )
+
+
 def provar_python(base: Path) -> None:
     ruff, mypy = ferramenta("ruff"), ferramenta("mypy")
     if ruff is None:
@@ -519,6 +581,7 @@ def provar_python(base: Path) -> None:
         avisos.append("mypy ou pytest ausente: o conferir.py NÃO foi conferido")
     else:
         provar_conferir(pasta)
+        provar_trava_do_commit(base, pasta)
     provar_scripts_do_kit(base, ruff, mypy)
 
 

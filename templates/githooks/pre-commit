@@ -1,0 +1,25 @@
+#!/bin/sh
+# Trava do commit: roda a conferência completa do projeto e recusa o commit se ela falhar.
+# Instalar (uma vez por clone): copie para .githooks/pre-commit e rode
+#   git config core.hooksPath .githooks
+# Para uma emergência existe "git commit --no-verify"; o CI confere do mesmo jeito depois.
+
+raiz=$(git rev-parse --show-toplevel) || exit 1
+cd "$raiz" || exit 1
+
+if [ -f conferir.py ]; then
+  for python in .venv/Scripts/python.exe .venv/bin/python python python3; do
+    if "$python" --version >/dev/null 2>&1; then
+      exec "$python" conferir.py
+    fi
+  done
+  echo "pre-commit: Python não encontrado para rodar o conferir.py." >&2
+  exit 1
+fi
+
+if [ -f package.json ]; then
+  exec npm run --silent conferir
+fi
+
+echo "pre-commit: este projeto não tem comando de conferência (conferir.py ou package.json)." >&2
+exit 1
