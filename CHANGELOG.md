@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.9 · 2026-11-12
+Correção dos defeitos achados na revisão do kit e fechamento das etapas que dependiam de alguém lembrar.
+As provas passaram de 79 para mais de 200 e rodam no CI em Linux e em Windows.
+- **O uso do kit é opcional:** só vale quando a pessoa pede. Registrado no `README.md`, no `REGRAS.md` e no `CONTEXTO.md`.
+- **Defeitos corrigidos:** modelos fora do formato do Prettier (o comando de conferência de um projeto Node falhava
+  por causa dos documentos do próprio kit); regras de JavaScript que atritavam com React e com dados de API; regras de
+  Python que acusavam fixture e senha de mentira em testes; `conferir.py` que dizia "corrija" quando faltava a
+  ferramenta; hooks que travavam com arquivo apagado; quatro regras citadas sem prova; scripts do kit fora das próprias
+  regras; `eslint.config.mjs` com função descontinuada e regras em conflito.
+- **Novo `instalar.py`:** monta um projeto (Python ou Node) ou a máquina com um comando, sem sobrescrever o que existe.
+- **Trava do commit** (`templates/githooks/pre-commit`) e **trava do pronto** (`conferir-fim`, evento Stop do Claude
+  Code): a conferência deixa de depender de lembrar, e arquivo criado por comando também é conferido.
+- **Modelos novos:** `.gitignore` (Python e Node), `.gitattributes`, `.prettierignore` e `tsconfig.json` estrito.
+- **Provas novas:** toda regra de ESLint do kit precisa de um exemplo ruim; todo código citado nas listas da skill
+  precisa de prova; configuração de TypeScript com pacotes reais; ferramentas só no `.venv`; instalador; travas;
+  imagem Docker do modelo; todo arquivo do kit no mapa de arquivos.
+- Actions fixadas pelo identificador do commit, com Dependabot no kit. `README.md` reescrito com diagrama e
+  `docs/INSTALACAO.md` novo. Skill `conferir-codigo` confere a orientação de segurança do projeto e orienta o que
+  fazer com cada achado.
+- **Ainda não executado:** o Claude Code disparando os hooks, a skill, o estilo de saída e os plugins de segurança.
+
 ## 0.8 · 2026-11-12
 Conferência obrigatória de todo código, com as regras provadas por execução (`docs/REFERENCIAS.md`, seção 6).
 - `PADROES.md`, nova seção 4A: três camadas (hook na edição, comando único, revisão independente), formatação decidida

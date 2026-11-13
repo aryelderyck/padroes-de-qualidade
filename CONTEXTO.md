@@ -125,6 +125,7 @@ Só decisões que valem para **vários projetos**. Decisão de um projeto só fi
 estão em `painel-dota/docs/superpowers/specs/`; foram tiradas daqui em 2026-11-12 e continuam no histórico do git).
 Acrescente no topo, com data.
 
+- **2026-11-12:** o uso do kit é **opcional**: Claude só o segue quando a pessoa pede no prompt. O objetivo dele é ser a referência de código e de segurança, para a pessoa não ter de pedir cada correção à mão. Kit na versão 0.9: instalador, trava do commit, trava do pronto e provas em Linux e em Windows.
 - **2026-11-12:** kit na versão 0.8, a pedido da pessoa: todo código passa por conferência em três camadas (hook na edição, comando único de formatação, linter, tipos e testes, e revisão independente pela skill `/conferir-codigo`), com Código Limpo de limite medido, lista de armadilhas de modelagem e de algoritmos e regras de simplificação (`PADROES.md`, seção 4A). Regra automática só entra com prova em `provas/`.
 - **2026-11-12:** kit na versão 0.7: segurança reescrita por nível, com os riscos de API do OWASP e o modo de conferir cada item (`PADROES.md`, seção 6); código de segurança escrito com IA passa por teste negativo e revisão independente; modelos para o plugin `security-guidance` em `templates/claude/`.
 - **2026-11-12:** kit na versão 0.6: o jeito de ensinar passa a morar no estilo de saída Professor, um só lugar para todos os projetos (seção 2); as regras foram reescritas como gatilho e ação; as fontes ficam em `docs/REFERENCIAS.md`.

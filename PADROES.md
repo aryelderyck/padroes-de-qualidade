@@ -75,9 +75,11 @@ está bom. As fontes estão em [`docs/REFERENCIAS.md`](docs/REFERENCIAS.md), se�
 
 | Camada | Quando | O que confere | Como |
 | --- | --- | --- | --- |
-| 1. Na edição | A cada arquivo que o Claude edita | Indentação e formatação (corrige sozinho) e regras do linter (devolve ao Claude) | Hook `conferir-edicao` (`templates/claude/`) |
-| 2. Comando único | Antes de cada commit e no CI | Formatação, linter, tipos e testes, nessa ordem, parando na primeira falha | Python: `python conferir.py` · Node: `npm run conferir` |
+| 1. Na edição | A cada arquivo que o Claude edita, e de novo quando ele vai encerrar | Indentação e formatação (corrige sozinho) e regras do linter (devolve ao Claude) | Hook de edição e trava do pronto (`.claude/hooks/`) |
+| 2. Comando único | Em todo commit, pela trava do commit, e no CI | Formatação, linter, tipos e testes, nessa ordem, parando na primeira falha | Python: `python conferir.py` · Node: `npm run conferir` |
 | 3. Revisão independente | Antes de dizer "pronto" | O que a ferramenta não vê: erro de lógica, armadilhas de modelagem e de algoritmo, injeção, simplificação e Código Limpo | Skill `/conferir-codigo`, que roda num subagente sem o contexto de quem escreveu; `/code-review` e `/security-review` como complemento |
+
+As camadas 1 e 2 são instaladas pelo `instalar.py` ([`docs/INSTALACAO.md`](docs/INSTALACAO.md)).
 
 - **Formatação e indentação** não se discutem nem se pedem por instrução: quem decide é o formatador (`ruff format` em
   Python, Prettier no resto), e o `.editorconfig` cobre os outros arquivos. Código fora do formato não passa no CI.
@@ -124,7 +126,8 @@ Ordem das etapas (para na primeira que falhar):
 Regras do workflow:
 
 - `permissions: contents: read` por padrão; dê mais só ao job que precisa (ex.: Pages).
-- Versões das actions fixadas (`@v4`) e conferidas de tempos em tempos; Dependabot atualiza.
+- Actions fixadas pelo identificador do commit, com a versão no comentário (`uses: actions/checkout@<commit> # v4`): uma
+  etiqueta como `@v4` pode ser movida para outro código, o identificador não. O Dependabot atualiza os dois.
 - Segredos só em *Settings → Secrets*, nunca no YAML nem em logs.
 - Valide o YAML antes de subir (`python -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" arquivo.yml`). Valores com `:` precisam de aspas.
 - Verificações lentas ou instáveis (ex.: Lighthouse) ficam em workflow separado e não travam o deploy.

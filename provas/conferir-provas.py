@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import tomllib
 from pathlib import Path
 
@@ -852,6 +853,60 @@ def provar_js(base: Path) -> set[str]:
     return regras
 
 
+# --------------------------------------------------------------------------- [13] Docker
+APP_DE_EXEMPLO = """from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/saude")
+def saude() -> dict[str, str]:
+    return {"situacao": "ok"}
+"""
+ESPERA_DA_SAUDE_EM_SEGUNDOS = 120
+INTERVALO_EM_SEGUNDOS = 5
+
+
+def provar_docker(base: Path) -> None:
+    titulo("[13] Imagem Docker do modelo (Dockerfile.python)")
+    docker = shutil.which("docker")
+    if os.environ.get("PROVAS_COM_REDE") != "1" or docker is None or os.name == "nt":
+        avisos.append("sem rede, sem Docker ou em Windows: a imagem Docker NÃO foi conferida aqui")
+        return
+    pasta = base / "projeto-docker"
+    copiar(MODELOS / "Dockerfile.python", pasta / "Dockerfile")
+    copiar(MODELOS / "dockerignore", pasta / ".dockerignore")
+    escrever(pasta / "requirements.txt", "fastapi\nuvicorn\n")
+    escrever(pasta / "app" / "__init__.py", "")
+    escrever(pasta / "app" / "main.py", APP_DE_EXEMPLO)
+    escrever(pasta / ".env", "SEGREDO=nao-pode-entrar-na-imagem\n")
+    construir = rodar([docker, "build", "-q", "-t", "kit-prova", "."], pasta)
+    conferir(
+        construir.returncode == 0, "a imagem é construída", construir.stderr[-TAMANHO_DO_TRECHO:]
+    )
+    if construir.returncode != 0:
+        return
+    usuario = rodar([docker, "run", "--rm", "kit-prova", "id", "-u"], pasta).stdout.strip()
+    conferir(usuario == "10001", "o processo roda sem root (usuário 10001)", usuario)
+    segredo = rodar([docker, "run", "--rm", "kit-prova", "ls", "-a", "/app"], pasta).stdout
+    conferir(".env" not in segredo.split(), "o arquivo .env não entra na imagem", segredo)
+    rodar([docker, "run", "-d", "--name", "kit-prova-no-ar", "kit-prova"], pasta)
+    situacao = ""
+    for _ in range(ESPERA_DA_SAUDE_EM_SEGUNDOS // INTERVALO_EM_SEGUNDOS):
+        consulta = [docker, "inspect", "--format", "{{.State.Health.Status}}", "kit-prova-no-ar"]
+        situacao = rodar(consulta, pasta).stdout.strip()
+        if situacao in {"healthy", "unhealthy"}:
+            break
+        time.sleep(INTERVALO_EM_SEGUNDOS)
+    registro = rodar([docker, "logs", "kit-prova-no-ar"], pasta)
+    conferir(
+        situacao == "healthy",
+        "a aplicação sobe e responde na rota /saude",
+        situacao + registro.stderr,
+    )
+    rodar([docker, "rm", "-f", "kit-prova-no-ar"], pasta)
+
+
 # --------------------------------------------------------------------------- [12] instalador
 ESPERADO_NO_PROJETO = {
     "python": [
@@ -1128,6 +1183,7 @@ def main() -> int:
         provar_modelos_de_git(base)
         provar_instalador(base)
         provar_typescript(base)
+        provar_docker(base)
     provar_padroes_de_seguranca()
     titulo("[10] Coerência entre as listas da skill e as provas")
     provar_codigos_citados(regras_js)

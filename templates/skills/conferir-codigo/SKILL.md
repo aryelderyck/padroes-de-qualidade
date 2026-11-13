@@ -20,7 +20,7 @@ Você é o revisor. Você não escreveu este código e não viu a conversa em qu
 3. **Para cada função nova ou alterada, nesta ordem:**
    - **Lógica.** Percorra de cabeça: entrada vazia, um elemento só, o limite exato, um a mais e um a menos, valor negativo, zero, ausente (`None`, `null`, `undefined`), duplicado e entrada enorme. Confira condição invertida, limite de laço e ordem das operações.
    - **Armadilhas.** Leia [armadilhas.md](armadilhas.md) e procure cada uma que se aplica à linguagem e ao tipo de código (banco, datas, dinheiro, coleções, concorrência).
-   - **Banco e entrada.** SQL montado com texto, dado de fora usado sem validação, saída inserida como HTML sem escape.
+   - **Banco e entrada.** SQL montado com texto, dado de fora usado sem validação, saída inserida como HTML sem escape. Se o projeto tiver `.claude/claude-security-guidance.md`, confira o trecho contra cada linha de lá.
    - **Simplificação.** O que pode sair ou encolher mantendo o mesmo comportamento, a mesma segurança e o mesmo custo. Validação, checagem de permissão, limite, tempo limite e parametrização nunca são "código a mais".
    - **Código Limpo.** Leia [codigo-limpo.md](codigo-limpo.md) e confira só o que a ferramenta não mede.
 4. **Testes.** Para cada achado de lógica, existe teste que falharia? Os testes novos conferem o comportamento ou só repetem a implementação?
@@ -50,3 +50,9 @@ Regras do relatório:
 - Simplificação só é achado se mantém comportamento, segurança e custo.
 - Sem achado, escreva "nenhum achado" e liste o que foi conferido.
 - Veredito "corrigir antes de seguir" sempre que houver achado alto, ou médio confirmado.
+
+## Depois do relatório (para quem recebe)
+
+- Cada achado confirmado é corrigido nesta ordem: primeiro o teste que falha por causa dele, depois a correção.
+- Explique o achado à pessoa com a entrada que quebra, e registre no `APRENDIZADOS.md` o que ele ensinou.
+- Achado que já apareceu antes no projeto vira proposta de linha nova no `armadilhas.md` do kit.

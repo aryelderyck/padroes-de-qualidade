@@ -1,0 +1,7 @@
+# Mantém as actions do CI do kit atualizadas (elas são fixadas pelo identificador do commit).
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

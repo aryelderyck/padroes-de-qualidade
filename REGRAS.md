@@ -19,7 +19,7 @@ seção, no momento em que serve** (tabela abaixo). Ler o kit inteiro gasta cont
 | Otimizar ou refatorar | `REVISAO.md`, bloco C |
 | Testar | `PADROES.md`, seção 4 · `REVISAO.md`, bloco E |
 | Site que quer ser achado na busca | `PADROES.md`, seção 9A |
-| Antes de cada commit | O comando de conferência do projeto (`PADROES.md`, seção 4A) |
+| Antes de cada commit | O comando de conferência do projeto; com o kit instalado, a trava do commit o roda sozinha (`PADROES.md`, seção 4A) |
 | Antes de dizer "pronto" | Skill `/conferir-codigo` · `REVISAO.md`, bloco F · `docs/CHECKLIST-PRONTO.md` do projeto |
 | Apareceu um erro | `ERROS.md`: procure no índice ou por palavra e leia só a entrada. Nunca o arquivo inteiro |
 | Ensinar um conceito | `CONTEXTO.md`, seção 6 (glossário, para não redefinir um termo de outro jeito) · `REVISAO.md`, bloco G |
