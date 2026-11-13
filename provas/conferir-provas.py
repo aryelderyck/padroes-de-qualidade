@@ -569,6 +569,17 @@ def provar_trava_do_commit(base: Path, projeto_python: Path) -> None:
                 aceito == esperado,
                 f"projeto Node com conferência {situacao[:-1]}a: commit {situacao}",
             )
+        casos = (("sem-script", '{"scripts": {}}\n'), ("sem-scripts", "{}\n"), ("json-ruim", "{"))
+        for caso, conteudo in casos:
+            pasta = base / f"trava-node-{caso}"
+            escrever(pasta / "package.json", conteudo)
+            preparar_repositorio(git, pasta)
+            sem_script = tentar_commit(git, pasta, "feat: teste")
+            conferir(
+                sem_script.returncode != 0 and 'script "conferir"' in sem_script.stderr,
+                f"projeto Node {caso}: commit recusado com explicação",
+                sem_script.stderr,
+            )
     vazio = base / "trava-sem-conferencia"
     escrever(vazio / "leia.txt", "sem comando de conferência\n")
     preparar_repositorio(git, vazio)

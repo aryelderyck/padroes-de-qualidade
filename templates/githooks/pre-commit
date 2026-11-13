@@ -18,6 +18,12 @@ if [ -f conferir.py ]; then
 fi
 
 if [ -f package.json ]; then
+  # Sem esta checagem o npm recusaria em silêncio (o --silent esconde o "Missing script").
+  if ! node -e 'process.exit(require("./package.json").scripts?.conferir ? 0 : 1)' 2>/dev/null; then
+    echo 'pre-commit: o package.json não tem o script "conferir" (ou o Node não abriu o arquivo).' >&2
+    echo 'Crie-o, por exemplo: "conferir": "prettier --check . && eslint . --max-warnings 0 && tsc --noEmit && vitest run"' >&2
+    exit 1
+  fi
   exec npm run --silent conferir
 fi
 
