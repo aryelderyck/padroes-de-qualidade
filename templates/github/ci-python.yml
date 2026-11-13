@@ -1,6 +1,6 @@
-# Copie para .github/workflows/ci.yml. Não foi executado ainda: valide no primeiro projeto.
-# Antes: gere requirements-dev.txt travado, por exemplo com
-#   pip install pip-tools && pip-compile pyproject.toml --extra dev -o requirements-dev.txt
+# Copie para .github/workflows/ci.yml. As etapas "run" deste arquivo são executadas nas provas do kit,
+# num ambiente virtual de verdade, em Linux e em Windows.
+# Nível 2 em diante: trave as versões (pip-compile ou uv) e instale a partir do arquivo travado.
 name: CI
 
 on:
@@ -22,10 +22,10 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Instalar dependências (versões travadas)
+      - name: Instalar o projeto e as ferramentas da conferência
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+          pip install -e ".[dev]"
 
       # As quatro etapas abaixo são as mesmas do conferir.py (PADROES.md, seção 4A), com cobertura nos testes.
       - name: Formatação e indentação
@@ -41,7 +41,7 @@ jobs:
         run: pytest --cov --cov-fail-under=80
 
       - name: Auditoria de dependências
-        run: pip-audit -r requirements-dev.txt
+        run: pip-audit --skip-editable
 
   # Descomente quando o projeto tiver Dockerfile. Confira a versão atual da action do Trivy.
   # imagem:

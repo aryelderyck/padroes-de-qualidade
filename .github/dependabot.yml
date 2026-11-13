@@ -1,7 +1,12 @@
-# Mantém as actions do CI do kit atualizadas (elas são fixadas pelo identificador do commit).
+# Mantém atualizadas as actions do CI do kit (fixadas pelo identificador do commit) e as
+# ferramentas Python das provas (provas/requisitos.txt).
 version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/provas"
     schedule:
       interval: "weekly"

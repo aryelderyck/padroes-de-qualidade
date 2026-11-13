@@ -1,26 +1,31 @@
-# Modelo de pyproject.toml para projetos Python do kit. Troque o nome e ajuste as dependências.
+# Modelo de pyproject.toml para projetos Python do kit.
+# Troque o nome, liste as dependências e, se a pasta do código não se chamar `app`, troque `app`
+# nos dois lugares marcados com "pasta do código".
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "nome-do-projeto"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = [
-  "fastapi",
-  "uvicorn[standard]",
-  "pydantic>=2",
-  "sqlalchemy>=2",
-  "httpx",
-]
+# O que o projeto usa para rodar. Exemplos: "fastapi", "uvicorn[standard]", "pydantic>=2", "httpx".
+dependencies = []
 
 [project.optional-dependencies]
+# Ferramentas da conferência. Instale com: pip install -e ".[dev]"
 dev = [
   "pytest",
   "pytest-cov",
   "ruff",
   "mypy",
   "pip-audit",
-  "respx",   # simula respostas do httpx nos testes, sem rede
 ]
+
+[tool.setuptools.packages.find]
+# Pasta do código. Sem esta lista, o pip recusa instalar um projeto com mais de uma pasta na raiz.
+include = ["app*"]
 
 # ---------------------------------------------------------------------------
 # Conferência de código (PADROES.md, seção 4A). Cada regra abaixo tem prova em
@@ -89,7 +94,7 @@ testpaths = ["tests"]
 addopts = "-ra"
 
 [tool.coverage.run]
-source = ["app"]
+source = ["app"]   # pasta do código
 
 [tool.coverage.report]
 fail_under = 80

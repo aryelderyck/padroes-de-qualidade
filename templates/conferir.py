@@ -39,6 +39,7 @@ def main() -> int:
             print(f"\nNÃO RODOU: a ferramenta '{ferramenta}' não foi encontrada.")
             print("Crie o ambiente virtual em .venv e instale as dependências de desenvolvimento:")
             print('  python -m venv .venv   e depois   .venv/Scripts/pip install -e ".[dev]"')
+            print("  (em Linux e macOS o pip fica em .venv/bin/pip)")
             return SAIDA_SEM_FERRAMENTA
         resultado = subprocess.run([executavel, *argumentos], cwd=RAIZ, check=False)
         if resultado.returncode != 0:

@@ -69,8 +69,11 @@ ECOSSISTEMAS = {"python": {"pip", "github-actions"}, "node": {"npm", "github-act
 LINGUAGEM_DO_CODEQL = {"python": "python", "node": "javascript-typescript"}
 PROXIMOS_PASSOS = {
     "python": [
-        "Preencha os [colchetes] do CLAUDE.md e do pyproject.toml.",
-        'Crie o ambiente: python -m venv .venv  e depois  .venv/Scripts/pip install -e ".[dev]"',
+        "Preencha os [colchetes] do CLAUDE.md.",
+        "No pyproject.toml, troque o nome do projeto e liste as dependências.",
+        "Crie o ambiente: python -m venv .venv",
+        'Instale as ferramentas: .venv/Scripts/pip install -e ".[dev]"',
+        "(em Linux e macOS o pip fica em .venv/bin/pip)",
         "Antes de cada commit a conferência roda sozinha; à mão: python conferir.py",
     ],
     "node": [

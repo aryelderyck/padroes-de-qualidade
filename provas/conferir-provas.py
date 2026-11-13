@@ -1,7 +1,8 @@
 """Provas do kit: confirma que cada regra automática pega o exemplo ruim e deixa passar o bom.
 
 Uso, na raiz do kit:  python provas/conferir-provas.py
-Precisa de ruff, mypy, pytest, node, eslint e prettier (versões em .github/workflows/kit.yml).
+Precisa de ruff, mypy e pytest (versões em provas/requisitos.txt) e de node, eslint e prettier
+(versões em .github/workflows/kit.yml).
 Monta projetos de exemplo numa pasta temporária, com os modelos de templates/ nos lugares em que
 ficam num projeto de verdade, e roda as ferramentas de verdade. Sai com 1 se alguma prova falhar.
 """
@@ -9,6 +10,7 @@ ficam num projeto de verdade, e roda as ferramentas de verdade. Sai com 1 se alg
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -1133,6 +1135,96 @@ def provar_typescript(base: Path) -> None:
     )
 
 
+# --------------------------------------------------------------------------- [14] ambiente real
+SOMA = '''"""Exemplo mínimo com cobertura total."""
+
+
+def somar(primeiro: int, segundo: int) -> int:
+    return primeiro + segundo
+'''
+TESTE_DA_SOMA = """from app.soma import somar
+
+
+def test_somar():
+    assert somar(2, 3) == 5
+"""
+SAIDAS_DA_AUDITORIA = {0, 1}  # 1 = achou vulnerabilidade publicada hoje: a etapa rodou
+
+
+def etapas_do_ci(arquivo: Path) -> list[list[str]] | None:
+    """Os comandos das etapas `run` de um workflow, na ordem, já separados em argumentos."""
+    try:
+        import yaml  # type: ignore[import-untyped, unused-ignore]  # noqa: PLC0415
+    except ImportError:
+        avisos.append("pyyaml não está instalado: as etapas do CI modelo NÃO foram executadas")
+        return None
+    passos = yaml.safe_load(ler(arquivo))["jobs"]["qualidade"]["steps"]
+    linhas = [linha for passo in passos for linha in passo.get("run", "").splitlines()]
+    return [shlex.split(linha) for linha in linhas if linha.strip()]
+
+
+def provar_ambiente_real(base: Path) -> None:
+    titulo("[14] Projeto Python instalado de verdade (ambiente virtual, etapas do CI e commit)")
+    git = shutil.which("git")
+    if os.environ.get("PROVAS_COM_REDE") != "1" or git is None:
+        avisos.append("sem rede ou sem git: o projeto Python de verdade NÃO foi conferido aqui")
+        return
+    pasta = base / "ambiente-real"
+    pasta.mkdir()
+    rodar([git, "init", "-q"], pasta)
+    for ajuste in (("user.name", "Prova do Kit"), ("user.email", "prova@exemplo.test")):
+        rodar([git, "config", *ajuste], pasta)
+    rodar([git, "config", "commit.gpgsign", "false"], pasta)
+    instalar_kit("projeto", str(pasta), "--tipo", "python")
+    escrever(pasta / "app" / "__init__.py", "")
+    escrever(pasta / "app" / "soma.py", SOMA)
+    escrever(pasta / "tests" / "__init__.py", "")
+    escrever(pasta / "tests" / "test_soma.py", TESTE_DA_SOMA)
+    escrever(pasta / "scripts" / "__init__.py", "")  # segunda pasta na raiz: o pip tem de aceitar
+    etapas = etapas_do_ci(pasta / ".github" / "workflows" / "ci.yml")
+    if etapas is None:
+        return
+    criar = rodar([sys.executable, "-m", "venv", ".venv"], pasta)
+    conferir(criar.returncode == 0, "ambiente virtual criado", criar.stderr)
+    executaveis = pasta / ".venv" / ("Scripts" if os.name == "nt" else "bin")
+    ambiente = {
+        **os.environ,
+        "PATH": f"{executaveis}{os.pathsep}{os.environ.get('PATH', '')}",
+        "PIP_CONSTRAINT": str(PROVAS / "requisitos.txt"),
+        "PIP_DISABLE_PIP_VERSION_CHECK": "1",
+    }
+    for programa, *argumentos in etapas:
+        executavel = shutil.which(programa, path=str(executaveis))
+        etapa = " ".join([programa, *argumentos])
+        if executavel is None:
+            conferir(False, f"etapa do CI modelo: {etapa}", "programa não está no ambiente virtual")
+            return
+        saida = rodar([executavel, *argumentos], pasta, ambiente=ambiente)
+        aceitas = SAIDAS_DA_AUDITORIA if programa == "pip-audit" else {0}
+        registro = (saida.stdout + saida.stderr)[-TAMANHO_DO_TRECHO:]
+        conferir(saida.returncode in aceitas, f"etapa do CI modelo: {etapa}", registro)
+        if saida.returncode not in aceitas:
+            return
+    python = shutil.which("python", path=str(executaveis)) or sys.executable
+    confere = rodar([python, "conferir.py"], pasta, ambiente=ambiente)
+    conferir(
+        confere.returncode == 0,
+        "conferir.py passa com as ferramentas do ambiente virtual",
+        confere.stdout[-TAMANHO_DO_TRECHO:],
+    )
+    commit = tentar_commit(git, pasta, "feat: primeiro commit")
+    conferir(
+        commit.returncode == 0,
+        "primeiro commit do projeto recém-instalado é aceito pela trava",
+        (commit.stdout + commit.stderr)[-TAMANHO_DO_TRECHO:],
+    )
+    rastreados = rodar([git, "ls-files"], pasta).stdout
+    conferir(
+        ".venv" not in rastreados and "egg-info" not in rastreados,
+        "ambiente virtual e pasta egg-info ficam fora do commit",
+    )
+
+
 # --------------------------------------------------------------------------- [8-9] git e segurança
 def provar_modelos_de_git(base: Path) -> None:
     titulo("[8] Modelos de .gitignore e .gitattributes")
@@ -1194,6 +1286,7 @@ def main() -> int:
         provar_modelos_de_git(base)
         provar_instalador(base)
         provar_typescript(base)
+        provar_ambiente_real(base)
         provar_docker(base)
     provar_padroes_de_seguranca()
     titulo("[10] Coerência entre as listas da skill e as provas")

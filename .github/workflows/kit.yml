@@ -35,7 +35,7 @@ jobs:
       - name: Instalar as ferramentas conferidas
         run: |
           python -m pip install --upgrade pip
-          pip install "ruff==0.16.9" "mypy==2.3.1" "pytest==9.1.1" pyyaml
+          pip install -r provas/requisitos.txt
           npm install --global "eslint@10.1.0" "prettier@3.8.1"
 
       - name: Rodar as provas
