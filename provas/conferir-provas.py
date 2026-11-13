@@ -1200,7 +1200,7 @@ def preparar_destino(base: Path, nome: str, tipo: str, git: str) -> Path:
         rodar([git, "config", *ajuste], pasta)
     rodar([git, "config", "commit.gpgsign", "false"], pasta)
     if tipo == "node":
-        escrever(pasta / "package.json", '{"scripts": {}}\n')
+        escrever(pasta / "package.json", '{ "scripts": {} }\n')
         rodar([git, "add", "-A"], pasta)
         rodar([git, "commit", "-q", "-m", "chore: projeto criado"], pasta)
     return pasta
@@ -1396,6 +1396,16 @@ def provar_instalador(base: Path) -> None:
         for tipo in ("python", "node")
         for modo in ("essencial", "completo")
     }
+    comandos = comandos_de_node()
+    prettier = comandos[1] if comandos is not None else None
+    for modo in ("essencial", "completo") if prettier else ():
+        formato = rodar([*(prettier or []), "--check", "."], instalados["node", modo])
+        fora = (formato.stdout + formato.stderr).replace("Checking formatting...", "").strip()
+        conferir(
+            formato.returncode == 0,
+            f"node {modo}: tudo o que foi instalado passa no Prettier",
+            fora,
+        )
     provar_avaliacao_python(base, git)
     provar_avaliacao_node(base, git)
     if shutil.which("ruff") and shutil.which("mypy") and shutil.which("pytest"):
