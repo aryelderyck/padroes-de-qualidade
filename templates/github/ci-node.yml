@@ -28,8 +28,16 @@ jobs:
       - name: Conferência completa (formatação, linter, tipos e testes)
         run: npm run conferir
 
+      # [essencial]
+      # Avisa, mas não reprova: vulnerabilidade em dependência indireta nem sempre tem correção.
+      - name: Auditoria de dependências (só avisa)
+        continue-on-error: true
+        run: npm audit --audit-level=high
+      # [/essencial]
+      # [completo]
       - name: Auditoria de dependências
         run: npm audit --audit-level=high
+      # [/completo]
 
       - name: Build
         run: npm run build

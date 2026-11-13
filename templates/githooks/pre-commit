@@ -1,16 +1,22 @@
 #!/bin/sh
-# Trava do commit: roda a conferência completa do projeto e recusa o commit se ela falhar.
+# Trava do commit: roda a conferência do projeto e recusa o commit se ela falhar.
+# Por padrão roda a conferência rápida (formatação e linter). Para rodar também tipos e testes
+# em todo commit:   git config kit.trava completa
 # Instalar (uma vez por clone): copie para .githooks/pre-commit e rode
 #   git config core.hooksPath .githooks
 # Para uma emergência existe "git commit --no-verify"; o CI confere do mesmo jeito depois.
 
 raiz=$(git rev-parse --show-toplevel) || exit 1
 cd "$raiz" || exit 1
+completa=$(git config --get kit.trava)
 
 if [ -f conferir.py ]; then
   for python in .venv/Scripts/python.exe .venv/bin/python python python3; do
     if "$python" --version >/dev/null 2>&1; then
-      exec "$python" conferir.py
+      if [ "$completa" = "completa" ]; then
+        exec "$python" conferir.py
+      fi
+      exec "$python" conferir.py --rapido
     fi
   done
   echo "pre-commit: Python não encontrado para rodar o conferir.py." >&2
@@ -18,13 +24,19 @@ if [ -f conferir.py ]; then
 fi
 
 if [ -f package.json ]; then
+  # Diz qual script rodar: "conferir:rapido" (se existir e a trava não for a completa) ou "conferir".
+  script=$(node -e '
+    const scripts = require("./package.json").scripts ?? {};
+    const rapido = process.argv[1] !== "completa" && scripts["conferir:rapido"];
+    process.stdout.write(rapido ? "conferir:rapido" : scripts.conferir ? "conferir" : "");
+  ' "$completa" 2>/dev/null)
   # Sem esta checagem o npm recusaria em silêncio (o --silent esconde o "Missing script").
-  if ! node -e 'process.exit(require("./package.json").scripts?.conferir ? 0 : 1)' 2>/dev/null; then
+  if [ -z "$script" ]; then
     echo 'pre-commit: o package.json não tem o script "conferir" (ou o Node não abriu o arquivo).' >&2
     echo 'Crie-o, por exemplo: "conferir": "prettier --check . && eslint . --max-warnings 0 && tsc --noEmit && vitest run"' >&2
     exit 1
   fi
-  exec npm run --silent conferir
+  exec npm run --silent "$script"
 fi
 
 echo "pre-commit: este projeto não tem comando de conferência (conferir.py ou package.json)." >&2

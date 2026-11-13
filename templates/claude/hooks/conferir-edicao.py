@@ -2,7 +2,8 @@
 
 Formata o arquivo que o Claude acabou de editar e devolve ao Claude o que o linter apontar.
 Sai com 0 quando não há nada a dizer e com 2 quando há problema: nesse caso o Claude lê a
-mensagem e corrige. Copie para .claude/hooks/ do projeto.
+mensagem e corrige. Com o argumento `--so-formatar` (modo essencial do kit) só formata e
+ordena os imports, e nunca devolve nada ao Claude. Copie para .claude/hooks/ do projeto.
 """
 
 import json
@@ -41,6 +42,10 @@ def main() -> int:
         sys.stderr.write("conferir-edicao: ruff não encontrado; instale as dependências de dev.\n")
         return 0
     subprocess.run([ruff, "format", caminho], cwd=raiz, check=False, capture_output=True)
+    ordenar = [ruff, "check", "--select", "I", "--fix", "--quiet", caminho]
+    subprocess.run(ordenar, cwd=raiz, check=False, capture_output=True)
+    if "--so-formatar" in sys.argv[1:]:
+        return 0
     lint = subprocess.run(
         [ruff, "check", "--output-format", "concise", "--ignore", IGNORAR_NA_EDICAO, caminho],
         cwd=raiz,

@@ -37,11 +37,22 @@ jobs:
       - name: Tipos
         run: mypy .
 
+      # [essencial]
+      - name: Testes (a cobertura é só informada)
+        run: pytest --cov
+
+      # Avisa, mas não reprova: vulnerabilidade em dependência indireta nem sempre tem correção.
+      - name: Auditoria de dependências (só avisa)
+        continue-on-error: true
+        run: pip-audit --skip-editable
+      # [/essencial]
+      # [completo]
       - name: Testes com cobertura mínima
         run: pytest --cov --cov-fail-under=80
 
       - name: Auditoria de dependências
         run: pip-audit --skip-editable
+      # [/completo]
 
   # Descomente quando o projeto tiver Dockerfile. Confira a versão atual da action do Trivy.
   # imagem:

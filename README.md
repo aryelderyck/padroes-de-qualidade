@@ -3,7 +3,7 @@
 Kit de padrões de código e de segurança para os projetos do Aryel. Ele junta regras escritas, ferramentas que as
 conferem sozinhas e provas de que essas ferramentas funcionam.
 
-> Versão **0.10**. **O uso é opcional:** o kit só vale num projeto ou numa sessão quando a pessoa pede (por exemplo,
+> Versão **0.11**. **O uso é opcional:** o kit só vale num projeto ou numa sessão quando a pessoa pede (por exemplo,
 > "siga o kit padroes-de-qualidade"). Nada aqui se instala nem se aplica sozinho.
 
 ## Como o código é conferido
@@ -19,18 +19,22 @@ flowchart LR
   G --> H["Revisão independente:<br>skill conferir-codigo"]
 ```
 
-As quatro primeiras conferências são automáticas depois de instaladas. A revisão independente é pedida com
+No modo completo, as quatro primeiras conferências são automáticas depois de instaladas; no essencial, o hook só
+formata, a trava do pronto fica desligada e a trava do commit roda formatação e linter. A revisão independente é pedida com
 `/conferir-codigo` antes de dizer que a tarefa está pronta. As regras estão no [`PADROES.md`](PADROES.md), seções 4A
 (código) e 6 (segurança).
 
 ## Instalar
 
 ```text
+python instalar.py avaliar CAMINHO_DO_PROJETO --tipo python     (só olha: mostra o plano e os riscos)
 python instalar.py projeto CAMINHO_DO_PROJETO --tipo python     (ou --tipo node)
 python instalar.py maquina                                      (uma vez: skill de revisão e estilo Professor)
 ```
 
-O instalador copia cada modelo para o lugar certo, **não sobrescreve** o que já existe e liga a trava do commit.
+O instalador avalia o risco antes de copiar, **não sobrescreve** o que já existe e liga a trava do commit. Com risco
+alto ele para e explica. São dois modos: **essencial** (padrão), só com o que quase não acusa código correto, e
+**completo** (`--modo completo`), com tudo o que o diagrama acima mostra.
 Os detalhes, o que fazer depois e como desligar estão em [`docs/INSTALACAO.md`](docs/INSTALACAO.md).
 
 Frase para abrir uma sessão do Claude Code num projeto que usa o kit:
@@ -47,7 +51,7 @@ CI do kit a cada envio, em **Linux e em Windows**. Regra automática nova só en
 | --- | --- |
 | Cada regra de linter pega um exemplo ruim e libera o bom (Python, JavaScript e TypeScript) | O Claude Code disparando os hooks a partir do `settings.json` |
 | Formatadores, tipos estritos, comando único, trava do commit e os scripts dos hooks | A skill `/conferir-codigo` e o estilo de saída Professor |
-| Instalador: arquivos certos, não sobrescreve, projeto recém-instalado passa na conferência | Os plugins e comandos de segurança do Claude Code com os modelos do kit |
+| Instalador: os dois modos, avaliação de risco, não sobrescreve, projeto recém-instalado passa na conferência | Os plugins e comandos de segurança do Claude Code com os modelos do kit |
 | Projeto Python de ponta a ponta: ambiente virtual, `pip install -e ".[dev]"`, etapas do CI modelo e primeiro commit | Os workflows modelo de Node e de Dependabot rodando no GitHub de um projeto real |
 | Padrões de segurança, modelos de `.gitignore`, imagem Docker do modelo, CodeQL (roda no próprio kit) | |
 

@@ -12,14 +12,14 @@ seção, no momento em que serve** (tabela abaixo). Ler o kit inteiro gasta cont
 | Momento | Abrir só isto |
 | --- | --- |
 | Toda sessão | Este arquivo |
-| Começo de um projeto (uma vez) | `CONTEXTO.md`, seções 1 a 5 e 7 · `PADROES.md`, seções 1 a 5 e as do nível (tabela na seção 2 de lá) · `PRATICAS.md` |
+| Começo de um projeto (uma vez) | `python instalar.py avaliar PASTA --tipo ...` e mostre o resultado à pessoa antes de instalar · `CONTEXTO.md`, seções 1 a 5 e 7 · `PADROES.md`, seções 1 a 5 e as do nível (tabela na seção 2 de lá) · `PRATICAS.md` |
 | Escolher tema, abordagem ou stack | `REVISAO.md`, bloco A |
 | Escrever código | `REVISAO.md`, bloco B |
 | Rota, campo, dado, dependência ou chave nova; chamada a API ou a modelo de IA | `PADROES.md`, seção 6 (bloco do nível) · `REVISAO.md`, bloco D |
 | Otimizar ou refatorar | `REVISAO.md`, bloco C |
 | Testar | `PADROES.md`, seção 4 · `REVISAO.md`, bloco E |
 | Site que quer ser achado na busca | `PADROES.md`, seção 9A |
-| Antes de cada commit | O comando de conferência do projeto; com o kit instalado, a trava do commit o roda sozinha (`PADROES.md`, seção 4A) |
+| Antes de cada commit | Com o kit instalado, a trava do commit roda formatação e linter sozinha. Antes de dizer "pronto", rode o comando de conferência inteiro (`PADROES.md`, seção 4A) |
 | Antes de dizer "pronto" | Skill `/conferir-codigo` · `REVISAO.md`, bloco F · `docs/CHECKLIST-PRONTO.md` do projeto |
 | Apareceu um erro | `ERROS.md`: procure no índice ou por palavra e leia só a entrada. Nunca o arquivo inteiro |
 | Ensinar um conceito | `CONTEXTO.md`, seção 6 (glossário, para não redefinir um termo de outro jeito) · `REVISAO.md`, bloco G |
@@ -33,8 +33,8 @@ Cada regra diz **quando** vale e **o que fazer**, para dar para conferir se foi 
 
 1. **Antes de afirmar algo ou de pedir algo à pessoa, faça a ação real** (rode o comando, tente o envio). Aviso de ferramenta não é fato (E-001).
 2. **Só entra no README o que foi executado:** rode o comando e leia a saída antes de documentar (E-003).
-3. **Teste passou de primeira? Quebre o código de propósito,** veja o teste falhar e desfaça (E-009, E-010).
-4. **Mudou tela ou efeito? Capturas em 1440 px e 390 px,** olhadas antes de dizer que ficou bom (E-007, E-008).
+3. **Teste passou de primeira? Quebre o código de propósito,** veja o teste falhar, desfaça e confira com `git diff` que não sobrou nada da quebra; se a quebra escreve em disco, faça numa cópia (E-009, E-010, E-041).
+4. **Mudou tela ou efeito? Capturas em 1440 px e 390 px,** olhadas antes de dizer que ficou bom; sem navegador no ambiente, diga que não olhou (regra 6) em vez de tentar contornar (E-007, E-008).
 5. **Arquivo de configuração (YAML, JSON, TOML, Dockerfile): valide com um comando antes de subir** (E-011, E-016).
 6. **Toda entrega lista o que não foi verificado,** inclusive a ferramenta que não rodou (E-005, E-013).
 7. **Acesso negado pelo ambiente: diga e adapte, ou peça o arquivo.** Não contorne o bloqueio (E-005).
@@ -43,7 +43,7 @@ Cada regra diz **quando** vale e **o que fazer**, para dar para conferir se foi 
 10. **Criou um esqueleto? Preencha, ou diga com todas as letras que ficou vazio** (E-006).
 11. **Código saiu diferente do plano? Registre em "Desvios" no mesmo commit** (E-012).
 12. **O primeiro commit de um repositório já tem `.gitattributes` com `* text=auto eol=lf`** (E-004).
-13. **Antes de editar: `git status -sb` e `git pull --ff-only`** (E-020).
+13. **Antes de editar: `git status -sb` e, se o repositório tiver remoto, `git pull --ff-only`;** se o pull falhar, pare e diga, sem forçar (E-020).
 14. **Endereço público (usuário, domínio) em uma constante só,** com um teste que a confere (E-021).
 15. **Depois de renomear conta ou repositório, teste o envio antes de prometê-lo** (E-022).
 16. **Ao descrever o projeto, diga onde mora o dado real (em execução) e onde mora o fictício (repositório e testes)** (E-024).

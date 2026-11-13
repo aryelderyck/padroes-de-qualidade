@@ -1,6 +1,9 @@
 # Copie para a raiz do projeto com o nome .gitattributes, no PRIMEIRO commit.
 # Fim de linha igual em toda máquina: sem isso, Windows e Linux geram diferenças falsas.
 * text=auto eol=lf
+# Scripts do Prompt de Comando do Windows só funcionam com fim de linha CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
 *.png binary
 *.jpg binary
 *.ico binary

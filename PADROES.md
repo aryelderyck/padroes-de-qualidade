@@ -1,6 +1,6 @@
 # Padrões de qualidade dos projetos
 
-Versão 0.10 · 2026-11-13 · Dono: Aryel
+Versão 0.11 · 2026-11-13 · Dono: Aryel
 
 Este é o documento mestre. Todo projeto novo (landing, painel, e-commerce, AtendeFlow e os que vierem)
 começa por aqui e só é considerado **pronto** quando cumpre a Definição de Pronto (seção 2).
@@ -79,7 +79,16 @@ está bom. As fontes estão em [`docs/REFERENCIAS.md`](docs/REFERENCIAS.md), se�
 | 2. Comando único | Em todo commit, pela trava do commit, e no CI | Formatação, linter, tipos e testes, nessa ordem, parando na primeira falha | Python: `python conferir.py` · Node: `npm run conferir` |
 | 3. Revisão independente | Antes de dizer "pronto" | O que a ferramenta não vê: erro de lógica, armadilhas de modelagem e de algoritmo, injeção, simplificação e Código Limpo | Skill `/conferir-codigo`, que roda num subagente sem o contexto de quem escreveu; `/code-review` e `/security-review` como complemento |
 
-As camadas 1 e 2 são instaladas pelo `instalar.py` ([`docs/INSTALACAO.md`](docs/INSTALACAO.md)).
+As camadas 1 e 2 são instaladas pelo `instalar.py` ([`docs/INSTALACAO.md`](docs/INSTALACAO.md)), em um de dois modos:
+
+- **Essencial (padrão):** formatação, erros de lógica que quase não acusam código correto e as regras de segurança. O
+  hook de edição só formata, a trava do commit roda formatação e linter, e os tipos são conferidos sem o modo estrito.
+- **Completo:** soma os limites de Código Limpo, o número mágico, as regras de estilo, os tipos estritos, a cobertura
+  mínima no CI, o linter a cada edição e a trava do pronto. Pega mais e também acusa mais código que está certo;
+  por isso é pedido de propósito (`--modo completo`), depois da avaliação de risco do instalador.
+
+O texto abaixo descreve o modo completo. No essencial, o que não é automático continua valendo como orientação e é
+conferido pela camada 3.
 
 - **Formatação e indentação** não se discutem nem se pedem por instrução: quem decide é o formatador (`ruff format` em
   Python, Prettier no resto), e o `.editorconfig` cobre os outros arquivos. Código fora do formato não passa no CI.

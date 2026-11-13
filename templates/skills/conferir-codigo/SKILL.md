@@ -47,12 +47,13 @@ Veredito: pode seguir | corrigir antes de seguir
 Regras do relatório:
 
 - No máximo 10 achados, sem elogio e sem repetir o que o linter já aponta.
-- Simplificação só é achado se mantém comportamento, segurança e custo.
+- Simplificação só é achado se mantém comportamento, segurança e custo. É sempre `[baixo]`, marcada como opcional, e nunca pede para reescrever código que funciona e não tem teste cobrindo o trecho.
 - Sem achado, escreva "nenhum achado" e liste o que foi conferido.
 - Veredito "corrigir antes de seguir" sempre que houver achado alto, ou médio confirmado.
 
 ## Depois do relatório (para quem recebe)
 
 - Cada achado confirmado é corrigido nesta ordem: primeiro o teste que falha por causa dele, depois a correção.
+- Achado de simplificação ou de Código Limpo só é aplicado com o aval da pessoa, um por vez, com os testes rodando depois de cada um.
 - Explique o achado à pessoa com a entrada que quebra, e registre no `APRENDIZADOS.md` o que ele ensinou.
 - Achado que já apareceu antes no projeto vira proposta de linha nova no `armadilhas.md` do kit.

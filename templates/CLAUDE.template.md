@@ -28,7 +28,8 @@ Dados e nomes no repositório são **fictícios**. [Se o produto mostra dado rea
 
 - Teste antes do código (TDD): ver o teste falhar pelo motivo certo, depois implementar.
 - Rodar o comando e ler a saída antes de dizer que funciona; listar o que não foi verificado.
-- Conferência completa antes de cada commit; `/conferir-codigo` antes de dizer que a tarefa está pronta.
+- A trava do commit confere formatação e linter. Antes de dizer que a tarefa está pronta: conferência completa e
+  `/conferir-codigo`.
 - Commits pequenos, em português, no formato `tipo: o que mudou`.
 
 **Pergunte antes**
@@ -59,10 +60,13 @@ Se a sessão não estiver nesse estilo, avise a pessoa uma vez e siga as instru�
 
 ## Kit de padrões
 
-Kit **padroes-de-qualidade** [0.10], nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**, clonado em `../padroes-de-qualidade`
+Kit **padroes-de-qualidade** [0.11], modo **[essencial ou completo]** (está no `.kit-versao`), nível **[1, 2 ou 3]**, ritmo
+**[rápido ou completo]**, clonado em `../padroes-de-qualidade`
 (se faltar, peça à pessoa para clonar `https://github.com/aryelderyck/padroes-de-qualidade`).
 
 - O kit é opcional: vale quando a pessoa pedir. Nesse caso, leia só o `REGRAS.md` do kit. Ele diz o que mais abrir, e quando. Não leia o kit inteiro.
+- Nível, ritmo e modo são escolhidos pela pessoa. Se algum estiver em branco acima, pergunte: não deduza.
+- Regra do linter acusou código que está certo? Não reescreva o código só para calar a regra: mostre o caso à pessoa.
 - "Pronto" é o `docs/CHECKLIST-PRONTO.md` (em ritmo rápido, só os itens **[E]**). Desvio vai na seção "Desvios" da
   especificação ou do README, com o motivo.
 - Erro que pode se repetir, que custou mais de uns 15 minutos ou que chegou à pessoa: `ERROS.md` do kit, ao fechar a

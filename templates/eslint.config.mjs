@@ -2,37 +2,47 @@
 // Provada no CI do kit (provas/conferir-provas.py, parte com rede), em Linux e em Windows.
 // Instalar: npm install -D eslint @eslint/js typescript-eslint typescript globals prettier
 // package.json:
-//   "conferir": "prettier --check . && eslint . --max-warnings 0 && tsc --noEmit && vitest run"
+//   "conferir:rapido": "prettier --check . && eslint . --max-warnings 0"
+//   "conferir": "npm run conferir:rapido && tsc --noEmit && vitest run"
 
 import js from "@eslint/js";
 import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-import { regrasDoKit, regrasParaComponentes } from "./eslint.regras.mjs";
+import { MODO, regrasDoModo, regrasParaComponentes } from "./eslint.regras.mjs";
+
+// O modo ("essencial" ou "completo") é escolhido na primeira linha do eslint.regras.mjs.
+const completo = MODO === "completo";
+
+// No modo completo, as regras do ESLint que têm versão com tipos dão lugar a ela.
+const trocasDoRigor = {
+  "no-shadow": "off",
+  "@typescript-eslint/no-shadow": "error",
+  // O switch sem "default" deixa o TypeScript avisar quando surge um caso novo.
+  "default-case": "off",
+  "@typescript-eslint/switch-exhaustiveness-check": "error",
+  // Quem confere os retornos é o compilador: ligue "noImplicitReturns" no tsconfig.json.
+  "consistent-return": "off",
+};
 
 export default defineConfig(
   globalIgnores(["dist", "build", "coverage"]),
   js.configs.recommended,
-  tseslint.configs.strictTypeChecked,
+  // Essencial: o conjunto recomendado. Completo: o mais estrito, com as regras que leem os tipos.
+  completo ? tseslint.configs.strictTypeChecked : tseslint.configs.recommended,
   {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
       parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
     },
     rules: {
-      ...regrasDoKit,
+      ...regrasDoModo,
       // Em TypeScript, a versão que conhece os tipos substitui a regra básica.
       "no-unused-vars": "off",
-      "no-shadow": "off",
       "@typescript-eslint/no-unused-vars": "error",
-      "@typescript-eslint/no-shadow": "error",
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-floating-promises": "error",
-      // O switch sem "default" deixa o TypeScript avisar quando surge um caso novo.
-      "default-case": "off",
-      "@typescript-eslint/switch-exhaustiveness-check": "error",
-      // Quem confere os retornos é o compilador: ligue "noImplicitReturns" no tsconfig.json.
-      "consistent-return": "off",
+      ...(completo ? trocasDoRigor : {}),
     },
   },
   { files: ["**/*.{jsx,tsx}"], rules: regrasParaComponentes },
@@ -48,7 +58,7 @@ export default defineConfig(
   },
   {
     // Números de exemplo e funções longas são normais em testes.
-    files: ["**/*.test.*", "**/tests/**"],
+    files: ["**/*.test.*", "**/*.spec.*", "**/tests/**", "**/__tests__/**"],
     rules: { "no-magic-numbers": "off", "max-lines-per-function": "off" },
   },
 );

@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1
 # Modelo de Dockerfile para API Python. Construído e executado nas provas do kit (Linux):
 # sobe sem root (usuário 10001) e responde na rota /saude.
+# Supõe três coisas; ajuste se o projeto for diferente: um requirements.txt na raiz, a aplicação em
+# app/main.py com o nome `app`, e uma rota GET /saude sem autenticação.
 
 # Estágio 1: instala as dependências
 FROM python:3.12-slim AS build
