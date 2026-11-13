@@ -1,6 +1,6 @@
 # Versões das ferramentas Python usadas para escrever as provas. O CI do kit instala a partir daqui,
 # e a prova do ambiente virtual usa este arquivo como limite de versões (pip install -c).
-ruff==0.16.9
-mypy==2.3.1
-pytest==9.1.1
-pyyaml>=6
+ruff==0.17.4
+mypy==2.4.1
+pytest==9.2.0
+pyyaml>=6.0.3
