@@ -166,27 +166,25 @@ def com_o_modo_escrito(texto: str, _tipo: str, modo: str) -> str:
 
 
 def hooks_do_modo(texto: str, _tipo: str, modo: str) -> str:
-    """Essencial: só o hook de edição, e só formatando. Troca `python` por `python3` se preciso."""
-    ajustes = json.loads(texto)
+    """Essencial: só o hook de edição, e só formatando. Troca `python` por `python3` se preciso.
+
+    Mexe no texto, e não no JSON carregado, para o arquivo continuar no formato do Prettier.
+    """
     if modo == "essencial":
-        ajustes["hooks"].pop("Stop", None)
-    for evento in ajustes["hooks"].values():
-        for grupo in evento:
-            for hook in grupo["hooks"]:
-                if modo == "essencial":
-                    hook["args"].append("--so-formatar")
-                if hook["command"] == "python" and not shutil.which("python"):
-                    hook["command"] = "python3" if shutil.which("python3") else "python"
-    return json.dumps(ajustes, indent=2, ensure_ascii=False) + "\n"
+        texto = re.sub(r',\n    "Stop": \[.*?\n    \]', "", texto, flags=re.DOTALL)
+        texto = re.sub(r'(conferir-edicao\.\w+")\]', r'\1, "--so-formatar"]', texto)
+    if not shutil.which("python") and shutil.which("python3"):
+        texto = texto.replace('"command": "python"', '"command": "python3"')
+    return texto
 
 
 def tsconfig_do_modo(texto: str, _tipo: str, modo: str) -> str:
     if modo == "completo":
         return texto
-    opcoes = json.loads(texto)
-    for opcao in OPCOES_SO_DO_COMPLETO:
-        opcoes["compilerOptions"].pop(opcao, None)
-    return json.dumps(opcoes, indent=2, ensure_ascii=False) + "\n"
+    linhas = texto.splitlines(keepends=True)
+    return "".join(
+        linha for linha in linhas if not any(opcao in linha for opcao in OPCOES_SO_DO_COMPLETO)
+    )
 
 
 AJUSTES: dict[str, Callable[[str, str, str], str]] = {
