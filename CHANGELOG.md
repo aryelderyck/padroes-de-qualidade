@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.11 · 2026-11-13
+O que pode travar o trabalho, acusar código correto ou ser mal interpretado deixa de ser o padrão.
+- **Dois modos no instalador.** *Essencial* (padrão): formatação, erros de lógica e regras de segurança; hook de
+  edição só formata; sem trava do pronto; trava do commit com formatação e linter; tipos sem o modo estrito; cobertura
+  e auditoria só informam no CI. *Completo* (`--modo completo`): tudo o que existia até a 0.10.
+- **Avaliação de risco antes de aplicar** (`instalar.py avaliar`, e sempre antes de `projeto`): mostra o plano, mede
+  o código que já existe com as regras do modo e para a instalação quando o risco é alto (`--aceitar-risco` libera).
+- **Projeto gerado (Vite):** o kit não cria uma segunda configuração de ESLint nem de TypeScript; copia as regras e
+  diz como juntar. Node sem `package.json` é recusado com a explicação. O `tsconfig.json` do kit ganhou `jsx`.
+- **Trava do commit** roda a conferência rápida por padrão (`conferir.py --rapido` ou o script `conferir:rapido`), o
+  que permite o commit de teste falhando do TDD; `git config kit.trava completa` roda tudo.
+- **Correções:** `.bat` e `.cmd` com fim de linha CRLF; hooks com `python3` quando a máquina não tem `python`; regras
+  mais leves para testes em qualquer pasta (`**/tests/**`, `test_*.py`, `__tests__`, `*.spec.*`); o hook de edição
+  ordena os imports; o `conferir.py` diz o comando que corrige sozinho.
+- **Texto que podia ser mal interpretado:** regras 3, 4 e 13 do `REGRAS.md`; nível, ritmo e modo nunca são deduzidos;
+  a skill não manda reescrever código que funciona; o estilo Professor aceita "modo direto".
+- Provas novas para cada separação (um exemplo que o essencial deixa passar e o completo pega), para a avaliação de
+  risco e para o alcance da trava. O commit do Dependabot passa na prova do formato.
+- **Ainda não executado:** o mesmo da 0.10. O modo essencial liga só o hook que formata, que não consegue interromper
+  o Claude: se ele falhar, nada acontece.
+
 ## 0.10 · 2026-11-13
 Último pente fino: os modelos passam a ser executados pelo caminho que a pessoa percorre.
 - **Projeto Python instala de verdade:** o `pyproject` modelo ganhou `[build-system]` e a lista de pacotes (sem isso o

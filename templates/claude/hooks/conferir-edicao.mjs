@@ -1,7 +1,8 @@
 // Hook do Claude Code para projeto Node (evento PostToolUse, ferramentas Edit e Write).
 // Formata com o Prettier o arquivo que o Claude acabou de editar e devolve ao Claude o que o
 // ESLint apontar. Sai com 0 quando não há nada a dizer e com 2 quando há problema: nesse caso o
-// Claude lê a mensagem e corrige. Copie para .claude/hooks/ do projeto.
+// Claude lê a mensagem e corrige. Com o argumento --so-formatar (modo essencial do kit) só
+// formata, e nunca devolve nada ao Claude. Copie para .claude/hooks/ do projeto.
 
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
@@ -74,6 +75,9 @@ function main() {
   }
   const raiz = process.env.CLAUDE_PROJECT_DIR || dados.cwd || process.cwd();
   rodar(raiz, "prettier/bin/prettier.cjs", ["--write", "--log-level", "silent", arquivo]);
+  if (process.argv.includes("--so-formatar")) {
+    return 0;
+  }
   return CODIGO.has(extensao) ? conferirComEslint(raiz, arquivo) : 0;
 }
 

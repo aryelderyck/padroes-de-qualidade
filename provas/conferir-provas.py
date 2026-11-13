@@ -7,6 +7,8 @@ Monta projetos de exemplo numa pasta temporária, com os modelos de templates/ n
 ficam num projeto de verdade, e roda as ferramentas de verdade. Sai com 1 se alguma prova falhar.
 """
 
+import functools
+import importlib.util
 import json
 import os
 import re
@@ -18,6 +20,7 @@ import tempfile
 import time
 import tomllib
 from pathlib import Path
+from typing import Any
 
 RAIZ = Path(__file__).resolve().parent.parent
 MODELOS = RAIZ / "templates"
@@ -47,7 +50,9 @@ ESPERADO_TS = {
 }
 EXTENSOES_DE_TEXTO = {".md", ".py", ".js", ".jsx", ".mjs", ".json", ".toml", ".yml", ".yaml", ""}
 PASTAS_IGNORADAS = {".git", ".mypy_cache", ".ruff_cache", "__pycache__", "node_modules"}
-FORMATO_DO_COMMIT = re.compile(r"^(docs|feat|fix|test|refactor|chore)\(kit\): \S|^Merge ")
+FORMATO_DO_COMMIT = re.compile(
+    r"^(docs|feat|fix|test|refactor|chore)\(kit\): \S|^Merge |^chore\(deps\): \S"
+)
 LINK_DE_MARKDOWN = re.compile(r"\]\(([^)#\s]+)(?:#[^)]*)?\)")
 USO_DE_ACTION = re.compile(r"uses: ([\w./-]+)@(\S+)")
 FIXACAO_POR_COMMIT = re.compile(r"[0-9a-f]{40}")
@@ -56,6 +61,11 @@ LINGUAGENS_DO_CODEQL_DO_KIT = ("language: [python]", "language: [python, javascr
 CODIGO_DE_REGRA = re.compile(r"`([A-Z]{1,4}\d{3,4})`")
 # Os scripts do kit imprimem no terminal e chamam ferramentas: só isso é liberado para eles.
 EXCECOES_DOS_SCRIPTS_DO_KIT = ["kit/*:T201", "kit/*:S603"]
+
+# Grupos de regras do ruff que valem no modo essencial; os outros só entram no completo.
+GRUPOS_ESSENCIAIS = ("E", "W", "F", "I", "UP", "B", "A", "BLE", "S")
+MARCAS_DE_MODO = ("[completo]", "[/completo]", "[essencial]", "[/essencial]")
+MODELOS_COM_MODO = ["pyproject-python.toml", "github/ci-python.yml", "github/ci-node.yml"]
 
 # O que o linter do kit PRECISA apontar em provas/python/ruim.py.
 ESPERADO_PYTHON = {
@@ -206,6 +216,22 @@ def instalar_no_venv(pasta: Path, nomes: list[str]) -> None:
         origem = shutil.which(nome)
         if origem is not None:
             copiar(Path(origem), destino / Path(origem).name)
+
+
+@functools.cache
+def instalador() -> Any:
+    """O instalar.py carregado como módulo, para as provas usarem os modelos já no modo certo."""
+    especificacao = importlib.util.spec_from_file_location("instalar", INSTALADOR)
+    if especificacao is None or especificacao.loader is None:
+        raise RuntimeError("instalar.py não pôde ser carregado")
+    modulo = importlib.util.module_from_spec(especificacao)
+    especificacao.loader.exec_module(modulo)
+    return modulo
+
+
+def modelo_do_modo(nome: str, tipo: str, modo: str) -> str:
+    """O texto que o instalador grava no projeto para este modelo, tipo e modo."""
+    return str(instalador().texto_do_modelo(nome, tipo, modo))
 
 
 def entrada_do_hook(pasta: Path, arquivo: Path) -> str:
@@ -361,8 +387,8 @@ def provar_estrutura() -> None:
 
 
 # --------------------------------------------------------------------------- [2-5] Python
-def montar_projeto_python(pasta: Path) -> None:
-    copiar(MODELOS / "pyproject-python.toml", pasta / "pyproject.toml")
+def montar_projeto_python(pasta: Path, modo: str = "completo") -> None:
+    escrever(pasta / "pyproject.toml", modelo_do_modo("pyproject-python.toml", "python", modo))
     copiar(MODELOS / "conferir.py", pasta / "conferir.py")
     copiar(
         MODELOS / "claude" / "hooks" / "conferir-edicao.py",
@@ -422,6 +448,69 @@ def provar_regras_python(pasta: Path, ruff: str, mypy: str | None) -> None:
         conferir(codigo in codigos, f"{codigo} pega: {significado}")
     recusou = rodar([ruff, "format", "--check", "app/ruim.py"], pasta).returncode != 0
     conferir(recusou, "formatador recusa a indentação do exemplo ruim")
+
+
+def provar_modo_essencial_python(base: Path, ruff: str, mypy: str | None) -> None:
+    titulo("[2A] Modo essencial em Python (o que sai e o que continua valendo)")
+    for nome in MODELOS_COM_MODO:
+        for modo in ("essencial", "completo"):
+            texto = modelo_do_modo(nome, "python", modo)
+            sobras = [marca for marca in MARCAS_DE_MODO if marca in texto]
+            conferir(not sobras, f"{nome} no modo {modo}: sem marcação sobrando", sobras)
+    pasta = base / "projeto-essencial"
+    montar_projeto_python(pasta, "essencial")
+    copiar(PROVAS / "python" / "rigor.py", pasta / "app" / "rigor.py")
+    limpo = rodar([ruff, "check", "--output-format", "json", "."], pasta)
+    achados = [achado["code"] for achado in json.loads(limpo.stdout or "[]")]
+    conferir(not achados, "essencial: código correto com número mágico e print passa", achados)
+    copiar(PROVAS / "python" / "ruim.py", pasta / "app" / "ruim.py")
+    ruim = rodar([ruff, "check", "--output-format", "json", "app/ruim.py"], pasta)
+    codigos = {achado["code"] for achado in json.loads(ruim.stdout or "[]")}
+    for codigo, significado in ESPERADO_PYTHON.items():
+        if codigo.rstrip("0123456789") in GRUPOS_ESSENCIAIS:
+            conferir(codigo in codigos, f"essencial continua pegando {codigo}: {significado}")
+        else:
+            conferir(codigo not in codigos, f"essencial não aplica {codigo}: {significado}")
+    (pasta / "app" / "ruim.py").unlink()
+    completo = base / "projeto-rigor"
+    montar_projeto_python(completo)
+    copiar(PROVAS / "python" / "rigor.py", completo / "app" / "rigor.py")
+    rigor = rodar([ruff, "check", "--output-format", "json", "app/rigor.py"], completo)
+    vistos = {achado["code"] for achado in json.loads(rigor.stdout or "[]")}
+    conferir(
+        {"PLR2004", "T201", "PLR0913"} <= vistos,
+        "completo: o mesmo código é apontado (número mágico, print, parâmetros)",
+        sorted(vistos),
+    )
+    if mypy is not None:
+        conferir(
+            rodar([mypy, "app/rigor.py"], pasta).returncode == 0,
+            "essencial: função sem anotação de tipo passa no mypy",
+        )
+        conferir(
+            rodar([mypy, "app/rigor.py"], completo).returncode != 0,
+            "completo: a mesma função é recusada pelo mypy estrito",
+        )
+    hook = [
+        sys.executable,
+        str(pasta / ".claude" / "hooks" / "conferir-edicao.py"),
+        "--so-formatar",
+    ]
+    torto = "import sys\nimport os\n\n\ndef  f( ):\n  return  eval(os.sep + sys.argv[0])\n"
+    escrever(pasta / "app" / "torto.py", torto)
+    saida = rodar(hook, pasta, entrada_do_hook(pasta, pasta / "app" / "torto.py"))
+    conferir(
+        saida.returncode == 0 and not saida.stderr,
+        "hook com --so-formatar: nunca devolve nada ao Claude, mesmo com apontamento",
+        saida.stderr,
+    )
+    arrumado = ler(pasta / "app" / "torto.py")
+    conferir(
+        arrumado.startswith("import os\nimport sys\n") and "def f():\n    return" in arrumado,
+        "hook com --so-formatar: formata e ordena os imports",
+        arrumado,
+    )
+    (pasta / "app" / "torto.py").unlink()
 
 
 def provar_hook_python(pasta: Path, ruff: str) -> None:
@@ -541,7 +630,9 @@ def provar_conferir(pasta: Path) -> None:
 def provar_scripts_do_kit(base: Path, ruff: str, mypy: str | None) -> None:
     titulo("[5] O kit segue as próprias regras")
     pasta = base / "kit-como-projeto"
-    copiar(MODELOS / "pyproject-python.toml", pasta / "pyproject.toml")
+    escrever(
+        pasta / "pyproject.toml", modelo_do_modo("pyproject-python.toml", "python", "completo")
+    )
     copiar(PROVAS / "conferir-provas.py", pasta / "kit" / "conferir_provas.py")
     copiar(MODELOS / "conferir.py", pasta / "kit" / "conferir.py")
     hooks = MODELOS / "claude" / "hooks"
@@ -589,6 +680,51 @@ def tentar_commit(git: str, pasta: Path, mensagem: str) -> subprocess.CompletedP
     return rodar([git, "commit", "-q", "-m", mensagem], pasta)
 
 
+TESTE_QUE_FALHA = 'def test_falha():\n    assert len("a") == 2\n'
+
+
+def provar_alcance_da_trava(base: Path, projeto_python: Path, git: str) -> None:
+    """Por padrão a trava roda formatação e linter; com `kit.trava completa`, também os testes."""
+    escrever(projeto_python / "tests" / "test_falha.py", TESTE_QUE_FALHA)
+    rapida = rodar([sys.executable, "conferir.py", "--rapido"], projeto_python)
+    inteira = rodar([sys.executable, "conferir.py"], projeto_python)
+    conferir(
+        rapida.returncode == 0 and inteira.returncode != 0,
+        "conferir.py --rapido: passa com teste falhando; sem a opção, falha",
+        rapida.stdout[-TAMANHO_DO_TRECHO:],
+    )
+    rodar([git, "config", "kit.trava", "completa"], projeto_python)
+    recusado = tentar_commit(git, projeto_python, "test: teste falhando")
+    conferir(
+        recusado.returncode != 0,
+        "Python, trava completa: commit com teste falhando é recusado",
+    )
+    rodar([git, "config", "--unset", "kit.trava"], projeto_python)
+    aceito = tentar_commit(git, projeto_python, "test: teste falhando")
+    conferir(
+        aceito.returncode == 0,
+        "Python, trava padrão: commit com teste falhando é aceito (TDD)",
+        aceito.stdout + aceito.stderr,
+    )
+    (projeto_python / "tests" / "test_falha.py").unlink()
+    if shutil.which("npm") is None:
+        return
+    pasta = base / "trava-node-alcance"
+    scripts = {"conferir": 'node -e "process.exit(1)"', "conferir:rapido": 'node -e ""'}
+    escrever(pasta / "package.json", json.dumps({"scripts": scripts}) + "\n")
+    preparar_repositorio(git, pasta)
+    conferir(
+        tentar_commit(git, pasta, "feat: teste").returncode == 0,
+        "Node, trava padrão: roda só o script conferir:rapido",
+    )
+    escrever(pasta / "outro.txt", "mudança\n")
+    rodar([git, "config", "kit.trava", "completa"], pasta)
+    conferir(
+        tentar_commit(git, pasta, "feat: outro").returncode != 0,
+        "Node, trava completa: roda o script conferir inteiro",
+    )
+
+
 def provar_trava_do_commit(base: Path, projeto_python: Path) -> None:
     titulo("[4A] Trava do commit (templates/githooks/pre-commit)")
     git = shutil.which("git")
@@ -632,6 +768,7 @@ def provar_trava_do_commit(base: Path, projeto_python: Path) -> None:
                 f"projeto Node {caso}: commit recusado com explicação",
                 sem_script.stderr,
             )
+    provar_alcance_da_trava(base, projeto_python, git)
     vazio = base / "trava-sem-conferencia"
     escrever(vazio / "leia.txt", "sem comando de conferência\n")
     preparar_repositorio(git, vazio)
@@ -693,6 +830,7 @@ def provar_python(base: Path) -> None:
     montar_projeto_python(pasta)
     provar_regras_python(pasta, ruff, mypy)
     provar_hook_python(pasta, ruff)
+    provar_modo_essencial_python(base, ruff, mypy)
     if mypy is None or ferramenta("pytest") is None:
         avisos.append("mypy ou pytest ausente: o conferir.py NÃO foi conferido")
     else:
@@ -738,8 +876,10 @@ def comandos_de_node() -> tuple[list[str], list[str], Path, Path] | None:
     return chamar_eslint, chamar_prettier, modulo_eslint, modulo_prettier
 
 
-def regras_apontadas(eslint: list[str], arquivo: str) -> set[str]:
-    saida = rodar([*eslint, "-c", str(PROVAS / "eslint.config.mjs"), "-f", "json", arquivo], RAIZ)
+def regras_apontadas(eslint: list[str], arquivo: str, modo: str = "completo") -> set[str]:
+    ambiente = {**os.environ, "MODO_DAS_PROVAS": modo}
+    comando = [*eslint, "-c", str(PROVAS / "eslint.config.mjs"), "-f", "json", arquivo]
+    saida = rodar(comando, RAIZ, ambiente=ambiente)
     try:
         relatorio = json.loads(saida.stdout)
     except json.JSONDecodeError:
@@ -752,12 +892,36 @@ def regras_apontadas(eslint: list[str], arquivo: str) -> set[str]:
     }
 
 
-def regras_do_kit(node: str) -> set[str]:
+def regras_do_kit(node: str, grupo: str = "regrasDoKit") -> set[str]:
     codigo = (
         f'import("{(MODELOS / "eslint.regras.mjs").as_uri()}")'
-        ".then((m) => console.log(JSON.stringify(Object.keys(m.regrasDoKit))))"
+        f".then((m) => console.log(JSON.stringify(Object.keys(m.{grupo}))))"
     )
     return set(json.loads(rodar([node, "-e", codigo], RAIZ).stdout or "[]"))
+
+
+def provar_modo_essencial_js(eslint: list[str]) -> None:
+    titulo("[6A] Modo essencial em JavaScript (o que sai e o que continua valendo)")
+    essenciais = regras_do_kit(eslint[0], "regrasEssenciais")
+    rigor = regras_do_kit(eslint[0], "regrasDeRigor")
+    conferir(bool(essenciais) and bool(rigor), "o kit separa regras essenciais e de rigor")
+    tolerado = regras_apontadas(eslint, "provas/js/rigor.js", "essencial")
+    conferir(
+        not tolerado,
+        "essencial: código correto com número mágico e console.log passa",
+        sorted(tolerado),
+    )
+    cobrado = regras_apontadas(eslint, "provas/js/rigor.js")
+    conferir(
+        {"no-magic-numbers", "no-console", "max-params", "curly"} <= cobrado,
+        "completo: o mesmo código é apontado",
+        sorted(cobrado),
+    )
+    no_ruim = regras_apontadas(eslint, "provas/js/ruim.js", "essencial")
+    conferir(essenciais <= no_ruim, "essencial continua pegando todas as regras essenciais")
+    conferir(
+        not rigor & no_ruim, "essencial não aplica as regras de rigor", sorted(rigor & no_ruim)
+    )
 
 
 def provar_regras_js(eslint: list[str], prettier: list[str]) -> set[str]:
@@ -871,6 +1035,17 @@ def provar_hook_node(
     )
     outro = rodar(hook, pasta, entrada_do_hook(pasta, pasta / "notas.txt"))
     conferir(outro.returncode == 0, "arquivo de outro tipo: não faz nada")
+    escrever(pasta / "src" / "torto.js", RUIM_JS)
+    calado = rodar(
+        [*hook, "--so-formatar"], pasta, entrada_do_hook(pasta, pasta / "src" / "torto.js")
+    )
+    arrumou = rodar([*prettier, "--check", "src/torto.js"], pasta).returncode == 0
+    conferir(
+        calado.returncode == 0 and not calado.stderr and arrumou,
+        "hook com --so-formatar: formata e nunca devolve nada ao Claude",
+        calado.stderr,
+    )
+    (pasta / "src" / "torto.js").unlink()
     sumiu = rodar(hook, pasta, entrada_do_hook(pasta, pasta / "src" / "nao_existe.js"))
     conferir(sumiu.returncode == 0, "arquivo que não existe mais: não interrompe", sumiu.stderr)
     conferir(
@@ -912,6 +1087,7 @@ def provar_js(base: Path) -> set[str]:
         return set()
     eslint, prettier, modulo_eslint, modulo_prettier = comandos
     regras = provar_regras_js(eslint, prettier)
+    provar_modo_essencial_js(eslint)
     provar_hook_node(base, eslint[0], prettier, (modulo_eslint, modulo_prettier))
     return regras
 
@@ -972,18 +1148,14 @@ def provar_docker(base: Path) -> None:
 
 # --------------------------------------------------------------------------- [12] instalador
 ESPERADO_NO_PROJETO = {
-    "python": [
-        "pyproject.toml",
-        "conferir.py",
-        ".claude/hooks/conferir-edicao.py",
-        ".claude/hooks/conferir-fim.py",
-    ],
+    "python": ["pyproject.toml", "conferir.py", ".claude/hooks/conferir-edicao.py"],
     "node": [
         "eslint.config.mjs",
         "eslint.regras.mjs",
         ".prettierrc.json",
         ".prettierignore",
         "tsconfig.json",
+        ".claude/hooks/conferir-edicao.mjs",
     ],
     "comum": [
         ".editorconfig",
@@ -992,101 +1164,253 @@ ESPERADO_NO_PROJETO = {
         ".githooks/pre-commit",
         ".claude/settings.json",
         ".claude/claude-security-guidance.md",
-        ".claude/security-patterns.json",
         "CLAUDE.md",
         "APRENDIZADOS.md",
         "docs/CHECKLIST-PRONTO.md",
         ".github/workflows/ci.yml",
-        ".github/workflows/codeql.yml",
         ".github/dependabot.yml",
         ".kit-versao",
     ],
+    "só no completo": [".claude/security-patterns.json", ".github/workflows/codeql.yml"],
+}
+TRAVA_DO_PRONTO = {
+    "python": ".claude/hooks/conferir-fim.py",
+    "node": ".claude/hooks/conferir-fim.mjs",
 }
 ECOSSISTEMAS_ESPERADOS = {"python": {"pip", "github-actions"}, "node": {"npm", "github-actions"}}
 LINGUAGEM_ESPERADA = {"python": "[python]", "node": "[javascript-typescript]"}
+# Onde o modo aparece escrito em cada tipo de projeto: (arquivo, trecho que só o completo tem).
+SINAL_DO_COMPLETO = {
+    "python": ("pyproject.toml", '"PL"'),
+    "node": ("tsconfig.json", "noUncheckedIndexedAccess"),
+}
+MUITAS_LINHAS_COM_EVAL = 60
 
 
 def instalar_kit(*argumentos: str) -> subprocess.CompletedProcess[str]:
     return rodar([sys.executable, str(INSTALADOR), *argumentos], RAIZ)
 
 
-def provar_instalacao(base: Path, tipo: str, git: str) -> Path:
-    pasta = base / f"instalado-{tipo}"
+def preparar_destino(base: Path, nome: str, tipo: str, git: str) -> Path:
+    """Uma pasta de projeto recém-criada, com git e, em Node, com o package.json já commitado."""
+    pasta = base / nome
     pasta.mkdir()
     rodar([git, "init", "-q"], pasta)
-    primeira = instalar_kit("projeto", str(pasta), "--tipo", tipo)
+    for ajuste in (("user.name", "Prova do Kit"), ("user.email", "prova@exemplo.test")):
+        rodar([git, "config", *ajuste], pasta)
+    rodar([git, "config", "commit.gpgsign", "false"], pasta)
+    if tipo == "node":
+        escrever(pasta / "package.json", '{"scripts": {}}\n')
+        rodar([git, "add", "-A"], pasta)
+        rodar([git, "commit", "-q", "-m", "chore: projeto criado"], pasta)
+    return pasta
+
+
+def conferir_arquivos_do_modo(pasta: Path, tipo: str, modo: str) -> None:
+    rotulo = f"{tipo} {modo}"
+    so_do_completo = [*ESPERADO_NO_PROJETO["só no completo"], TRAVA_DO_PRONTO[tipo]]
+    esperados = ESPERADO_NO_PROJETO[tipo] + ESPERADO_NO_PROJETO["comum"]
+    if modo == "completo":
+        esperados = esperados + so_do_completo
+    faltando = [a for a in esperados if not (pasta / a).is_file()]
+    conferir(not faltando, f"{rotulo}: todos os arquivos esperados foram criados", faltando)
+    if modo == "essencial":
+        sobrando = [a for a in so_do_completo if (pasta / a).exists()]
+        conferir(not sobrando, f"{rotulo}: o que é só do completo não foi instalado", sobrando)
+    arquivo, sinal = SINAL_DO_COMPLETO[tipo]
     conferir(
-        primeira.returncode == 0, f"{tipo}: instala sem erro", primeira.stdout + primeira.stderr
+        (sinal in ler(pasta / arquivo)) == (modo == "completo"),
+        f"{rotulo}: {arquivo} gravado no modo certo",
     )
-    faltando = [
-        a
-        for a in ESPERADO_NO_PROJETO[tipo] + ESPERADO_NO_PROJETO["comum"]
-        if not (pasta / a).is_file()
-    ]
-    conferir(not faltando, f"{tipo}: todos os arquivos esperados foram criados", faltando)
-    ajustes = json.loads(ler(pasta / ".claude" / "settings.json"))["hooks"]
-    alvos = [
-        hook["args"][0].replace("${CLAUDE_PROJECT_DIR}/", "")
-        for evento in ajustes.values()
-        for grupo in evento
-        for hook in grupo["hooks"]
-    ]
-    orfaos = [alvo for alvo in alvos if not (pasta / alvo).is_file()]
-    conferir(
-        len(alvos) > 1 and not orfaos,
-        f"{tipo}: todo hook do settings.json aponta para arquivo instalado",
-        orfaos,
-    )
+    conferir(modo in ler(pasta / ".kit-versao"), f"{rotulo}: .kit-versao registra o modo")
+    if tipo == "node":
+        conferir(
+            f'MODO = "{modo}"' in ler(pasta / "eslint.regras.mjs"),
+            f"{rotulo}: eslint.regras.mjs gravado no modo certo",
+        )
     dependabot = ler(pasta / ".github" / "dependabot.yml")
     ecossistemas = set(re.findall(r'package-ecosystem: "([a-z-]+)"', dependabot))
     conferir(
         ecossistemas == ECOSSISTEMAS_ESPERADOS[tipo],
-        f"{tipo}: dependabot só com o que o projeto usa",
+        f"{rotulo}: dependabot só com o que o projeto usa",
         ecossistemas,
     )
-    codeql = ler(pasta / ".github" / "workflows" / "codeql.yml")
+    if modo == "completo":
+        codeql = ler(pasta / ".github" / "workflows" / "codeql.yml")
+        conferir(
+            f"language: {LINGUAGEM_ESPERADA[tipo]}" in codeql,
+            f"{rotulo}: CodeQL na linguagem do projeto",
+        )
+
+
+def conferir_hooks_do_modo(pasta: Path, tipo: str, modo: str, git: str) -> None:
+    rotulo = f"{tipo} {modo}"
+    ajustes = json.loads(ler(pasta / ".claude" / "settings.json"))["hooks"]
+    hooks = [hook for evento in ajustes.values() for grupo in evento for hook in grupo["hooks"]]
+    alvos = [hook["args"][0].replace("${CLAUDE_PROJECT_DIR}/", "") for hook in hooks]
+    orfaos = [alvo for alvo in alvos if not (pasta / alvo).is_file()]
     conferir(
-        f"language: {LINGUAGEM_ESPERADA[tipo]}" in codeql, f"{tipo}: CodeQL na linguagem do projeto"
+        bool(alvos) and not orfaos,
+        f"{rotulo}: todo hook do settings.json aponta para arquivo instalado",
+        orfaos,
+    )
+    eventos = {"PostToolUse", "Stop"} if modo == "completo" else {"PostToolUse"}
+    conferir(set(ajustes) == eventos, f"{rotulo}: hooks ligados são {sorted(eventos)}", ajustes)
+    so_formata = all("--so-formatar" in hook["args"] for hook in hooks)
+    conferir(
+        so_formata == (modo == "essencial"),
+        f"{rotulo}: hook de edição {'só formata' if modo == 'essencial' else 'formata e confere'}",
     )
     trava = rodar([git, "config", "core.hooksPath"], pasta).stdout.strip()
-    conferir(trava == ".githooks", f"{tipo}: trava do commit ligada no git", trava)
+    conferir(trava == ".githooks", f"{rotulo}: trava do commit ligada no git", trava)
+    alcance = rodar([git, "config", "--get", "kit.trava"], pasta).stdout.strip()
+    conferir(
+        alcance == ("completa" if modo == "completo" else ""),
+        f"{rotulo}: alcance da trava do commit conforme o modo",
+        alcance,
+    )
+
+
+def provar_instalacao(base: Path, tipo: str, modo: str, git: str) -> Path:
+    pasta = preparar_destino(base, f"instalado-{tipo}-{modo}", tipo, git)
+    rotulo = f"{tipo} {modo}"
+    comando = ["projeto", str(pasta), "--tipo", tipo, "--modo", modo]
+    if modo == "completo":
+        parou = instalar_kit(*comando)
+        conferir(
+            parou.returncode == SAIDA_DE_PROBLEMA_DO_HOOK
+            and "Nada foi instalado" in parou.stdout
+            and not (pasta / ".kit-versao").exists(),
+            f"{rotulo}: sem --aceitar-risco, mostra o risco alto e não instala",
+            parou.stdout,
+        )
+        comando.append("--aceitar-risco")
+    primeira = instalar_kit(*comando)
+    conferir(
+        primeira.returncode == 0, f"{rotulo}: instala sem erro", primeira.stdout + primeira.stderr
+    )
+    conferir_arquivos_do_modo(pasta, tipo, modo)
+    conferir_hooks_do_modo(pasta, tipo, modo, git)
 
     escrever(pasta / "CLAUDE.md", "# Editado pela pessoa\n")
-    segunda = instalar_kit("projeto", str(pasta), "--tipo", tipo)
+    segunda = instalar_kit(*comando)
     conferir(
-        "criado" not in segunda.stdout, f"{tipo}: instalar de novo não cria nada", segunda.stdout
+        "criado" not in segunda.stdout, f"{rotulo}: instalar de novo não cria nada", segunda.stdout
     )
     conferir(
         ler(pasta / "CLAUDE.md") == "# Editado pela pessoa\n",
-        f"{tipo}: arquivo editado pela pessoa é mantido",
+        f"{rotulo}: arquivo editado pela pessoa é mantido",
     )
-    forcada = instalar_kit("projeto", str(pasta), "--tipo", tipo, "--forcar")
+    forcada = instalar_kit(*comando, "--forcar")
     substituiu = "substituído" in forcada.stdout and "Editado pela pessoa" not in ler(
         pasta / "CLAUDE.md"
     )
-    conferir(substituiu, f"{tipo}: --forcar substitui o arquivo")
+    conferir(substituiu, f"{rotulo}: --forcar substitui o arquivo")
     return pasta
 
 
+def provar_avaliacao_python(base: Path, git: str) -> None:
+    vazio = preparar_destino(base, "avaliado-vazio", "python", git)
+    olhar = instalar_kit("avaliar", str(vazio), "--tipo", "python")
+    conferir(
+        olhar.returncode == 0 and [a.name for a in vazio.iterdir()] == [".git"],
+        "avaliar: mostra o plano e não escreve nada",
+        olhar.stdout,
+    )
+    conferir("Risco geral: BAIXO" in olhar.stdout, "avaliar: projeto novo tem risco baixo")
+
+    antigo = preparar_destino(base, "avaliado-antigo", "python", git)
+    escrever(antigo / "pyproject.toml", '[project]\nname = "antigo"\nversion = "1"\n')
+    escrever(antigo / "velho.py", 'VALOR = eval("1 + 1")\n')
+    visto = instalar_kit("avaliar", str(antigo), "--tipo", "python").stdout
+    conferir("sem commit" in visto, "avaliar: avisa que há mudanças sem commit", visto)
+    conferir(
+        "pyproject.toml" in visto and "NÃO valem" in visto,
+        "avaliar: avisa que o pyproject que já existe fica sem as regras do kit",
+        visto,
+    )
+    if shutil.which("ruff"):
+        conferir("S307" in visto, "avaliar: mede o código que já existe (eval encontrado)", visto)
+        escrever(antigo / "velho.py", 'VALOR = eval("1 + 1")\n' * MUITAS_LINHAS_COM_EVAL)
+        parou = instalar_kit("projeto", str(antigo), "--tipo", "python")
+        conferir(
+            parou.returncode == SAIDA_DE_PROBLEMA_DO_HOOK and not (antigo / ".kit-versao").exists(),
+            "muitos apontamentos no código que já existe: risco alto, não instala",
+            parou.stdout,
+        )
+        aceito = instalar_kit("projeto", str(antigo), "--tipo", "python", "--aceitar-risco")
+        conferir(
+            aceito.returncode == 0 and (antigo / ".kit-versao").exists(),
+            "com --aceitar-risco: instala mesmo com risco alto",
+        )
+
+
+def provar_avaliacao_node(base: Path, git: str) -> None:
+    sem_projeto = base / "avaliado-sem-package"
+    sem_projeto.mkdir()
+    rodar([git, "init", "-q"], sem_projeto)
+    parou = instalar_kit("projeto", str(sem_projeto), "--tipo", "node")
+    conferir(
+        parou.returncode == SAIDA_DE_PROBLEMA_DO_HOOK
+        and "package.json" in parou.stdout
+        and not (sem_projeto / ".kit-versao").exists(),
+        "Node sem package.json: risco alto, não instala e manda criar o projeto antes",
+        parou.stdout,
+    )
+    gerado = preparar_destino(base, "avaliado-vite", "node", git)
+    escrever(gerado / "eslint.config.js", "export default [];\n")
+    escrever(gerado / "tsconfig.app.json", '{ "compilerOptions": { "strict": true } }\n')
+    instalado = instalar_kit("projeto", str(gerado), "--tipo", "node")
+    intactos = (
+        not (gerado / "eslint.config.mjs").exists() and not (gerado / "tsconfig.json").exists()
+    )
+    conferir(
+        instalado.returncode == 0 and intactos and (gerado / "eslint.regras.mjs").is_file(),
+        "projeto gerado (Vite): não cria segunda configuração de ESLint nem de TypeScript",
+        instalado.stdout,
+    )
+    conferir(
+        instalado.stdout.count("NÃO valem") == len(("eslint", "tsconfig")),
+        "projeto gerado: avisa que as regras não valem até juntar, e diz como",
+        instalado.stdout,
+    )
+    juntar = (
+        'import { regrasDoModo } from "./eslint.regras.mjs";\n'
+        "export default [{ rules: regrasDoModo }];\n"
+    )
+    escrever(gerado / "eslint.config.js", juntar)
+    opcoes = '{ "compilerOptions": { "strict": true, "noImplicitReturns": true } }\n'
+    escrever(gerado / "tsconfig.app.json", opcoes)
+    depois = instalar_kit("avaliar", str(gerado), "--tipo", "node").stdout
+    conferir("NÃO valem" not in depois, "projeto gerado: depois de juntar, o aviso some", depois)
+
+
 def provar_instalador(base: Path) -> None:
-    titulo("[12] Instalador (instalar.py)")
+    titulo("[12] Instalador (instalar.py): modos, avaliação de risco e reinstalação")
     git = shutil.which("git")
     if git is None:
         avisos.append("git ausente: o instalador NÃO foi conferido")
         return
-    python = provar_instalacao(base, "python", git)
-    provar_instalacao(base, "node", git)
+    instalados = {
+        (tipo, modo): provar_instalacao(base, tipo, modo, git)
+        for tipo in ("python", "node")
+        for modo in ("essencial", "completo")
+    }
+    provar_avaliacao_python(base, git)
+    provar_avaliacao_node(base, git)
     if shutil.which("ruff") and shutil.which("mypy") and shutil.which("pytest"):
-        copiar(PROVAS / "python" / "bom.py", python / "app" / "bom.py")
-        escrever(python / "app" / "__init__.py", "")
-        escrever(python / "tests" / "__init__.py", "")
-        escrever(python / "tests" / "test_bom.py", TESTE_TIPICO)
-        confere = rodar([sys.executable, "conferir.py"], python)
-        conferir(
-            confere.returncode == 0,
-            "python: projeto recém-instalado passa na conferência",
-            confere.stdout[-TAMANHO_DO_TRECHO:],
-        )
+        for modo in ("essencial", "completo"):
+            python = instalados["python", modo]
+            copiar(PROVAS / "python" / "bom.py", python / "app" / "bom.py")
+            escrever(python / "app" / "__init__.py", "")
+            escrever(python / "tests" / "__init__.py", "")
+            escrever(python / "tests" / "test_bom.py", TESTE_TIPICO)
+            confere = rodar([sys.executable, "conferir.py"], python)
+            conferir(
+                confere.returncode == 0,
+                f"python {modo}: projeto recém-instalado passa na conferência",
+                confere.stdout[-TAMANHO_DO_TRECHO:],
+            )
 
     casa = base / "casa"
     maquina = instalar_kit("maquina", "--pasta", str(casa))
@@ -1120,9 +1444,9 @@ def provar_instalador(base: Path) -> None:
 def montar_projeto_typescript(pasta: Path) -> None:
     """Monta o projeto com o instalador do kit: é o que um projeto de verdade recebe."""
     pasta.mkdir(parents=True)
-    rodar([sys.executable, str(INSTALADOR), "projeto", str(pasta), "--tipo", "node"], RAIZ)
-    copiar(PROVAS / "ts" / "bom.ts", pasta / "src" / "bom.ts")
     escrever(pasta / "package.json", '{\n  "type": "module",\n  "private": true\n}\n')
+    instalar_kit("projeto", str(pasta), "--tipo", "node", "--modo", "completo", "--aceitar-risco")
+    copiar(PROVAS / "ts" / "bom.ts", pasta / "src" / "bom.ts")
 
 
 def apontamentos_do_eslint(comando: list[str], pasta: Path, alvo: str) -> dict[str, set[str]]:
@@ -1183,6 +1507,24 @@ def provar_typescript(base: Path) -> None:
     conferir(
         recusou, "tsc recusa função que nem sempre retorna (noImplicitReturns)", compilou.stdout
     )
+    provar_typescript_essencial(pasta, eslint)
+
+
+def provar_typescript_essencial(pasta: Path, eslint: list[str]) -> None:
+    """Troca o projeto para o modo essencial, do jeito que a pessoa faria: uma linha."""
+    regras = pasta / "eslint.regras.mjs"
+    escrever(regras, ler(regras).replace('MODO = "completo"', 'MODO = "essencial"'))
+    escrever(pasta / "tsconfig.json", modelo_do_modo("tsconfig.json", "node", "essencial"))
+    apontadas = apontamentos_do_eslint(eslint, pasta, "src/ruim.ts").get("ruim.ts", set())
+    for regra in ("@typescript-eslint/no-floating-promises", "@typescript-eslint/no-explicit-any"):
+        conferir(regra in apontadas, f"essencial continua pegando {regra}", sorted(apontadas))
+    conferir(
+        "@typescript-eslint/switch-exhaustiveness-check" not in apontadas,
+        "essencial não aplica a regra de switch completo",
+    )
+    (pasta / "src" / "ruim.ts").unlink()
+    limpo = apontamentos_do_eslint(eslint, pasta, ".")
+    conferir(not limpo, "essencial: projeto bom sem apontamento nem aviso", limpo)
 
 
 # --------------------------------------------------------------------------- [14] ambiente real
@@ -1219,13 +1561,13 @@ def provar_ambiente_real(base: Path) -> None:
     if os.environ.get("PROVAS_COM_REDE") != "1" or git is None:
         avisos.append("sem rede ou sem git: o projeto Python de verdade NÃO foi conferido aqui")
         return
-    pasta = base / "ambiente-real"
-    pasta.mkdir()
-    rodar([git, "init", "-q"], pasta)
-    for ajuste in (("user.name", "Prova do Kit"), ("user.email", "prova@exemplo.test")):
-        rodar([git, "config", *ajuste], pasta)
-    rodar([git, "config", "commit.gpgsign", "false"], pasta)
-    instalar_kit("projeto", str(pasta), "--tipo", "python")
+    for modo in ("essencial", "completo"):
+        provar_ambiente_do_modo(base, modo, git)
+
+
+def provar_ambiente_do_modo(base: Path, modo: str, git: str) -> None:
+    pasta = preparar_destino(base, f"ambiente-real-{modo}", "python", git)
+    instalar_kit("projeto", str(pasta), "--tipo", "python", "--modo", modo, "--aceitar-risco")
     escrever(pasta / "app" / "__init__.py", "")
     escrever(pasta / "app" / "soma.py", SOMA)
     escrever(pasta / "tests" / "__init__.py", "")
@@ -1235,7 +1577,7 @@ def provar_ambiente_real(base: Path) -> None:
     if etapas is None:
         return
     criar = rodar([sys.executable, "-m", "venv", ".venv"], pasta)
-    conferir(criar.returncode == 0, "ambiente virtual criado", criar.stderr)
+    conferir(criar.returncode == 0, f"{modo}: ambiente virtual criado", criar.stderr)
     executaveis = pasta / ".venv" / ("Scripts" if os.name == "nt" else "bin")
     ambiente = {
         **os.environ,
@@ -1247,31 +1589,35 @@ def provar_ambiente_real(base: Path) -> None:
         executavel = shutil.which(programa, path=str(executaveis))
         etapa = " ".join([programa, *argumentos])
         if executavel is None:
-            conferir(False, f"etapa do CI modelo: {etapa}", "programa não está no ambiente virtual")
+            conferir(
+                False,
+                f"{modo}, etapa do CI modelo: {etapa}",
+                "programa não está no ambiente virtual",
+            )
             return
         saida = rodar([executavel, *argumentos], pasta, ambiente=ambiente)
         aceitas = SAIDAS_DA_AUDITORIA if programa == "pip-audit" else {0}
         registro = (saida.stdout + saida.stderr)[-TAMANHO_DO_TRECHO:]
-        conferir(saida.returncode in aceitas, f"etapa do CI modelo: {etapa}", registro)
+        conferir(saida.returncode in aceitas, f"{modo}, etapa do CI modelo: {etapa}", registro)
         if saida.returncode not in aceitas:
             return
     python = shutil.which("python", path=str(executaveis)) or sys.executable
     confere = rodar([python, "conferir.py"], pasta, ambiente=ambiente)
     conferir(
         confere.returncode == 0,
-        "conferir.py passa com as ferramentas do ambiente virtual",
+        f"{modo}: conferir.py passa com as ferramentas do ambiente virtual",
         confere.stdout[-TAMANHO_DO_TRECHO:],
     )
     commit = tentar_commit(git, pasta, "feat: primeiro commit")
     conferir(
         commit.returncode == 0,
-        "primeiro commit do projeto recém-instalado é aceito pela trava",
+        f"{modo}: primeiro commit do projeto recém-instalado é aceito pela trava",
         (commit.stdout + commit.stderr)[-TAMANHO_DO_TRECHO:],
     )
     rastreados = rodar([git, "ls-files"], pasta).stdout
     conferir(
         ".venv" not in rastreados and "egg-info" not in rastreados,
-        "ambiente virtual e pasta egg-info ficam fora do commit",
+        f"{modo}: ambiente virtual e pasta egg-info ficam fora do commit",
     )
 
 
@@ -1305,6 +1651,8 @@ def provar_modelos_de_git(base: Path) -> None:
             conferir(manteve, f"{modelo} mantém {caminho}")
     fim_de_linha = rodar([git, "check-attr", "eol", "--", "a.py"], base / "gitignore-python").stdout
     conferir("eol: lf" in fim_de_linha, "gitattributes força fim de linha LF", fim_de_linha)
+    do_windows = rodar([git, "check-attr", "eol", "--", "a.bat"], base / "gitignore-python").stdout
+    conferir("eol: crlf" in do_windows, "gitattributes mantém CRLF em script .bat", do_windows)
 
 
 def provar_padroes_de_seguranca() -> None:
