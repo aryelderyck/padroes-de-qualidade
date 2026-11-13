@@ -49,6 +49,10 @@ EXTENSOES_DE_TEXTO = {".md", ".py", ".js", ".jsx", ".mjs", ".json", ".toml", ".y
 PASTAS_IGNORADAS = {".git", ".mypy_cache", ".ruff_cache", "__pycache__", "node_modules"}
 FORMATO_DO_COMMIT = re.compile(r"^(docs|feat|fix|test|refactor|chore)\(kit\): \S|^Merge ")
 LINK_DE_MARKDOWN = re.compile(r"\]\(([^)#\s]+)(?:#[^)]*)?\)")
+USO_DE_ACTION = re.compile(r"uses: ([\w./-]+)@(\S+)")
+FIXACAO_POR_COMMIT = re.compile(r"[0-9a-f]{40}")
+MARCADOR_DE_VERSAO = "<versão"
+LINGUAGENS_DO_CODEQL_DO_KIT = ("language: [python]", "language: [python, javascript-typescript]")
 CODIGO_DE_REGRA = re.compile(r"`([A-Z]{1,4}\d{3,4})`")
 # Os scripts do kit imprimem no terminal e chamam ferramentas: só isso é liberado para eles.
 EXCECOES_DOS_SCRIPTS_DO_KIT = ["kit/*:T201", "kit/*:S603"]
@@ -291,6 +295,50 @@ def provar_codigos_citados(regras_js: set[str]) -> None:
     )
 
 
+def provar_versao() -> None:
+    """O número da versão do topo do CHANGELOG aparece igual em todo lugar que o cita."""
+    achada = re.search(r"^## (\d+\.\d+)", ler(RAIZ / "CHANGELOG.md"), re.MULTILINE)
+    versao = achada.group(1) if achada else "?"
+    citacoes = {
+        "README.md": f"Versão **{versao}**",
+        "PADROES.md": f"Versão {versao} ·",
+        "templates/CLAUDE.template.md": f"[{versao}]",
+    }
+    atrasados = [nome for nome, trecho in citacoes.items() if trecho not in ler(RAIZ / nome)]
+    conferir(not atrasados, f"versão {versao} citada igual em todos os documentos", atrasados)
+
+
+def provar_actions() -> None:
+    """Toda action é fixada pelo commit, e os modelos usam a mesma fixação do CI do kit."""
+    fixacoes: dict[str, set[str]] = {}
+    soltas = []
+    workflows = [*(RAIZ / ".github" / "workflows").glob("*.yml"), *MODELOS.glob("github/*.yml")]
+    for arquivo in workflows:
+        for action, versao in USO_DE_ACTION.findall(ler(arquivo)):
+            if versao == MARCADOR_DE_VERSAO:
+                continue
+            if not FIXACAO_POR_COMMIT.fullmatch(versao):
+                soltas.append(f"{arquivo.name}: {action}@{versao}")
+            fixacoes.setdefault(action.split("/")[1], set()).add(versao)
+    conferir(bool(fixacoes) and not soltas, "toda action é fixada pelo commit", soltas)
+    diferentes = {nome: versoes for nome, versoes in fixacoes.items() if len(versoes) > 1}
+    conferir(
+        not diferentes,
+        "modelos de workflow usam a mesma fixação de actions do CI do kit",
+        f"{diferentes}: atualize também templates/github/",
+    )
+    modelo = ler(MODELOS / "github" / "codeql.yml").replace(*LINGUAGENS_DO_CODEQL_DO_KIT)
+    do_kit = ler(RAIZ / ".github" / "workflows" / "codeql.yml")
+    conferir(
+        sem_comentarios_do_topo(modelo) == sem_comentarios_do_topo(do_kit),
+        "o CodeQL do kit é o modelo, só com as linguagens trocadas",
+    )
+
+
+def sem_comentarios_do_topo(texto: str) -> str:
+    return texto[texto.index("name:") :]
+
+
 def provar_estrutura() -> None:
     titulo("[1] Estrutura do kit")
     provar_links()
@@ -301,6 +349,8 @@ def provar_estrutura() -> None:
     )
     provar_configuracoes()
     provar_yaml_e_cabecalhos()
+    provar_actions()
+    provar_versao()
     provar_git()
     com_cr = [
         str(arquivo.relative_to(RAIZ))

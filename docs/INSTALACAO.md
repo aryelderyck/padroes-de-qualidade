@@ -33,8 +33,10 @@ O instalador lista cada arquivo como `criado`, `mantido (já existia)` ou `subst
 Depois de instalar:
 
 1. Preencha os `[colchetes]` do `CLAUDE.md` e, na orientação de segurança, a lista de rotas públicas.
-2. **Python:** crie o ambiente (`python -m venv .venv`) e instale as dependências de desenvolvimento
-   (`.venv\Scripts\pip install -e ".[dev]"`). O comando único é `python conferir.py`.
+2. **Python:** no `pyproject.toml`, troque o nome do projeto e liste as dependências. Crie o ambiente
+   (`python -m venv .venv`) e instale as ferramentas (`.venv\Scripts\pip install -e ".[dev]"`; em Linux e macOS,
+   `.venv/bin/pip`). O comando único é `python conferir.py`. Se a pasta do código não se chamar `app`, troque o nome
+   nos dois lugares do `pyproject.toml` marcados com "pasta do código".
 3. **Node:** instale `eslint`, `@eslint/js`, `typescript-eslint`, `typescript`, `globals` e `prettier` como
    dependências de desenvolvimento e crie no `package.json` o script
    `"conferir": "prettier --check . && eslint . --max-warnings 0 && tsc --noEmit && vitest run"`.
@@ -56,6 +58,10 @@ Instala em `~/.claude` a skill de revisão `conferir-codigo` e o estilo de saíd
 Para a camada de segurança, instale também o plugin oficial `security-guidance` (no VS Code, em *Manage plugins*).
 Ele precisa de Python. A conferência de padrões a cada edição não gasta uso; as revisões de fim de turno e de commit
 gastam. O comando `/security-review` confere a branch antes de dizer "pronto".
+
+**Linux e macOS:** os hooks do `.claude/settings.json` de projeto Python chamam o comando `python`. Se na máquina só
+existe `python3`, o hook não roda e o Claude Code não avisa: troque `"command": "python"` por `"command": "python3"`
+nesse arquivo. A trava do commit e o CI não dependem disso (procuram `.venv`, `python` e `python3`).
 
 ## 4. O que cada conferência faz
 
@@ -80,3 +86,7 @@ gastam. O comando `/security-review` confere a branch antes de dizer "pronto".
 Rode `git pull` no kit e o instalador de novo. Ele mantém o que você editou. Para trocar um arquivo pelo modelo novo,
 apague-o antes ou use `--forcar` (que substitui **todos**, inclusive o `CLAUDE.md` preenchido: prefira apagar só o que
 quer trocar).
+
+**Quem mantém o kit:** o Dependabot abre no kit um pull request por semana com as actions e as ferramentas novas. As
+provas recusam o pull request de actions enquanto os modelos de `templates/github/` não tiverem a mesma fixação do
+`kit.yml`: leve a mesma linha `uses:` para os modelos, no mesmo pull request.

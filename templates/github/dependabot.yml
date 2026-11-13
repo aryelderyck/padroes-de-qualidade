@@ -1,19 +1,32 @@
 # Copie para .github/dependabot.yml. Apague os ecossistemas que o projeto não usa.
+# O grupo junta as atualizações da semana num pull request por ecossistema, em vez de um por pacote.
 version: 2
 updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      tudo-junto:
+        patterns: ["*"]
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      tudo-junto:
+        patterns: ["*"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      tudo-junto:
+        patterns: ["*"]
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      tudo-junto:
+        patterns: ["*"]

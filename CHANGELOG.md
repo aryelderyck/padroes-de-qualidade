@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.10 · 2026-11-13
+Último pente fino: os modelos passam a ser executados pelo caminho que a pessoa percorre.
+- **Projeto Python instala de verdade:** o `pyproject` modelo ganhou `[build-system]` e a lista de pacotes (sem isso o
+  `pip install -e ".[dev]"` falhava com duas pastas na raiz) e deixou de trazer dependências de uma stack específica.
+  O CI modelo instala com o mesmo comando, sem pedir um `requirements-dev.txt` que o instalador não cria.
+- **Prova de ponta a ponta** (seção [14], Linux e Windows): instala o kit, cria o ambiente virtual, roda cada etapa do
+  CI modelo, roda o `conferir.py` e faz o primeiro commit pela trava.
+- **Trava do commit:** projeto Node sem o script `conferir` era recusado sem mensagem; agora explica o que falta.
+- **Actions:** `checkout`, `setup-python` e `setup-node` na versão 7 e CodeQL na 4, no kit e nos modelos. Prova nova:
+  toda action fixada pelo commit, e os modelos com a mesma fixação do CI do kit.
+- **CodeQL roda no próprio kit**, com o mesmo arquivo do modelo.
+- Versões das ferramentas das provas em `provas/requisitos.txt`, atualizadas pelo Dependabot; atualizações agrupadas
+  em um pull request por ecossistema, no kit e no modelo.
+- Documentos: referência quebrada no `CONTEXTO.md`, mapa de arquivos em dia, nota sobre `python3` em Linux e macOS,
+  E-040 e E-041 no `ERROS.md`. Prova nova: o número da versão é o mesmo em todos os lugares.
+- **Ainda não executado:** o Claude Code disparando os hooks, a skill, o estilo de saída e os plugins de segurança; os
+  workflows modelo de Node e de Dependabot no GitHub de um projeto.
+
 ## 0.9 · 2026-11-12
 Correção dos defeitos achados na revisão do kit e fechamento das etapas que dependiam de alguém lembrar.
 As provas passaram de 79 para mais de 200 e rodam no CI em Linux e em Windows.

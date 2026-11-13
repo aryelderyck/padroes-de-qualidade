@@ -59,7 +59,7 @@ Se a sessão não estiver nesse estilo, avise a pessoa uma vez e siga as instru�
 
 ## Kit de padrões
 
-Kit **padroes-de-qualidade** [0.9], nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**, clonado em `../padroes-de-qualidade`
+Kit **padroes-de-qualidade** [0.10], nível **[1, 2 ou 3]**, ritmo **[rápido ou completo]**, clonado em `../padroes-de-qualidade`
 (se faltar, peça à pessoa para clonar `https://github.com/aryelderyck/padroes-de-qualidade`).
 
 - O kit é opcional: vale quando a pessoa pedir. Nesse caso, leia só o `REGRAS.md` do kit. Ele diz o que mais abrir, e quando. Não leia o kit inteiro.

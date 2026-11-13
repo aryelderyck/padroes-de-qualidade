@@ -3,7 +3,7 @@
 Kit de padrões de código e de segurança para os projetos do Aryel. Ele junta regras escritas, ferramentas que as
 conferem sozinhas e provas de que essas ferramentas funcionam.
 
-> Versão **0.9**. **O uso é opcional:** o kit só vale num projeto ou numa sessão quando a pessoa pede (por exemplo,
+> Versão **0.10**. **O uso é opcional:** o kit só vale num projeto ou numa sessão quando a pessoa pede (por exemplo,
 > "siga o kit padroes-de-qualidade"). Nada aqui se instala nem se aplica sozinho.
 
 ## Como o código é conferido
@@ -48,8 +48,8 @@ CI do kit a cada envio, em **Linux e em Windows**. Regra automática nova só en
 | Cada regra de linter pega um exemplo ruim e libera o bom (Python, JavaScript e TypeScript) | O Claude Code disparando os hooks a partir do `settings.json` |
 | Formatadores, tipos estritos, comando único, trava do commit e os scripts dos hooks | A skill `/conferir-codigo` e o estilo de saída Professor |
 | Instalador: arquivos certos, não sobrescreve, projeto recém-instalado passa na conferência | Os plugins e comandos de segurança do Claude Code com os modelos do kit |
-| Projeto Python de ponta a ponta: ambiente virtual, `pip install -e ".[dev]"`, etapas do CI modelo e primeiro commit | Os workflows modelo rodando no GitHub de um projeto real (Node, CodeQL e Dependabot) |
-| Padrões de segurança, modelos de `.gitignore`, imagem Docker do modelo | |
+| Projeto Python de ponta a ponta: ambiente virtual, `pip install -e ".[dev]"`, etapas do CI modelo e primeiro commit | Os workflows modelo de Node e de Dependabot rodando no GitHub de um projeto real |
+| Padrões de segurança, modelos de `.gitignore`, imagem Docker do modelo, CodeQL (roda no próprio kit) | |
 
 O que está na coluna da direita só dá para conferir numa sessão real do Claude Code ou num projeto real.
 

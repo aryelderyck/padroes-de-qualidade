@@ -1,6 +1,6 @@
 # Padrões de qualidade dos projetos
 
-Versão 0.9 · 2026-11-12 · Dono: Aryel
+Versão 0.10 · 2026-11-13 · Dono: Aryel
 
 Este é o documento mestre. Todo projeto novo (landing, painel, e-commerce, AtendeFlow e os que vierem)
 começa por aqui e só é considerado **pronto** quando cumpre a Definição de Pronto (seção 2).

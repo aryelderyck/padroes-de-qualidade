@@ -88,6 +88,8 @@ Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, c
 | E-037 | Claude Code no VS Code respondia só "Credit balance is too low" | Ambiente | painel | Resolvido |
 | E-038 | Linha do changelog anexada no fim do arquivo caiu na versão 0.1 | Documentação | kit de padrões | Resolvido |
 | E-039 | Commit do kit com `feat(kit):` quando a regra só previa `docs(kit):` (repetição do E-034) | Processo | kit de padrões | Resolvido |
+| E-040 | Modelos enviados sem nunca terem sido executados (TypeScript, `pyproject`, CI de Python) | Teste | kit de padrões | Resolvido |
+| E-041 | Teste de mutação rodado na pasta de trabalho instalou o kit dentro do próprio kit | Teste | kit de padrões | Resolvido |
 
 ## Registro
 
@@ -501,3 +503,13 @@ Mudaram de lugar em 2026-11-12: estão no [`REGRAS.md`](REGRAS.md), seção 2, c
 - **Data / projeto / categoria:** 2026-11-12 · kit de padrões · Processo
 - **Sintoma e causa raiz:** o commit `e53c603` foi enviado como `feat(kit): ...`, e o `README.md` do kit só previa `docs(kit): ...`. O kit passou a ter código (provas, hooks, scripts) e a regra de commit não acompanhou; além disso ela dependia de alguém lembrar, a mesma causa do E-034. O histórico já enviado não foi reescrito.
 - **Como evitar:** a regra agora aceita `docs`, `feat`, `fix`, `test`, `refactor` e `chore`, sempre com `(kit)`, e as provas conferem o formato do último commit no CI. O que tem de valer sempre vira verificação automática, não lembrete. **Status:** Resolvido
+
+### E-040 · Modelos enviados sem nunca terem sido executados (TypeScript, `pyproject`, CI de Python)
+- **Data / projeto / categoria:** 2026-11-12 e 13 · kit de padrões · Teste
+- **Sintoma e causa raiz:** a configuração de TypeScript foi enviada à branch principal sem rodar com os pacotes reais (sem rede no ambiente de escrita), e o CI achou quatro erros nela. Na revisão seguinte, o mesmo tipo de falha apareceu em outros modelos: o `pyproject` sem `[build-system]` fazia o `pip install -e ".[dev]"` falhar em projeto com duas pastas na raiz; o CI de Python pedia um `requirements-dev.txt` que o instalador não cria; a trava do commit recusava em silêncio o projeto Node sem o script `conferir`. Causa comum: as provas montavam os projetos copiando arquivos, sem passar pelo caminho que a pessoa percorre (instalar, criar o ambiente, rodar, fazer o commit).
+- **Como evitar:** modelo novo só entra com uma prova que o executa pelo caminho da pessoa. Sem rede no ambiente de escrita, a prova roda no CI numa branch antes de chegar à principal. A seção [14] das provas faz esse caminho inteiro para Python. **Status:** Resolvido
+
+### E-041 · Teste de mutação rodado na pasta de trabalho instalou o kit dentro do próprio kit
+- **Data / projeto / categoria:** 2026-11-12 · kit de padrões · Teste
+- **Sintoma e causa raiz:** para ver a prova "o instalador recusa a pasta do kit" falhar, a recusa foi removida e as provas rodaram na pasta de trabalho. O instalador então fez o que a recusa impedia: copiou os modelos para a raiz do kit e ligou `core.hooksPath`. Limpo com `git clean -fd` e `git config --unset core.hooksPath`, antes de qualquer commit.
+- **Como evitar:** mutação de código que escreve em disco roda numa **cópia** do repositório, nunca na pasta de trabalho. **Status:** Resolvido

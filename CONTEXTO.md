@@ -21,7 +21,7 @@ atualize sempre que algo mudar.
 
 As instruções de ensino, na forma que o Claude Code executa, ficam em **um só lugar**: o estilo de saída
 [`templates/output-styles/professor.md`](templates/output-styles/professor.md), instalado uma vez por máquina e ligado
-ou desligado com um comando (`README.md`, "Estilo de saída Professor"). Aqui fica o porquê de cada princípio; as fontes
+ou desligado com um comando ([`docs/INSTALACAO.md`](docs/INSTALACAO.md), seção 3). Aqui fica o porquê de cada princípio; as fontes
 estão em [`docs/REFERENCIAS.md`](docs/REFERENCIAS.md).
 
 | Princípio | Por quê |
